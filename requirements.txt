@@ -1,0 +1,5 @@
+SwissArmyTransformer>=0.4.7
+transformers>=4.33.1
+xformers>=0.0.22
+torch>1.10.0
+torchvision
