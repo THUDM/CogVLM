@@ -11,22 +11,17 @@
 
 We introduce CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers. As a result, CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. CogVLM-17B achieves state-of-the-art performance on 9 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., surpassing or matching PaLI-X 55B. Codes and checkpoints are available at Github.
 
-## Model list
-
-* base
-* chat
-* grounding-base
-* grounding-chat
-
 ## Inference
 
 ```bash
 pip install -r requirements.txt
-python cli_demo.py --from_pretrained cogvlm-base --version base --english --bf16 --no_prompt
+python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
+python cli_demo.py --from_pretrained cogvlm-base-490 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
-python cli_demo.py --from_pretrained cogvlm-grounding --version base --english --bf16
+python cli_demo.py --from_pretrained cogvlm-grounding-base --version base --english --bf16
+python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
 # We also support model parallel inference, which splits model to multiple (2/4/8) GPUs.
-torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
+torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
 ```
 
 If you have trouble in connecting to huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.

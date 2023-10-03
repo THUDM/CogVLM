@@ -5,7 +5,7 @@ def base_history_to_prompt(self, history, query, add_eoi_first=False):
 def chat_history_to_prompt(self, history, query, add_eoi_first=False):
     prompt = "<EOI> [INST] "
     for i, (old_query, response) in enumerate(history):
-        prompt += old_query.replace("NO GROUNDING.", "").replace("WITH GROUNDING.", "").strip() + " [/INST] " + response + " [INST] "
+        prompt += old_query + " [/INST] " + response + " [INST] "
     prompt += query + " [/INST] "
     return prompt
 

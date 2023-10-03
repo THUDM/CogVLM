@@ -32,15 +32,8 @@ def main():
     parser = CogVLMModel.add_model_specific_args(parser)
     args = parser.parse_args()
 
-
-    from sat.model.finetune.lora2 import LoraMixin
-    class VisualChatModel(CogVLMModel):
-        def __init__(self, args, transformer=None, parallel_output=True, **kwargs):
-            super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)
-            self.add_mixin("lora", LoraMixin(args.num_layers, 10), reinit=True)
-
     # load model
-    model, model_args = VisualChatModel.from_pretrained(
+    model, model_args = CogVLMModel.from_pretrained(
         args.from_pretrained,
         args=argparse.Namespace(
         deepspeed=None,
