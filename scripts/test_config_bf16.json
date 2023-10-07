@@ -20,7 +20,7 @@
       "enabled": true
     },
     "optimizer": {
-      "type": "sat.ops.FusedEmaAdam",
+      "type": "Adam",
       "params": {
         "lr": 0.00001,
         "betas": [

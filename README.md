@@ -48,9 +48,7 @@ To evaluate the performance of your model, use:
 bash scripts/evaluate.sh checkpoints/your_model_path
 ```
 
-* If you wish to evaluate using the Exponential Moving Average (EMA) checkpoints, rename the ema folder to a unique integer. Subsequently, update the `latest` file located in the checkpoints/model folder with this integer.
-* For instance, upon evaluating the 800-ema checkpoint, anticipated results are approximately **96.27%** accuracy. When disregarding letter cases, the accuracy is around **97.13%**.
-
+The anticipated results are approximately **94.53%** accuracy. When disregarding letter cases, the accuracy is around **95.13%**.
 
 ## Citation
 
