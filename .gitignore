@@ -3,3 +3,7 @@ __pycache__
 output.png
 fewshot-data/
 checkpoints/
+archive*
+.deepspeed_env
+hostfile
+runs/

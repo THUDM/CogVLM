@@ -24,9 +24,33 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
 ```
 
-If you have trouble in connecting to huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
+If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
 
 ## Fine-tuning
+
+Start by downloading the [Captcha Images dataset](https://www.kaggle.com/datasets/aadhavvignesh/captcha-images). Once downloaded, extract the contents of the ZIP file.
+
+To create a train/validation/test split in the ratio of 80/5/15, execute the following:
+
+```bash
+python scripts/split_dataset.py
+```
+
+Kickstart the fine-tuning process with this command:
+
+```bash
+bash scripts/finetune_lora.sh
+```
+
+To evaluate the performance of your model, use:
+
+```bash
+bash scripts/evaluate.sh checkpoints/your_model_path
+```
+
+* If you wish to evaluate using the Exponential Moving Average (EMA) checkpoints, rename the ema folder to a unique integer. Subsequently, update the `latest` file located in the checkpoints/model folder with this integer.
+* For instance, upon evaluating the 800-ema checkpoint, anticipated results are approximately **96.27%** accuracy. When disregarding letter cases, the accuracy is around **97.13%**.
+
 
 ## Citation
 
