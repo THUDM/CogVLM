@@ -61,8 +61,6 @@ bash scripts/evaluate.sh checkpoints/your_model_path
 
 The anticipated results are approximately **94.53%** accuracy. When disregarding letter cases, the accuracy is around **95.13%**.
 
-## Citation
-
 ### Command Line Demo
 
 ```shell
@@ -85,7 +83,6 @@ optional arguments:
   --english             only output English
   --quant {8,4}         quantization bits
 ```
-Note that during training, the prompt words for English Q&A pairs are 'Q: A:'.
 
 ### Web Demo
 We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
@@ -109,7 +106,7 @@ model = quantize(model.transformer, args.quant).cuda()
 
 ## License
 
-The code in this repository is open source under the Apache-2.0 license, while the use of the VisualGLM-6B model weights must comply with the Model License.
+The code in this repository is open source under the Apache-2.0 license, while the use of the CogVLM model weights must comply with the Model License.
 
 ## Citation & Acknowledgements
 
