@@ -15,6 +15,12 @@ CogVLM is powerful for answering various types of visual questions, including **
 ![chat-example](assets/chat.png)
 
 ## Usage
+
+### Web Demo
+We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
+
+![web_demo](assets/web_demo.png)
+
 ### Inference
 
 ```bash
@@ -29,7 +35,25 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
 ```
 
-If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
+The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter. Enter 'clear' to clear the conversation history and 'stop' to stop the program.
+
+The program provides the following hyperparameters to control the generation process and quantization accuracy:
+```
+usage: cli_demo.py [-h] [--max_length MAX_LENGTH] [--top_p TOP_P] [--top_k TOP_K] [--temperature TEMPERATURE] [--english] [--quant {8,4}]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --max_length MAX_LENGTH
+                        max length of the total sequence
+  --top_p TOP_P         top p for nucleus sampling
+  --top_k TOP_K         top k for top k sampling
+  --temperature TEMPERATURE
+                        temperature for sampling
+  --english             only output English
+  --quant {8,4}         quantization bits
+```
+
+Note: If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
 
 ### Fine-tuning
 
@@ -54,34 +78,6 @@ bash scripts/evaluate.sh checkpoints/your_model_path
 ```
 
 The anticipated results are approximately **94.53%** accuracy. When disregarding letter cases, the accuracy is around **95.13%**.
-
-### Command Line Demo
-
-```shell
-python cli_demo.py 
-```
-The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter. Enter 'clear' to clear the conversation history and 'stop' to stop the program.
-
-The program provides the following hyperparameters to control the generation process and quantization accuracy:
-```
-usage: cli_demo.py [-h] [--max_length MAX_LENGTH] [--top_p TOP_P] [--top_k TOP_K] [--temperature TEMPERATURE] [--english] [--quant {8,4}]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --max_length MAX_LENGTH
-                        max length of the total sequence
-  --top_p TOP_P         top p for nucleus sampling
-  --top_k TOP_K         top k for top k sampling
-  --temperature TEMPERATURE
-                        temperature for sampling
-  --english             only output English
-  --quant {8,4}         quantization bits
-```
-
-### Web Demo
-We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
-
-![web_demo](assets/web_demo.png)
 
 ## Model Quantization
 In the sat implementation, you need to change the loading location to 'cpu' first, and then perform quantization. Here's how, see cli_demo.py for details:
