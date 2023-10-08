@@ -1,8 +1,8 @@
-def base_history_to_prompt(self, history, query, add_eoi_first=False):
+def base_history_to_prompt(self, history, query):
     prompt = '<EOI>' + query
     return prompt
 
-def chat_history_to_prompt(self, history, query, add_eoi_first=False):
+def chat_history_to_prompt(self, history, query):
     prompt = "<EOI> [INST] "
     for i, (old_query, response) in enumerate(history):
         prompt += old_query + " [/INST] " + response + " [INST] "
@@ -31,7 +31,7 @@ import numpy as np
 import torch
 
 class llama2_text_processor:
-    def __init__(self, tokenizer, max_target_length=1024, image_length=257, model=None):
+    def __init__(self, tokenizer, max_target_length=2048, image_length=1225):
         self.tokenizer = tokenizer
         self.max_target_length = max_target_length
         self.image_length = image_length
@@ -41,7 +41,7 @@ class llama2_text_processor:
             prompt = self.replace_tags_with_empty(prompt)
             # caption = self.replace_tags_with_empty(caption)
             history = []
-            prompt = self.history_to_prompt(history, prompt, add_eoi_first=True)
+            prompt = self.history_to_prompt(history, prompt)
 
         input_ids = [self.tokenizer.bos_token_id]
 
@@ -49,7 +49,6 @@ class llama2_text_processor:
         caption_splits = caption.split('<EOI>')
         if len(prompt_splits) > 0:
             input_ids.extend(self.tokenizer.encode(prompt_splits[0], add_special_tokens=False))
-            pre_image = len(input_ids)
         for tokens in prompt_splits[1:]:
             tokens_with_img = [-100] + self.tokenizer.encode(tokens, add_special_tokens=False)
             input_ids.extend(tokens_with_img)
@@ -120,8 +119,8 @@ class llama2_text_processor:
                 'context_length': context_length, 'image_position': image_position, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask
                 }
 
-    def history_to_prompt(self, history, query, add_eoi_first=False):
-        return _history_to_prompt[self.tokenizer.signal_type](self, history, query, add_eoi_first)
+    def history_to_prompt(self, history, query):
+        return _history_to_prompt[self.tokenizer.signal_type](self, history, query)
 
     def replace_tags_with_empty(self, text):
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)
@@ -148,7 +147,7 @@ def get_masks_and_position_ids(seq, image_logits_mask):
     return tokens, attention_mask, position_ids
 
 class llama2_text_processor_inference:
-    def __init__(self, tokenizer, max_target_length=1024, image_length=257, model=None, no_prompt=False, english=True):
+    def __init__(self, tokenizer, max_target_length=2048, image_length=1225):
         self.tokenizer = tokenizer
         self.max_target_length = max_target_length
         self.image_length = image_length
@@ -161,14 +160,13 @@ class llama2_text_processor_inference:
             prompt = self.replace_tags_with_empty(prompt)
             # caption = self.replace_tags_with_empty(caption)
             history = []
-            prompt = self.history_to_prompt(history, prompt, add_eoi_first=True)
+            prompt = self.history_to_prompt(history, prompt)
 
         input_ids = [self.tokenizer.bos_token_id]
 
         prompt_splits = prompt.split('<EOI>')
         if len(prompt_splits) > 0:
             input_ids.extend(self.tokenizer.encode(prompt_splits[0], add_special_tokens=False))
-            pre_image = len(input_ids)
         for tokens in prompt_splits[1:]:
             tokens_with_img = [-100] + self.tokenizer.encode(tokens, add_special_tokens=False)
             input_ids.extend(tokens_with_img)
@@ -197,8 +195,8 @@ class llama2_text_processor_inference:
         image_rope_mask = torch.tensor(image_rope_mask).unsqueeze(0)
         return {'input_ids': input_ids, 'image_embed_mask': image_embed_mask, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask}
 
-    def history_to_prompt(self, history, query, add_eoi_first=False):
-        return _history_to_prompt[self.tokenizer.signal_type](self, history, query, add_eoi_first)
+    def history_to_prompt(self, history, query):
+        return _history_to_prompt[self.tokenizer.signal_type](self, history, query)
 
     def replace_tags_with_empty(self, text):
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)

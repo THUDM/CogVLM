@@ -6,3 +6,7 @@ checkpoints/
 records.db
 server.py
 examples/*grounding.png
+archive*
+.deepspeed_env
+hostfile
+runs/

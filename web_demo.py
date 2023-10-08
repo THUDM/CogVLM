@@ -24,13 +24,14 @@ from utils.language import llama2_tokenizer, llama2_text_processor_inference
 from utils.vision import get_image_processor
 
 
-DESCRIPTION = '''# <a href="https://github.com/THUDM/CogVLM">VisualGLM</a>'''
+DESCRIPTION = '''<h2 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM-17B</a> </h2>'''
+
+NOTES = 'This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model.'
 
 MAINTENANCE_NOTICE1 = 'Hint 1: If the app report "Something went wrong, connection error out", please turn off your proxy and retry.<br>Hint 2: If you upload a large size of image like 10MB, it may take some time to upload and process. Please be patient and wait.'
 
 GROUNDING_NOTICE = 'Hint: When you check "Grounding", please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/template.py#L344">corresponding prompt</a> or the examples below.'
 
-NOTES = 'This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model.'
 
 
 default_chatbox = [("", "Hi, What do you want to know about this image?")]
@@ -161,6 +162,9 @@ def main(args):
 
     with gr.Blocks(css='style.css') as demo:
 
+        gr.Markdown(DESCRIPTION)
+        gr.Markdown(NOTES)
+
         with gr.Row():
             with gr.Column(scale=4.5):
                 with gr.Group():
@@ -186,8 +190,6 @@ def main(args):
                                   examples_per_page=6)
 
         gr.Markdown(MAINTENANCE_NOTICE1)
-
-        gr.Markdown(NOTES)
 
         print(gr.__version__)
         run_button.click(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash],

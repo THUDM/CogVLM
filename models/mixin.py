@@ -1,18 +1,10 @@
-import os
-import sys
-import math
-import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from sat.transformer_defaults import attention_fn_default
-from sat.model.base_model import BaseModel, BaseMixin, non_conflict
-from sat.model import ChatGLMModel
-from sat.model.position_embedding.rotary_embeddings import RotaryEmbedding, apply_rotary_pos_emb_index
+from sat.model.base_model import BaseMixin, non_conflict
 from sat.mpu.layers import ColumnParallelLinear, RowParallelLinear
-from sat.mpu.utils import split_tensor_along_last_dim, gelu
-from sat.model.official.llama_model import apply_rotary_pos_emb_index_bhs
-from sat.ops import LayerNorm
+from sat.mpu.utils import split_tensor_along_last_dim
 from sat import mpu
 
 
