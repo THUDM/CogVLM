@@ -116,3 +116,28 @@ class CogVLMModel(LLaMAModel):
         if input_ids.shape[1] > 1:
             return super().forward(input_ids=input_ids, vision_expert_mask=vision_expert_mask, image_embed_mask=image_embed_mask, **kwargs)
         return super().forward(input_ids=input_ids, **kwargs)
+
+
+from sat.model.finetune import PTuningV2Mixin
+from sat.model.finetune.lora2 import LoraMixin
+class FineTuneCogVLMModel(CogVLMModel):
+    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):
+        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)
+        if args.use_ptuning:
+            self.add_mixin("ptuning", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))
+        if args.use_lora:
+            self.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)
+        elif args.use_qlora:
+            self.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)
+        self.args = args
+        
+    @classmethod
+    def add_model_specific_args(cls, parser):
+        group = parser.add_argument_group('CogVLM-finetune', 'CogVLM finetune Configurations')
+        group.add_argument('--pre_seq_len', type=int, default=8)
+        group.add_argument('--lora_rank', type=int, default=10)
+        group.add_argument('--use_ptuning', action="store_true")
+        group.add_argument('--use_lora', action="store_true")
+        group.add_argument('--use_qlora', action="store_true")
+        group.add_argument('--layer_range', nargs='+', type=int, default=None)
+        return super().add_model_specific_args(parser)

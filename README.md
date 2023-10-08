@@ -35,11 +35,33 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
 ```
 
-If you have trouble in connecting to huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the local tokenizer.
+If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
 
 ### Fine-tuning
 
-## Deployment Tools
+Start by downloading the [Captcha Images dataset](https://www.kaggle.com/datasets/aadhavvignesh/captcha-images). Once downloaded, extract the contents of the ZIP file.
+
+To create a train/validation/test split in the ratio of 80/5/15, execute the following:
+
+```bash
+python scripts/split_dataset.py
+```
+
+Kickstart the fine-tuning process with this command:
+
+```bash
+bash scripts/finetune_lora.sh
+```
+
+To evaluate the performance of your model, use:
+
+```bash
+bash scripts/evaluate.sh checkpoints/your_model_path
+```
+
+The anticipated results are approximately **94.53%** accuracy. When disregarding letter cases, the accuracy is around **95.13%**.
+
+## Citation
 
 ### Command Line Demo
 
@@ -66,13 +88,12 @@ optional arguments:
 Note that during training, the prompt words for English Q&A pairs are 'Q: A:'.
 
 ### Web Demo
+We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
+
 ![web_demo](assets/web_demo.png)
 
-We provide a web demo based on [Gradio](https://gradio.app). First, install Gradio: `pip install gradio`.
-Then download and enter this repository and run `web_demo.py`:
-
 ## Model Quantization
-In the Huggingface implementation, the model is loaded with FP16 precision by default, and running the above code requires about 15GB of GPU memory. If your GPU memory is limited, you can try loading the model in a quantized manner.
+In the Huggingface implementation, the model is loaded with FP16 precision by default, and running the above code requires about *GB of GPU memory. If your GPU memory is limited, you can try loading the model in a quantized manner.
 Here's how:
 ```python
 # Modify as needed, currently only 4/8 bit quantization is supported. The following will only quantize ChatGLM, as the error is larger when quantizing ViT
