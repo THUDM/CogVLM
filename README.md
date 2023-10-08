@@ -4,9 +4,6 @@
 ⚒️ <a href="https://github.com/THUDM/SwissArmyTransformer" target="_blank">SwissArmyTransformer (sat)</a> • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> 
 </p>
 <p align="center">
-•  📃 <a href="https://arxiv.org/abs/2105.13290" target="_blank">[CogView@NeurIPS 21]</a>  <a href="https://github.com/THUDM/CogView" target="_blank">[GitHub]</a> • 📃 <a href="https://arxiv.org/abs/2103.10360" target="_blank">[GLM@ACL 22]</a> <a href="https://github.com/THUDM/GLM" target="_blank">[GitHub]</a> <br>
-</p>
-<p align="center">
     👋 Join us on <a href="assets/WECHAT.md" target="_blank">WeChat</a>
 </p>
 
@@ -90,13 +87,6 @@ We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gr
 ![web_demo](assets/web_demo.png)
 
 ## Model Quantization
-In the Huggingface implementation, the model is loaded with FP16 precision by default, and running the above code requires about *GB of GPU memory. If your GPU memory is limited, you can try loading the model in a quantized manner.
-Here's how:
-```python
-# Modify as needed, currently only 4/8 bit quantization is supported. The following will only quantize ChatGLM, as the error is larger when quantizing ViT
-model = AutoModel.from_pretrained("THUDM/cogvlm", trust_remote_code=True).quantize(8).half().cuda()
-```
-
 In the sat implementation, you need to change the loading location to 'cpu' first, and then perform quantization. Here's how, see cli_demo.py for details:
 ```python
 from sat.quantization.kernels import quantize
