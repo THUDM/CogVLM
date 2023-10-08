@@ -17,11 +17,11 @@ We introduce CogVLM, a powerful open-source visual language foundation model. Di
 pip install -r requirements.txt
 python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-base-490 --version base --english --bf16 --no_prompt
-python cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
+python cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
 python cli_demo.py --from_pretrained cogvlm-grounding-base --version base --english --bf16
 python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
 # We also support model parallel inference, which splits model to multiple (2/4/8) GPUs.
-torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --fp16
+torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
 ```
 
 If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
@@ -48,7 +48,7 @@ To evaluate the performance of your model, use:
 bash scripts/evaluate.sh checkpoints/your_model_path
 ```
 
-The anticipated results are approximately **94.53%** accuracy. When disregarding letter cases, the accuracy is around **95.13%**.
+The anticipated result is approximately **98.13%** accuracy.
 
 ## Citation
 

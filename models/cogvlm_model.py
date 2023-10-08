@@ -62,7 +62,9 @@ def override_dist_dtype_device_args(args, b={}):
                 mode=args.mode,
                 checkpoint_activations=args.checkpoint_activations,
                 checkpoint_num_layers=args.checkpoint_num_layers,
-                device=args.device
+                device=args.device,
+                hidden_dropout=0.,
+                attention_dropout=0.
             )
     if hasattr(args, 'model_parallel_size'):
         b['model_parallel_size'] = args.model_parallel_size
