@@ -81,7 +81,7 @@ def load_model(args):
 
     model.add_mixin('auto-regressive', CachedAutoregressiveMixin())
 
-    text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length, model, args.no_prompt, args.english)
+    text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length)
 
     return model, image_processor, text_processor_infer
 
