@@ -3,3 +3,6 @@ __pycache__
 output.png
 fewshot-data/
 checkpoints/
+records.db
+server.py
+examples/*grounding.png

@@ -13,6 +13,7 @@ We introduce CogVLM, a powerful open-source visual language foundation model. Di
 
 ## Inference
 
+### terminal demo
 ```bash
 pip install -r requirements.txt
 python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
@@ -25,6 +26,15 @@ torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretraine
 ```
 
 If you have trouble in connecting to huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
+
+### web demo
+We also offer a web demo based on [Gradio](https://gradio.app). First, install Gradio by running: `pip install gradio`. Then download and enter this repository and run `web_demo.py` like `cli_demo.py`:
+
+```bash
+python web_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
+python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
+
+```
 
 ## Fine-tuning
 
