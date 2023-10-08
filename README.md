@@ -1,10 +1,7 @@
 # CogVLM
 
 <p align="center">
-⚒️ <a href="https://github.com/THUDM/SwissArmyTransformer" target="_blank">SwissArmyTransformer (sat)</a> • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> 
-</p>
-<p align="center">
-    👋 Join us on <a href="assets/WECHAT.md" target="_blank">WeChat</a>
+⚒️ <a href="https://github.com/THUDM/SwissArmyTransformer" target="_blank">SwissArmyTransformer (sat)</a> • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> • 👋 Join us on <a href="assets/WECHAT.md" target="_blank">WeChat</a>
 </p>
 
 ## Introduction
@@ -104,4 +101,4 @@ If you find our work helpful, please consider citing the following papers
 ```
 
 ```
-In the instruction fine-tuning phase of the VisualGLM-6B dataset, there are some English image-text data from the [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), and [LLaVAR](https://github.com/SALT-NLP/LLaVAR) projects, as well as many classic cross-modal work datasets. We sincerely thank them for their contributions.
+In the instruction fine-tuning phase of the CogVLM, there are some English image-text data from the [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), and [LLaVAR](https://github.com/SALT-NLP/LLaVAR) projects, as well as many classic cross-modal work datasets. We sincerely thank them for their contributions.
