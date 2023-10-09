@@ -3,7 +3,7 @@
 # export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 NUM_GPUS_PER_WORKER=8
-MP_SIZE=8
+MP_SIZE=4
 LOCAL_WORLD_SIZE=8
 
 script_path=$(realpath $0)
@@ -13,7 +13,7 @@ MODEL_TYPE="cogvlm-base-224"
 VERSION="base"
 MODEL_ARGS="--from_pretrained $MODEL_TYPE \
     --max_length 319 \
-    --lora_rank 4 \
+    --lora_rank 10 \
     --use_lora \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"
@@ -38,6 +38,7 @@ gpt_options=" \
        --lr-decay-style cosine \
        --warmup .02 \
        --checkpoint-activations \
+       --vit_checkpoint_activations \
        --save-interval 200 \
        --eval-interval 200 \
        --save "./checkpoints" \

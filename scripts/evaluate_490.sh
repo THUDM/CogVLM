@@ -10,7 +10,7 @@ script_dir=$(dirname $script_path)
 main_dir=$(dirname $script_dir)
 MODEL_TYPE="cogvlm-base-490"
 VERSION="base"
-MODEL_ARGS="--from_pretrained checkpoints/merged_model \
+MODEL_ARGS="--from_pretrained checkpoints/merged_lora \
     --max_length 1288 \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"

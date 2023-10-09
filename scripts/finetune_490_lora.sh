@@ -13,8 +13,6 @@ MODEL_TYPE="cogvlm-base-490"
 VERSION="base"
 MODEL_ARGS="--from_pretrained $MODEL_TYPE \
     --max_length 1288 \
-    --lora_rank 10 \
-    --use_lora \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"
 
@@ -38,6 +36,7 @@ gpt_options=" \
        --lr-decay-style cosine \
        --warmup .02 \
        --checkpoint-activations \
+       --vit_checkpoint_activations \
        --save-interval 200 \
        --eval-interval 200 \
        --save "./checkpoints" \

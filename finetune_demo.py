@@ -12,7 +12,7 @@ from functools import partial
 
 def disable_untrainable_params(self):
     total_trainable = 0
-    enable = ["mixins.mlp.vision", "mixins.rotary.vision", ('mlp.dense_h_to_4h', 'vit'), ('mlp.dense_4h_to_h', 'vit')]
+    enable = [('mlp', 'vit')]
     if self.args.use_ptuning:
         enable.extend(['ptuning'])
     if self.args.use_lora or self.args.use_qlora:
@@ -21,7 +21,7 @@ def disable_untrainable_params(self):
         flag = False
         for e in enable:
             if type(e) is tuple:
-                if e[0].lower() in n.lower() and e[1].lower() not in n.lower():
+                if e[0].lower() in n.lower() and e[1].lower() in n.lower() and 55 > int(n[:n.find('.mlp')].split('.')[-1]) > 45:
                     flag = True
                     break
             else:
@@ -33,8 +33,6 @@ def disable_untrainable_params(self):
         else:
             total_trainable += p.numel()
             print_rank0(n)
-            if 'vision' in n:
-                p.lr_scale = 0.5
     print_rank0("***** Total trainable parameters: "+str(total_trainable)+" *****")
 
 FineTuneTrainCogVLMModel.disable_untrainable_params = disable_untrainable_params
@@ -243,6 +241,7 @@ if __name__ == '__main__':
         model.add_mixin("ptuning", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))
     if args.use_lora:
         model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)
+        model.get_mixin("eva").vit_model.add_mixin("lora", LoraMixin(args.eva_args['num_layers'], args.lora_rank, layer_range=args.layer_range), reinit=True)
     elif args.use_qlora:
         model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)
         
@@ -256,6 +255,7 @@ if __name__ == '__main__':
     model = training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor), collate_fn=data_collator, forward_step_eval=forward_step_eval)
     if args.use_lora:
         model.get_mixin("lora").merge_lora()
+        model.get_mixin("eva").vit_model.get_mixin("lora").merge_lora()
         args.use_lora = False
         args.save = "checkpoints/merged_lora"
         from sat.training.model_io import save_checkpoint
