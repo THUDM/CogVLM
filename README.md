@@ -1,25 +1,52 @@
 # CogVLM
 
 <p align="center">
-⚒️ <a href="https://github.com/THUDM/SwissArmyTransformer" target="_blank">SwissArmyTransformer (sat)</a> • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> • 👋 Join us on <a href="assets/WECHAT.md" target="_blank">WeChat</a>
+ 📖 <a href="assets/cogvlm-paper.pdf" target="_blank" >Paper</a> • ⚒️ <a href="https://github.com/THUDM/SwissArmyTransformer" target="_blank">SwissArmyTransformer (sat)</a> • 👋 Join us on <a href="assets/WECHAT.md" target="_blank">WeChat</a>  • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> 
 </p>
 
 ## Introduction
 
-We introduce CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers. As a result, CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. CogVLM-17B achieves state-of-the-art performance on 9 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., surpassing or matching PaLI-X 55B. Codes and checkpoints are available at Github.
+- CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers. CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. 
+
+- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., surpassing or matching PaLI-X 55B. Codes and checkpoints are available at Github.
+
+- We anticipate that the open-sourcing of CogVLM will greatly help the research and industrial application of visual understanding.
+
+<div align="center">
+    <img src=assets/metrics.png width=50% />
+</div>
 
 ## Examples
 
 CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grouning Visual Question Answering**, etc.
 
-![chat-example](assets/chat.png)
+<div align="center">
+    <img src=assets/compare.png width=70% />
+</div>
+
+<!-- ![compare](assets/compare.png) -->
+
+<details>
+<summary>Click to expand/collapse more examples</summary>
+
+![Chat Examples](assets/chat.png)
+
+</details>
+
+## Method
+CogVLM model comprises four fundamental components: a vision transformer (ViT) encoder, an MLP adapter, a pretrained large language model (GPT), and a visual expert module.
+
+<div align="center">
+    <img src=assets/method.png width=70% />
+</div>
 
 ## Usage
 
 ### Web Demo
 We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
-
-![web_demo](assets/web_demo.png)
+<div align="center">
+    <img src=assets/web_demo.png width=70% />
+</div>
 
 ### Inference
 
