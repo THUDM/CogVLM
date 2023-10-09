@@ -1,20 +1,17 @@
 # CogVLM
 
-<p align="center">
- 📖 <a href="assets/cogvlm-paper.pdf" target="_blank" >Paper</a> • ⚒️ <a href="https://github.com/THUDM/SwissArmyTransformer" target="_blank">SwissArmyTransformer (sat)</a> • 👋 Join us on <a href="assets/WECHAT.md" target="_blank">WeChat</a>  • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> 
-</p>
-
 ## Introduction
+CogVLM是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在14项权威跨模态基准上取得了SOTA性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
 
-📖 [Paper](./assets/cogvlm-paper.pdf)
+📖 [Paper（论文）](./assets/cogvlm-paper.pdf)
+
+🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
 - CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, **CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers**. CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. 
 
 - CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**.
 
 - We anticipate that the open-sourcing of CogVLM will greatly help the research and industrial application of visual understanding.
-
-CogVLM是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在多项跨模态基准上取得了SOTA性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
 
 <div align="center">
     <img src=assets/metrics.png width=80% />
