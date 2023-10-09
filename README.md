@@ -6,14 +6,14 @@
 
 ## Introduction
 
-- CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers. CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. 
+- CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, **CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers**. CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. 
 
-- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., surpassing or matching PaLI-X 55B. Codes and checkpoints are available at Github.
+- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**.
 
 - We anticipate that the open-sourcing of CogVLM will greatly help the research and industrial application of visual understanding.
 
 <div align="center">
-    <img src=assets/metrics.png width=50% />
+    <img src=assets/metrics.png width=80% />
 </div>
 
 ## Examples
@@ -21,7 +21,7 @@
 CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grouning Visual Question Answering**, etc.
 
 <div align="center">
-    <img src=assets/compare.png width=70% />
+    <img src=assets/compare.png width=80% />
 </div>
 
 <!-- ![compare](assets/compare.png) -->
