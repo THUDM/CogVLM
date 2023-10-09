@@ -42,14 +42,22 @@ CogVLM model comprises four fundamental components: a vision transformer (ViT) e
 
 ## Usage
 
-### Web Demo
+### Online Web Demo
 We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
 <div align="center">
     <img src=assets/web_demo.png width=70% />
 </div>
 
-### Inference
+### Local Web Demo
+We also offer a local web demo based on Gradio. First, install Gradio by running: `pip install gradio`. Then download and enter this repository and run `web_demo.py`. See the next section for detailed usage:
 
+```bash
+python web_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
+python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
+
+```
+
+### Terminal Demo
 ```bash
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
