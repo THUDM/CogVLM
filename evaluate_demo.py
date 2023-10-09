@@ -5,39 +5,10 @@ import argparse
 from sat import mpu, get_args, get_tokenizer
 from sat.training.deepspeed_training import training_main
 from sat.helpers import print_rank0
-from models.cogvlm_model import FineTuneTrainCogVLMModel
+from models.cogvlm_model import FineTuneTestCogVLMModel
 from utils.language import llama2_text_processor, llama2_text_processor_inference
 from utils.vision import get_image_processor
 from functools import partial
-
-def disable_untrainable_params(self):
-    total_trainable = 0
-    enable = ["mixins.mlp.vision", "mixins.rotary.vision", ('mlp.dense_h_to_4h', 'vit'), ('mlp.dense_4h_to_h', 'vit')]
-    if self.args.use_ptuning:
-        enable.extend(['ptuning'])
-    if self.args.use_lora or self.args.use_qlora:
-        enable.extend(['matrix_A', 'matrix_B'])
-    for n, p in self.named_parameters():
-        flag = False
-        for e in enable:
-            if type(e) is tuple:
-                if e[0].lower() in n.lower() and e[1].lower() not in n.lower():
-                    flag = True
-                    break
-            else:
-                if e.lower() in n.lower():
-                    flag = True
-                    break
-        if not flag:
-            p.requires_grad_(False)
-        else:
-            total_trainable += p.numel()
-            print_rank0(n)
-            if 'vision' in n:
-                p.lr_scale = 0.5
-    print_rank0("***** Total trainable parameters: "+str(total_trainable)+" *****")
-
-FineTuneTrainCogVLMModel.disable_untrainable_params = disable_untrainable_params
 
 def data_collator(examples):
     examples = [ex for ex in examples if len(ex) > 0] # drop {}
@@ -220,9 +191,6 @@ def create_dataset_function(image_processor, text_processor, path, args):
     dataset = ItemDataset(image_processor, text_processor, args, path)
     return dataset
 
-from sat.model.finetune.lora2 import LoraMixin
-from sat.model.finetune.prompt_tuning import PTuningV2Mixin
-
 if __name__ == '__main__':
     py_parser = argparse.ArgumentParser(add_help=False)
     py_parser.add_argument('--max_length', type=int)
@@ -231,21 +199,14 @@ if __name__ == '__main__':
     py_parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat", help='pretrained ckpt')
     py_parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     py_parser.add_argument("--vit_checkpoint_activations", action='store_true')
-    py_parser = FineTuneTrainCogVLMModel.add_model_specific_args(py_parser)
+    py_parser = FineTuneTestCogVLMModel.add_model_specific_args(py_parser)
     known, args_list = py_parser.parse_known_args()
     args = get_args(args_list)
     args = argparse.Namespace(**vars(args), **vars(known))
     if args.use_qlora:
         args.device = 'cpu'
 
-    model, args = FineTuneTrainCogVLMModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})
-    if args.use_ptuning:
-        model.add_mixin("ptuning", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))
-    if args.use_lora:
-        model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)
-    elif args.use_qlora:
-        model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)
-        
+    model, args = FineTuneTestCogVLMModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})
     if args.use_qlora and torch.cuda.is_available():
         model = model.to('cuda')
     from utils.language import llama2_tokenizer
@@ -253,10 +214,4 @@ if __name__ == '__main__':
     image_processor = get_image_processor(args.eva_args["image_size"][0])
     text_processor = llama2_text_processor(tokenizer, args.max_length, args.image_length)
 
-    model = training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor), collate_fn=data_collator, forward_step_eval=forward_step_eval)
-    if args.use_lora:
-        model.get_mixin("lora").merge_lora()
-        args.use_lora = False
-        args.save = "checkpoints/merged_lora"
-        from sat.training.model_io import save_checkpoint
-        save_checkpoint(1, model, None, None, args)
+    training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor), collate_fn=data_collator, forward_step_eval=forward_step_eval)

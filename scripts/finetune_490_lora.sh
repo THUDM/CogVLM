@@ -4,35 +4,36 @@
 
 NUM_GPUS_PER_WORKER=8
 MP_SIZE=1
+LOCAL_WORLD_SIZE=8
 
 script_path=$(realpath $0)
 script_dir=$(dirname $script_path)
 main_dir=$(dirname $script_dir)
 MODEL_TYPE="cogvlm-base-490"
 VERSION="base"
-MODEL_ARGS="--from_pretrained $1 \
-    --max_length 1500 \
+MODEL_ARGS="--from_pretrained $MODEL_TYPE \
+    --max_length 1288 \
     --lora_rank 10 \
     --use_lora \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"
 
 OPTIONS_SAT="SAT_HOME=~/.sat_models"
-OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2"
+OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$LOCAL_WORLD_SIZE"
 HOST_FILE_PATH="hostfile"
 
 train_data="./archive_split/train"
-test_data="./archive_split/test"
+valid_data="./archive_split/valid"
 
 gpt_options=" \
        --experiment-name finetune-$MODEL_TYPE \
        --model-parallel-size ${MP_SIZE} \
        --mode finetune \
-       --train-iters 0 \
+       --train-iters 800 \
        --resume-dataloader \
        $MODEL_ARGS \
        --train-data ${train_data} \
-       --test-data ${test_data} \
+       --valid-data ${valid_data} \
        --distributed-backend nccl \
        --lr-decay-style cosine \
        --warmup .02 \
@@ -40,7 +41,7 @@ gpt_options=" \
        --save-interval 200 \
        --eval-interval 200 \
        --save "./checkpoints" \
-       --strict-eval \
+       --eval-iters 10 \
        --eval-batch-size 1 \
        --split 1. \
        --deepspeed_config scripts/test_config_bf16.json \

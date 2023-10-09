@@ -6,6 +6,8 @@
 
 ## Introduction
 
+[Paper](./assets/cogvlm-paper.pdf)
+
 - CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, **CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers**. CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. 
 
 - CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**.
@@ -34,7 +36,7 @@ CogVLM is powerful for answering various types of visual questions, including **
 </details>
 
 ## Method
-CogVLM model comprises four fundamental components: a vision transformer (ViT) encoder, an MLP adapter, a pretrained large language model (GPT), and a visual expert module.
+CogVLM model comprises four fundamental components: a vision transformer (ViT) encoder, an MLP adapter, a pretrained large language model (GPT), and a visual expert module. See [Paper](./assets/cogvlm-paper.pdf) for more details.
 
 <div align="center">
     <img src=assets/method.png width=70% />
@@ -103,16 +105,22 @@ python scripts/split_dataset.py
 Kickstart the fine-tuning process with this command:
 
 ```bash
-bash scripts/finetune_lora.sh
+bash scripts/finetune_(224/490)_lora.sh
+```
+
+Then, merge the model to model_parallel_size=1: (replace 8 with your training MP_SIZE)
+
+```bash
+torchrun --standalone --nnodes=1 --nproc-per-node=8 merge_model.py --from_pretrained checkpoints/merged_lora/ --version base --bf16
 ```
 
 To evaluate the performance of your model, use:
 
 ```bash
-bash scripts/evaluate.sh checkpoints/your_model_path
+bash scripts/evaluate_(224/490).sh
 ```
 
-The anticipated result is approximately **98.13%** accuracy.
+It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel.
 
 ## Model Quantization
 In the sat implementation, you need to change the loading location to 'cpu' first, and then perform quantization. Here's how, see cli_demo.py for details:

@@ -60,11 +60,11 @@ def override_dist_dtype_device_args(args, b={}):
                 bf16=args.bf16,
                 fp16=args.fp16,
                 mode=args.mode,
-                checkpoint_activations=args.checkpoint_activations,
+                checkpoint_activations=args.checkpoint_activations if not hasattr(args, 'vit_checkpoint_activations') else args.vit_checkpoint_activations,
                 checkpoint_num_layers=args.checkpoint_num_layers,
                 device=args.device,
                 hidden_dropout=0.,
-                attention_dropout=0.
+                attention_dropout=0.,
             )
     if hasattr(args, 'model_parallel_size'):
         b['model_parallel_size'] = args.model_parallel_size
@@ -120,9 +120,28 @@ class CogVLMModel(LLaMAModel):
         return super().forward(input_ids=input_ids, **kwargs)
 
 
+class FineTuneTrainCogVLMModel(CogVLMModel):
+    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):
+        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)
+        self.args = args
+        # If you want to use model parallel with a mp_size=1 checkpoint, and meanwhile you also want to use lora,
+        # you have to add_mixin after loading model checkpoint.
+        
+    @classmethod
+    def add_model_specific_args(cls, parser):
+        group = parser.add_argument_group('CogVLM-finetune', 'CogVLM finetune Configurations')
+        group.add_argument('--pre_seq_len', type=int, default=8)
+        group.add_argument('--lora_rank', type=int, default=10)
+        group.add_argument('--use_ptuning', action="store_true")
+        group.add_argument('--use_lora', action="store_true")
+        group.add_argument('--use_qlora', action="store_true")
+        group.add_argument('--layer_range', nargs='+', type=int, default=None)
+        return super().add_model_specific_args(parser)
+
+
 from sat.model.finetune import PTuningV2Mixin
 from sat.model.finetune.lora2 import LoraMixin
-class FineTuneCogVLMModel(CogVLMModel):
+class FineTuneTestCogVLMModel(CogVLMModel):
     def __init__(self, args, transformer=None, parallel_output=True, **kw_args):
         super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)
         if args.use_ptuning:
