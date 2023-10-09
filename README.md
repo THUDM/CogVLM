@@ -14,6 +14,8 @@
 
 - We anticipate that the open-sourcing of CogVLM will greatly help the research and industrial application of visual understanding.
 
+CogVLM是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在多项跨模态基准上取得了SOTA性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
+
 <div align="center">
     <img src=assets/metrics.png width=80% />
 </div>
