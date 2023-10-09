@@ -54,7 +54,7 @@ class llama2_text_processor:
             input_ids.extend(tokens_with_img)
         context_length = len(input_ids) + (len(prompt_splits)-1) * (self.image_length + 1)
         if context_length > self.max_target_length - 50:
-            return None
+            return None  # prompt is too long
         if len(caption_splits) > 0:
             input_ids.extend(self.tokenizer.encode(caption_splits[0], add_special_tokens=False))
         for tokens in caption_splits[1:]:
@@ -62,8 +62,6 @@ class llama2_text_processor:
             input_ids.extend(tokens_with_img)
 
         if len(input_ids) > self.max_target_length - self.image_length - 5:
-            if(len(input_ids)) > self.max_target_length - self.image_length + 200:
-                return None
             input_ids = input_ids[:self.max_target_length - self.image_length - 5]
 
         input_ids += [self.tokenizer.eos_token_id]
