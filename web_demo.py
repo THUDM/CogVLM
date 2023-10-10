@@ -202,7 +202,7 @@ def main(args):
         print(gr.__version__)
 
     demo.queue(concurrency_count=10)
-    demo.launch(server_port=7860)
+    demo.launch()
 
 
 if __name__ == '__main__':
