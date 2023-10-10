@@ -89,7 +89,7 @@ optional arguments:
   --quant {8,4}         quantization bits
 ```
 
-Note: If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
+Note: If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer. If you have trouble in automatically downloading model with [SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from [CogVLM modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) manually.
 
 ### Fine-tuning
 

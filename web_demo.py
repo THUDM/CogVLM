@@ -65,7 +65,6 @@ def load_model(args):
         skip_init=True,
         use_gpu_initialization=True,
         device=f'cuda'),
-        url='local',
         overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {}
     )
     model = model.eval()
