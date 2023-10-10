@@ -10,13 +10,15 @@ script_dir=$(dirname $script_path)
 main_dir=$(dirname $script_dir)
 MODEL_TYPE="cogvlm-base-224"
 VERSION="base"
-MODEL_ARGS="--from_pretrained checkpoints/merged_model \
-    --max_length 384 \
+MODEL_ARGS="--from_pretrained ./checkpoints/merged_model_224 \
+    --max_length 319 \
+    --lora_rank 10 \
+    --use_lora \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"
 
 OPTIONS_SAT="SAT_HOME=~/.sat_models"
-OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$LOCAL_WORLD_SIZE"
+OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$NUM_GPUS_PER_WORKER"
 HOST_FILE_PATH="hostfile"
 
 train_data="./archive_split/train"

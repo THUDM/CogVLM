@@ -10,13 +10,15 @@ script_dir=$(dirname $script_path)
 main_dir=$(dirname $script_dir)
 MODEL_TYPE="cogvlm-base-490"
 VERSION="base"
-MODEL_ARGS="--from_pretrained checkpoints/merged_lora \
+MODEL_ARGS="--from_pretrained ./checkpoints/merged_lora_490 \
     --max_length 1288 \
+    --lora_rank 10 \
+    --use_lora \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"
 
 OPTIONS_SAT="SAT_HOME=~/.sat_models"
-OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$LOCAL_WORLD_SIZE"
+OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$NUM_GPUS_PER_WORKER"
 HOST_FILE_PATH="hostfile"
 
 train_data="./archive_split/train"
@@ -41,7 +43,7 @@ gpt_options=" \
        --strict-eval \
        --eval-batch-size 1 \
        --split 1. \
-       --deepspeed_config scripts/test_config_bf16.json \
+       --deepspeed_config scripts/test_config_bf16_490.json \
        --skip-init \
        --seed 2023
 "

@@ -107,10 +107,10 @@ Kickstart the fine-tuning process with this command:
 bash scripts/finetune_(224/490)_lora.sh
 ```
 
-Then, merge the model to model_parallel_size=1: (replace 8 with your training MP_SIZE)
+Then, merge the model to model_parallel_size=1: (replace 4 with your training MP_SIZE)
 
 ```bash
-torchrun --standalone --nnodes=1 --nproc-per-node=8 merge_model.py --from_pretrained checkpoints/merged_lora/ --version base --bf16
+torchrun --standalone --nnodes=1 --nproc-per-node=4 merge_model.py --version base --bf16 --from_pretrained ./checkpoints/merged_lora_(224/490)
 ```
 
 To evaluate the performance of your model, use:
@@ -119,7 +119,7 @@ To evaluate the performance of your model, use:
 bash scripts/evaluate_(224/490).sh
 ```
 
-It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel.
+It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel. The anticipated result is around 95% accuracy on test set.
 
 ## Model Quantization
 In the sat implementation, you need to change the loading location to 'cpu' first, and then perform quantization. Here's how, see cli_demo.py for details:
