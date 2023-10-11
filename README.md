@@ -43,6 +43,11 @@ CogVLM model comprises four fundamental components: a vision transformer (ViT) e
 
 ## Usage
 
+```bash
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+```
+
 ### Online Web Demo
 We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
 <div align="center">
@@ -60,8 +65,6 @@ python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 
 ### Terminal Demo
 ```bash
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
 python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-base-490 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
@@ -72,6 +75,11 @@ torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretraine
 ```
 
 The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter. Enter 'clear' to clear the conversation history and 'stop' to stop the program.
+
+Note:
+
+* If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
+* If you have trouble in automatically downloading model with 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) or 🤗[huggingface](https://huggingface.co/THUDM/CogVLM) manually.
 
 The program provides the following hyperparameters to control the generation process and quantization accuracy:
 ```
@@ -88,8 +96,6 @@ optional arguments:
   --english             only output English
   --quant {8,4}         quantization bits
 ```
-
-Note: If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer. If you have trouble in automatically downloading model with [SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from [CogVLM modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) manually.
 
 ### Fine-tuning
 
@@ -119,7 +125,7 @@ To evaluate the performance of your model, use:
 bash scripts/evaluate_(224/490).sh
 ```
 
-It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel. The anticipated result is around 95% accuracy on test set.
+It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel. The anticipated result is around 95% accuracy on test set. It is worth noting that the fine-tuning examples only tune limited parameters. If you want to improve performance, you can change trainable parameters in `finetune_demo.py` as needed.
 
 ## Model Quantization
 In the sat implementation, you need to change the loading location to 'cpu' first, and then perform quantization. Here's how, see cli_demo.py for details:
