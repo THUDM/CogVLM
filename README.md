@@ -1,7 +1,7 @@
 # CogVLM
 
 ## Introduction
-CogVLM是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在14项权威跨模态基准上取得了SOTA性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
+CogVLM 是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在 14 项权威跨模态基准上取得了 SOTA 性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
 
 📖 [Paper（论文）](./assets/cogvlm-paper.pdf)
 
@@ -80,6 +80,7 @@ Note:
 
 * If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
 * If you have trouble in automatically downloading model with 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) or 🤗[huggingface](https://huggingface.co/THUDM/CogVLM) manually.
+* Download model using 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), the model will be saved to the default location `~/.sat_models`. Change the default location by setting the environment variable `SAT_HOME`. For example, if you want to save the model to `/path/to/my/models`, you can run `export SAT_HOME=/path/to/my/models` before running the python command.
 
 The program provides the following hyperparameters to control the generation process and quantization accuracy:
 ```
