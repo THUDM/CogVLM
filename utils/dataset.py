@@ -50,7 +50,7 @@ class ItemDataset(Dataset):
         # text
         label = data.split('/')[-1].split('.')[0]
         uni_key = label
-        text_dict = self.process_text(label, "What is the CAPTCHA in image?")
+        text_dict = self.process_text(label, "CAPTCHA:")
         if text_dict is None:
             print_rank0(f"Process text failed. Please check the max_target_length & max_source_length.\n The data is {data}", level=logging.WARNING)
             return {}
