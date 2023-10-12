@@ -103,8 +103,9 @@ def post(
     global model, image_processor, text_processor_infer, is_grounding
 
     try:
-        pil_img, image_path_grounding = process_image_without_resize(image_prompt)
-        response, _, cache_image = chat(
+        with torch.no_grad():
+            pil_img, image_path_grounding = process_image_without_resize(image_prompt)
+            response, _, cache_image = chat(
                     image_path="", 
                     model=model, 
                     text_processor=text_processor_infer,
@@ -118,7 +119,7 @@ def post(
                     top_k=top_k,
                     invalid_slices=text_processor_infer.invalid_slices if hasattr(text_processor_infer, "invalid_slices") else [],
                     no_prompt=False
-        )
+            )
     except Exception as e:
         print("error message", e)
         result_text.append((input_text, 'Timeout! Please wait a few minutes and retry.'))
