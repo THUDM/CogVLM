@@ -13,7 +13,6 @@ import time
 import re
 import argparse
 from sat.model.mixins import CachedAutoregressiveMixin
-from sat.quantization.kernels import quantize
 from sat.mpu import get_model_parallel_world_size
 
 
@@ -72,11 +71,6 @@ def load_model(args):
 
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     image_processor = get_image_processor(model_args.eva_args["image_size"][0])
-
-    if args.quant:
-        quantize(model.transformer, args.quant)
-        if torch.cuda.is_available():
-            model = model.cuda()
 
     model.add_mixin('auto-regressive', CachedAutoregressiveMixin())
 
@@ -213,7 +207,6 @@ if __name__ == '__main__':
     parser.add_argument("--top_k", type=int, default=1, help='top k for top k sampling')
     parser.add_argument("--temperature", type=float, default=.8, help='temperature for sampling')
     parser.add_argument("--english", action='store_true', help='only output English')
-    parser.add_argument("--quant", choices=[8, 4], type=int, default=None, help='quantization bits')
     parser.add_argument("--version", type=str, default="chat", help='version to interact with')
     parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat", help='pretrained ckpt')
     parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
