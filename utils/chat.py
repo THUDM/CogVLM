@@ -92,6 +92,10 @@ def chat(image_path, model, text_processor, img_processor,
                 inputs_dic[k] = inputs_dic[k].to(next(model.parameters()).device)
         inputs = inputs_dic['input_ids'].to(model.parameters().__next__().device)[0]
     
+    if max_length-len(inputs) <=1:
+        response = "The prompt exceeds the context length limit, please try again."
+        return response, history, (torch_image, pil_img)
+    
     seq = torch.cat(
         [inputs, torch.tensor([-1]*(max_length-len(inputs)), device=inputs.device)], dim=0
     )
