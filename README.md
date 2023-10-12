@@ -82,9 +82,9 @@ Note:
 * If you have trouble in automatically downloading model with 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) or 🤗[huggingface](https://huggingface.co/THUDM/CogVLM) manually.
 * Download model using 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), the model will be saved to the default location `~/.sat_models`. Change the default location by setting the environment variable `SAT_HOME`. For example, if you want to save the model to `/path/to/my/models`, you can run `export SAT_HOME=/path/to/my/models` before running the python command.
 
-The program provides the following hyperparameters to control the generation process and quantization accuracy:
+The program provides the following hyperparameters to control the generation process:
 ```
-usage: cli_demo.py [-h] [--max_length MAX_LENGTH] [--top_p TOP_P] [--top_k TOP_K] [--temperature TEMPERATURE] [--english] [--quant {8,4}]
+usage: cli_demo.py [-h] [--max_length MAX_LENGTH] [--top_p TOP_P] [--top_k TOP_K] [--temperature TEMPERATURE] [--english]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -95,7 +95,6 @@ optional arguments:
   --temperature TEMPERATURE
                         temperature for sampling
   --english             only output English
-  --quant {8,4}         quantization bits
 ```
 
 ### Fine-tuning
@@ -129,12 +128,8 @@ bash scripts/evaluate_(224/490).sh
 It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel. The anticipated result is around 95% accuracy on test set. It is worth noting that the fine-tuning examples only tune limited parameters. If you want to improve performance, you can change trainable parameters in `finetune_demo.py` as needed.
 
 ## Model Quantization
-In the sat implementation, you need to change the loading location to 'cpu' first, and then perform quantization. Here's how, see cli_demo.py for details:
-```python
-from sat.quantization.kernels import quantize
-model = quantize(model.transformer, args.quant).cuda()
-# Specify model.transformer to only quantize ChatGLM, as the error is larger when quantizing ViT
-```
+
+Model quantization is not possible right now, but we are working on it. We will release the quantized model as soon as possible.
 
 ## License
 
