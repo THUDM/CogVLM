@@ -1,82 +1,114 @@
 # CogVLM
 
-## Introduction
-CogVLM 是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在 14 项权威跨模态基准上取得了 SOTA 性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
-
 📖 [Paper（论文）](./assets/cogvlm-paper.pdf)
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
-- CogVLM, a powerful open-source visual language foundation model. Different from the popular shallow-align method which maps image features into the input space of language model, **CogVLM bridges the gap between the frozen pretrained language model and image encoder by a trainable visual expert module in the attention and FFN layers**. CogVLM enables deep fusion of visual language features without sacrificing any performance on NLP tasks. 
+## Introduction
+- CogVLM is a powerful **open-source visual language model** (**VLM**). CogVLM-17B has 10 billion vision parameters and 7 billion language parameters.
 
-- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**.
+- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**. CogVLM can also [chat with you]((http://36.103.203.44:7861/)) about images.
 
-- We anticipate that the open-sourcing of CogVLM will greatly help the research and industrial application of visual understanding.
+- Chinese brief introduction: CogVLM 是一个强大的开源视觉语言模型，利用视觉专家模块深度整合语言编码和视觉编码，在 10 项权威跨模态基准上取得了SOTA性能。目前仅支持英文，后续会提供中英双语版本支持，欢迎持续关注！
 
 <div align="center">
-    <img src=assets/metrics.png width=80% />
+    <img src=assets/metrics-min.png width=80% />
 </div>
 
 ## Examples
 
-CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grounding Visual Question Answering**, etc.
+<!-- CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grounding Visual Question Answering**, etc. -->
+* CogVLM can accurately describe images in details with **very few hallucinations**.
+    <details>
+    <summary>Click for comparison with LLAVA-1.5 and MiniGPT-4.</summary>
 
+    ![LLAVA Comparision](assets/llava-comparison-min.png)
+    </details>
+<br>
+
+* CogVLM can understand and answer various types of questions, and has a **visual grounding** version.
 <div align="center">
-    <img src=assets/compare.png width=80% />
+    <img src=assets/pear_grounding.png width=90% />
+</div>
+
+<br>
+
+* CogVLM sometimes captures more detailed content than GPT-4V(ision).
+<div align="center">
+    <img src=assets/compare-min.png width=90% />
 </div>
 
 <!-- ![compare](assets/compare.png) -->
+<br> 
 
 <details>
-<summary>Click to expand/collapse more examples</summary>
+<summary>Click to expand more examples.</summary>
 
 ![Chat Examples](assets/chat.png)
 
 </details>
 
 ## Method
-CogVLM model comprises four fundamental components: a vision transformer (ViT) encoder, an MLP adapter, a pretrained large language model (GPT), and a visual expert module. See [Paper](./assets/cogvlm-paper.pdf) for more details.
+CogVLM model comprises four fundamental components: a vision transformer (ViT) encoder, an MLP adapter, a pretrained large language model (GPT), and a **visual expert module**. See [Paper](./assets/cogvlm-paper.pdf) for more details.
 
 <div align="center">
-    <img src=assets/method.png width=70% />
+    <img src=assets/method-min.png width=70% />
 </div>
 
-## Usage
+## Get Started
+We support two GUIs for model inference, **web demo** and **CLI**. If you want to use it in your python code, it is easy to modify the CLI scripts for your case. 
+
+First, we need to install the dependencies.
 
 ```bash
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-### Online Web Demo
-We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app).
-<div align="center">
-    <img src=assets/web_demo.png width=70% />
-</div>
+#### Hardware requirement
+* Model Inference: 1 * A100(80G) or 2 * RTX 3090(24G).
+* Finetuning: 4 * A100(80G) *[Recommend]* or 8* RTX 3090(24G).
 
-### Local Web Demo
+<!-- ### Online Web Demo
+We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app). -->
+
+### Web Demo
 We also offer a local web demo based on Gradio. First, install Gradio by running: `pip install gradio`. Then download and enter this repository and run `web_demo.py`. See the next section for detailed usage:
 
 ```bash
 python web_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
 python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
-
 ```
+The GUI of the web demo looks like:
+<div align="center">
+    <img src=assets/web_demo-min.png width=70% />
+</div>
 
-### Terminal Demo
+### CLI
+We open-source different checkpoints for different downstreaming tasks:
+
+* `cogvlm-chat` The model after SFT for alignment, which supports chat like GPT-4V.
+* `cogvlm-base-224` The original checkpoint after text-image pretraining.
+* `cogvlm-base-490` The finetuned version on `490px` resolution from `cogvlm-base-224`. The finetuning data includes the training sets of VQA datasets.
+* `cogvlm-grounding-generalist`. This checkpoint supports different visual grounding tasks, e.g. REC, Grounding Captioning, etc. 
+
+Run CLI demo via:
 ```bash
 python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-base-490 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
-python cli_demo.py --from_pretrained cogvlm-grounding-base --version base --english --bf16
 python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
-# We also support model parallel inference, which splits model to multiple (2/4/8) GPUs.
+```
+The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter.
+Enter `clear` to clear the conversation history and `stop` to stop the program.
+
+#### Multi-GPU inference
+We also support model parallel inference, which splits model to multiple (2/4/8) GPUs. `--nproc-per-node=[n]` in the following command controls the number of used GPUs.
+```
 torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
 ```
 
-The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter. Enter 'clear' to clear the conversation history and 'stop' to stop the program.
-
-Note:
+**Note**:
 
 * If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
 * If you have trouble in automatically downloading model with 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) or 🤗[huggingface](https://huggingface.co/THUDM/CogVLM) manually.
@@ -97,48 +129,49 @@ optional arguments:
   --english             only output English
 ```
 
-### Fine-tuning
+### Finetuning
+You may want to use CogVLM in your own task, which needs a **different output style or domain knowledge**. We here provide a finetuning example for **Captcha Recognition**.
 
-Start by downloading the [Captcha Images dataset](https://www.kaggle.com/datasets/aadhavvignesh/captcha-images). Once downloaded, extract the contents of the ZIP file.
+1. Start by downloading the [Captcha Images dataset](https://www.kaggle.com/datasets/aadhavvignesh/captcha-images). Once downloaded, extract the contents of the ZIP file.
 
-To create a train/validation/test split in the ratio of 80/5/15, execute the following:
+2. To create a train/validation/test split in the ratio of 80/5/15, execute the following:
+    ```bash
+    python scripts/split_dataset.py
+    ```
 
-```bash
-python scripts/split_dataset.py
-```
+3. Start the fine-tuning process with this command:
 
-Kickstart the fine-tuning process with this command:
+    ```bash
+    bash scripts/finetune_(224/490)_lora.sh
+    ```
 
-```bash
-bash scripts/finetune_(224/490)_lora.sh
-```
+4. Merge the model to `model_parallel_size=1`: (replace the 4 below with your training `MP_SIZE`)
 
-Then, merge the model to model_parallel_size=1: (replace 4 with your training MP_SIZE)
+    ```bash
+    torchrun --standalone --nnodes=1 --nproc-per-node=4 merge_model.py --version base --bf16 --from_pretrained ./checkpoints/merged_lora_(224/490)
+    ```
 
-```bash
-torchrun --standalone --nnodes=1 --nproc-per-node=4 merge_model.py --version base --bf16 --from_pretrained ./checkpoints/merged_lora_(224/490)
-```
+5. Evaluate the performance of your model.
+    ```bash
+    bash scripts/evaluate_(224/490).sh
+    ```
 
-To evaluate the performance of your model, use:
+It is recommended to use the `490px` version. However, if you have limited GPU resources (such as only one node with 8* RTX 3090), you can try `224px` version with model parallel. 
 
-```bash
-bash scripts/evaluate_(224/490).sh
-```
+The anticipated result of this script is around `95%` accuracy on test set.
 
-It is recommended to use 490 version. However, if you have limited GPU resources (such as only one node with eight 24GB 3090 cards), you can try 224 version with model parallel. The anticipated result is around 95% accuracy on test set. It is worth noting that the fine-tuning examples only tune limited parameters. If you want to improve performance, you can change trainable parameters in `finetune_demo.py` as needed.
-
-## Model Quantization
-
-Model quantization is not possible right now, but we are working on it. We will release the quantized model as soon as possible.
+It is worth noting that the fine-tuning examples only tune limited parameters. (Expert only) If you want to get `>98%` accuracy, you need to increase the trainable parameters in `finetune_demo.py`.
 
 ## License
 
-The code in this repository is open source under the Apache-2.0 license, while the use of the CogVLM model weights must comply with the Model License.
+The code in this repository is open source under the [Apache-2.0 license](./LICENSE), while the use of the CogVLM model weights must comply with the [Model License](./MODEL_LICENSE).
 
 ## Citation & Acknowledgements
 
 If you find our work helpful, please consider citing the following papers
 ```
-
+Yes, you can help us!!!
+The paper (ArXiv ID 5148899) has been "on hold" by arXiv for more than two weeks without clear reason. 
+If you happen to know the moderators (cs.CV), please help to accelarate the process. Thank you!
 ```
 In the instruction fine-tuning phase of the CogVLM, there are some English image-text data from the [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), [LLaVAR](https://github.com/SALT-NLP/LLaVAR) and [Shikra](https://github.com/shikras/shikra) projects, as well as many classic cross-modal work datasets. We sincerely thank them for their contributions.
