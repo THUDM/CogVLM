@@ -8,7 +8,7 @@ from models.mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
 from sat.resources.urls import MODEL_URLS
 
 MODEL_URLS["cogvlm-base-224"] = "r2://cogvlm-base-224.zip"
-MODEL_URLS["cogvlm-base-490"] = "r2://cogvlm-base-224.zip"
+MODEL_URLS["cogvlm-base-490"] = "r2://cogvlm-base-490.zip"
 MODEL_URLS["cogvlm-chat"] = "r2://cogvlm-chat.zip"
 MODEL_URLS["cogvlm-grounding-base"] = "r2://cogvlm-grounding-base.zip"
 MODEL_URLS["cogvlm-grounding-generalist"] = "r2://cogvlm-grounding-generalist.zip"
