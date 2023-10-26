@@ -102,7 +102,7 @@ def chat(image_path, model, text_processor, img_processor,
     strategy = BaseStrategy(temperature=temperature, top_p=top_p, top_k=top_k, end_tokens=[text_processor.tokenizer.eos_token_id],
                             invalid_slices=invalid_slices, repetition_penalty=repetition_penalty)
     get_func = text_processor.get_func(inputs, **inputs_dic) if hasattr(text_processor, 'get_func') else get_masks_and_position_ids_default
-    if image_position < 5:
+    if not is_image_mode:
         inputs = {}
     else:
         inputs = {'vision_'+k:v for k,v in torch_image.items()}
