@@ -175,7 +175,7 @@ The code in this repository is open source under the [Apache-2.0 license](./LICE
 If you find our work helpful, please consider citing the following papers
 ```
 Yes, you can help us!!!
-The paper (ArXiv ID 5148899) has been "on hold" by arXiv for more than two weeks without clear reason. 
+The paper (ArXiv ID 5148899) has been "on hold" by arXiv for more than one month without clear reason. 
 If you happen to know the moderators (cs.CV), please help to accelarate the process. Thank you!
 ```
 In the instruction fine-tuning phase of the CogVLM, there are some English image-text data from the [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), [LLaVAR](https://github.com/SALT-NLP/LLaVAR) and [Shikra](https://github.com/shikras/shikra) projects, as well as many classic cross-modal work datasets. We sincerely thank them for their contributions.
