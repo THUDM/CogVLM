@@ -174,7 +174,7 @@ The code in this repository is open source under the [Apache-2.0 license](./LICE
 
 If you find our work helpful, please consider citing the following papers
 ```
-@misc{wang2023cogvlm,
+@article{wang2023cogvlm,
       title={CogVLM: Visual Expert for Pretrained Language Models}, 
       author={Weihan Wang and Qingsong Lv and Wenmeng Yu and Wenyi Hong and Ji Qi and Yan Wang and Junhui Ji and Zhuoyi Yang and Lei Zhao and Xixuan Song and Jiazheng Xu and Bin Xu and Juanzi Li and Yuxiao Dong and Ming Ding and Jie Tang},
       year={2023},
