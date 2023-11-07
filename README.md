@@ -1,6 +1,6 @@
 # CogVLM
 
-📖 [Paper（论文）](./assets/cogvlm-paper.pdf)
+📖 [Paper（论文）](https://arxiv.org/abs/2311.03079)
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
@@ -174,8 +174,13 @@ The code in this repository is open source under the [Apache-2.0 license](./LICE
 
 If you find our work helpful, please consider citing the following papers
 ```
-Yes, you can help us!!!
-The paper (ArXiv ID 5148899) has been "on hold" by arXiv for more than one month without clear reason. 
-If you happen to know the moderators (cs.CV), please help to accelarate the process. Thank you!
+@misc{wang2023cogvlm,
+      title={CogVLM: Visual Expert for Pretrained Language Models}, 
+      author={Weihan Wang and Qingsong Lv and Wenmeng Yu and Wenyi Hong and Ji Qi and Yan Wang and Junhui Ji and Zhuoyi Yang and Lei Zhao and Xixuan Song and Jiazheng Xu and Bin Xu and Juanzi Li and Yuxiao Dong and Ming Ding and Jie Tang},
+      year={2023},
+      eprint={2311.03079},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
 ```
 In the instruction fine-tuning phase of the CogVLM, there are some English image-text data from the [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), [LLaVAR](https://github.com/SALT-NLP/LLaVAR) and [Shikra](https://github.com/shikras/shikra) projects, as well as many classic cross-modal work datasets. We sincerely thank them for their contributions.
