@@ -8,6 +8,8 @@
 
 🔥 **News**: CogVLM中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
 
+🔥 **News**: We are currently preparing to open-source a more powerful model with rich chart and document understanding capabilities. It has achieved a score of 81 on DocVQA, so stay tuned for its release!
+
 [中文版README](./README_zh.md)
 
 ## Introduction
