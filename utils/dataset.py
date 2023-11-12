@@ -47,6 +47,8 @@ class ItemDataset(Dataset):
 
     def __getitem__(self, index):
         img_path, label = self.data[index]
+        ## Printing Label to Make sure it's right
+        print(label)
         # img
         try:
             img = Image.open(img_path).convert('RGB')
