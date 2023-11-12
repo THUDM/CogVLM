@@ -31,29 +31,34 @@ class ItemDataset(Dataset):
         return self.text_processor(answer, prompt)
     
     def load_data(self, data_dir):
-        all_files = find_all_files(data_dir, suffix=".jpg")
-        print_rank0(f"find {len(all_files)} samples in all...")
-        return all_files
+        data_labels = []
+        for label_dir in os.listdir(data_dir):
+            full_path = os.path.join(data_dir, label_dir)
+            if os.path.isdir(full_path):
+                for img_file in os.listdir(full_path):
+                    if img_file.endswith(".jpg"):
+                        img_path = os.path.join(full_path, img_file)
+                        data_labels.append((img_path, label_dir))
+        print_rank0(f"find {len(data_labels)} samples in all...")
+        return data_labels
     
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, index):
-        data = self.data[index]
+        img_path, label = self.data[index]
         # img
         try:
-            img = Image.open(data).convert('RGB')
+            img = Image.open(img_path).convert('RGB')
         except Exception as e:
             print_rank0(e, level=logging.WARNING)
             return {}
         img_dict = self.process_img(img)
         # text
-        label = data.split('/')[-1].split('.')[0]
-        uni_key = label
-        text_dict = self.process_text(label, "CAPTCHA:")
+        text_dict = self.process_text(label)
         if text_dict is None:
-            print_rank0(f"Process text failed. Please check the max_target_length & max_source_length.\n The data is {data}", level=logging.WARNING)
+            print_rank0(f"Process text failed.\n The data is {img_path}", level=logging.WARNING)
             return {}
         # other attr
-        ret = {**img_dict, **text_dict, "question_id": uni_key}
+        ret = {**img_dict, **text_dict, "question_id": os.path.basename(img_path)}
         return ret
