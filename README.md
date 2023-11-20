@@ -99,7 +99,7 @@ We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gr
 We also offer a local web demo based on Gradio. First, install Gradio by running: `pip install gradio`. Then download and enter this repository and run `web_demo.py`. See the next section for detailed usage:
 
 ```bash
-python web_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
+python web_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16
 python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
 ```
 The GUI of the web demo looks like:
@@ -130,7 +130,7 @@ Enter `clear` to clear the conversation history and `stop` to stop the program.
 #### Multi-GPU inference
 We also support model parallel inference, which splits model to multiple (2/4/8) GPUs. `--nproc-per-node=[n]` in the following command controls the number of used GPUs.
 ```
-torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
+torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16
 ```
 
 **Note**:
