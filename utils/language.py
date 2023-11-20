@@ -1,18 +1,16 @@
-def base_history_to_prompt(self, history, query):
-    prompt = '<EOI>' + query
-    return prompt
+def _history_to_prompt(self, signal_type, query, history):
+    if signal_type == 'base':
+        return '<EOI>' + query
+    if signal_type == 'vqa':
+        answer_format = 'Short answer:'
+    else:
+        answer_format = 'Answer:'
 
-def chat_history_to_prompt(self, history, query):
-    prompt = "<EOI> [INST] "
+    prompt = '<EOI>'
     for i, (old_query, response) in enumerate(history):
-        prompt += old_query + " [/INST] " + response + " [INST] "
-    prompt += query + " [/INST] "
+        prompt += 'Question: ' + old_query + " {} ".format(answer_format) + response + "\n"
+    prompt += 'Question: {} {}'.format(query, answer_format)
     return prompt
-
-_history_to_prompt = {
-    "base": base_history_to_prompt,
-    "chat": chat_history_to_prompt
-}
 
 from transformers import LlamaTokenizer
 
@@ -20,10 +18,8 @@ def llama2_tokenizer(tokenizer_path, signal_type="base"):
     tokenizer = LlamaTokenizer.from_pretrained(tokenizer_path)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = 32000
-    tokenizer.boi = "[IMG]"
-    tokenizer.eoi = "[/IMG]"
-    assert signal_type in ["base", "chat"]
-    tokenizer.signal_type= signal_type
+    assert signal_type in ["base", "chat", "vqa"]
+    tokenizer.signal_type = signal_type
     return tokenizer
 
 import re
@@ -41,7 +37,7 @@ class llama2_text_processor:
             prompt = self.replace_tags_with_empty(prompt)
             # caption = self.replace_tags_with_empty(caption)
             history = []
-            prompt = self.history_to_prompt(history, prompt)
+            prompt = self.history_to_prompt(prompt, history)
 
         input_ids = [self.tokenizer.bos_token_id]
 
@@ -117,8 +113,8 @@ class llama2_text_processor:
                 'context_length': context_length, 'image_position': image_position, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask
                 }
 
-    def history_to_prompt(self, history, query):
-        return _history_to_prompt[self.tokenizer.signal_type](self, history, query)
+    def history_to_prompt(self, query, history):
+        return _history_to_prompt(self, self.tokenizer.signal_type, query, history)
 
     def replace_tags_with_empty(self, text):
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)
@@ -149,7 +145,12 @@ class llama2_text_processor_inference:
         self.tokenizer = tokenizer
         self.max_target_length = max_target_length
         self.image_length = image_length
-        self.sep = "[/INST]" if self.tokenizer.signal_type == "chat" else "<unk>"
+        if self.tokenizer.signal_type == "chat":
+            self.sep = 'Answer: '
+        elif self.tokenizer.signal_type == "vqa":
+            self.sep = 'Short answer: '
+        else:
+            self.sep = 'unk'
         self.invalid_slices = []
         self.no_eoi = True
 
@@ -193,8 +194,8 @@ class llama2_text_processor_inference:
         image_rope_mask = torch.tensor(image_rope_mask).unsqueeze(0)
         return {'input_ids': input_ids, 'image_embed_mask': image_embed_mask, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask}
 
-    def history_to_prompt(self, history, query):
-        return _history_to_prompt[self.tokenizer.signal_type](self, history, query)
+    def history_to_prompt(self, query, history):
+        return _history_to_prompt(self, self.tokenizer.signal_type, query, history)
 
     def replace_tags_with_empty(self, text):
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)

@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--temperature", type=float, default=.8, help='temperature for sampling')
     parser.add_argument("--english", action='store_true', help='only output English')
     parser.add_argument("--version", type=str, default="chat", help='version to interact with')
-    parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat", help='pretrained ckpt')
+    parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat-v1.1", help='pretrained ckpt')
     parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     parser.add_argument("--no_prompt", action='store_true', help='Sometimes there is no prompt in stage 1')
     parser.add_argument("--fp16", action="store_true")
@@ -107,15 +107,15 @@ def main():
                     sys.exit(0)
                 try:
                     response, history, cache_image = chat(
-                        image_path, 
-                        model, 
+                        image_path,
+                        model,
                         text_processor_infer,
                         image_processor,
-                        query, 
-                        history=history, 
-                        image=cache_image, 
-                        max_length=args.max_length, 
-                        top_p=args.top_p, 
+                        query,
+                        history=history,
+                        image=cache_image,
+                        max_length=args.max_length,
+                        top_p=args.top_p,
                         temperature=args.temperature,
                         top_k=args.top_k,
                         invalid_slices=text_processor_infer.invalid_slices,

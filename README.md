@@ -8,7 +8,22 @@
 
 🔥 **News**: CogVLM中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
 
-🔥 **News**: We are currently preparing to open-source a more powerful model with rich chart and document understanding capabilities. It has achieved a score of 81 on DocVQA, so stay tuned for its release!
+🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
+
+| Method           | LLM           | MM-VET | POPE(adversarial) | TouchStone |
+| ---------------- | ------------- |--------| --------- |------------|
+| BLIP-2           | Vicuna-13B    | 22.4   | -         | -          |
+| Otter            | MPT-7B        | 24.7   | -         | -          |
+| MiniGPT4         | Vicuna-13B    | 24.4   | 70.4      | 531.7      |
+| InstructBLIP     | Vicuna-13B    | 25.6   | 77.3      | 552.4      |
+| LLaMA-Adapter v2 | LLaMA-7B      | 31.4   | -         | 590.1      |
+| LLaVA            | LLaMA2-7B     | 28.1   | 66.3      | 602.7      |
+| mPLUG-Owl        | LLaMA-7B      | -      | 66.8      | 605.4      |
+| LLaVA-1.5        | Vicuna-13B    | 36.3   | 84.5      | -          |
+| Emu              | LLaMA-13B     | 36.3   | -         | -          |
+| Qwen-VL-Chat     | -             | -      | -         | 645.2      |
+| DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
+| CogVLM           | Vicuna-7B     | 52.8   | 87.6      | 742.0      |
 
 [中文版README](./README_zh.md)
 
@@ -93,16 +108,18 @@ The GUI of the web demo looks like:
 ### CLI
 We open-source different checkpoints for different downstreaming tasks:
 
-* `cogvlm-chat` The model after SFT for alignment, which supports chat like GPT-4V.
+* `cogvlm-chat-v1.1` The model supports multiple rounds of chat and vqa simultaneously, with different prompts.
 * `cogvlm-base-224` The original checkpoint after text-image pretraining.
-* `cogvlm-base-490` The finetuned version on `490px` resolution from `cogvlm-base-224`. The finetuning data includes the training sets of VQA datasets.
+* `cogvlm-base-490` Amplify the resolution to 490 through position encoding interpolation from `cogvlm-base-224`.
 * `cogvlm-grounding-generalist`. This checkpoint supports different visual grounding tasks, e.g. REC, Grounding Captioning, etc. 
 
 Run CLI demo via:
 ```bash
+# Chat version will provide detailed answers, while vqa version usually only has one word in answer.
 python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
 python cli_demo.py --from_pretrained cogvlm-base-490 --version base --english --bf16 --no_prompt
-python cli_demo.py --from_pretrained cogvlm-chat --version chat --english --bf16
+python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16
+python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version vqa --english --bf16
 python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
 ```
 The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter.
