@@ -8,6 +8,8 @@
 
 🔥 **News**: CogVLM中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
 
+🔥 **News**: CogVLM的huggingface版已开源！包括[**cogvlm-chat**](https://huggingface.co/THUDM/cogvlm-chat-hf), **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**. 仅使用几行代码即可进行推理，具体使用方法请参考[这里](#-transformers)。
+
 [README in English](./README.md)
 
 ## 简介
@@ -28,7 +30,7 @@
 
     ![LLAVA Comparision](assets/llava-comparison-min.png)
     </details>
-<br>
+    <br>
 
 * CogVLM 能理解和回答各种类型的问题，并有一个**视觉定位**版本。
 <div align="center">
@@ -106,6 +108,42 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 该程序会自动下载 sat 模型并在命令行中进行交互。您可以通过输入指令并按 Enter 生成回复。
 输入 clear 可清除对话历史，输入 stop 可停止程序。
 
+### 🤗 Transformers
+
+使用Transformers对CogVLM进行推理，只需要如下几行代码：
+
+```python
+import torch
+import requests
+from PIL import Image
+from transformers import AutoModelForCausalLM, LlamaTokenizer
+
+tokenizer = LlamaTokenizer.from_pretrained('lmsys/vicuna-7b-v1.5')
+model = AutoModelForCausalLM.from_pretrained(
+    'THUDM/cogvlm-chat-hf',
+    torch_dtype=torch.bfloat16,
+    low_cpu_mem_usage=True,
+    trust_remote_code=True
+).to('cuda').eval()
+
+query = 'Describe this image'
+image = Image.open(requests.get('https://github.com/THUDM/CogVLM/blob/main/examples/1.png?raw=true', stream=True).raw).convert('RGB')
+inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image])
+inputs = {
+    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
+    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
+    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
+    'images': [[inputs['images'][0].to('cuda').to(torch.bfloat16)]],
+}
+gen_kwargs = {"max_length": 2048, "do_sample": False}
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, **gen_kwargs)
+    outputs = outputs[:, inputs['input_ids'].shape[1]:]
+    print(tokenizer.decode(outputs[0]))
+
+# Two professional basketball players are playing against each other. On the left side, there is Kobe Bryant wearing a yellow jersey with the number 24 on it. He is holding a brown basketball. On the right side, there is another player wearing a blue and red jersey, blocking Kobe's movement. Behind them, there are many spectators watching the game.</s>
+```
 
 ## 许可
 
