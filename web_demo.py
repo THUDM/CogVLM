@@ -180,7 +180,7 @@ def main(args):
 
         gr_examples = gr.Examples(examples=[[example["text"], example["image"]] for example in examples], 
                                   inputs=[input_text, image_prompt],
-                                  label="Example Inputs (Click to insert an examplet into the input box)",
+                                  label="Example Inputs (Click to insert an example into the input box)",
                                   examples_per_page=6)
 
         gr.Markdown(MAINTENANCE_NOTICE1)

@@ -25,6 +25,8 @@
 | DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
 | CogVLM           | Vicuna-7B     | 52.8   | 87.6      | 742.0      |
 
+🔥 **News**: We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
+
 [中文版README](./README_zh.md)
 
 ## Introduction
@@ -45,7 +47,7 @@
 
     ![LLAVA Comparision](assets/llava-comparison-min.png)
     </details>
-<br>
+    <br>
 
 * CogVLM can understand and answer various types of questions, and has a **visual grounding** version.
 <div align="center">
@@ -184,6 +186,45 @@ It is recommended to use the `490px` version. However, if you have limited GPU r
 The anticipated result of this script is around `95%` accuracy on test set.
 
 It is worth noting that the fine-tuning examples only tune limited parameters. (Expert only) If you want to get `>98%` accuracy, you need to increase the trainable parameters in `finetune_demo.py`.
+
+
+### 🤗 Transformers
+
+To use CogVLM for the inference with transformers, use the following code:
+
+```python
+import torch
+import requests
+from PIL import Image
+from transformers import AutoModelForCausalLM, LlamaTokenizer
+
+tokenizer = LlamaTokenizer.from_pretrained('lmsys/vicuna-7b-v1.5')
+model = AutoModelForCausalLM.from_pretrained(
+    'THUDM/cogvlm-chat-hf',
+    torch_dtype=torch.bfloat16,
+    low_cpu_mem_usage=True,
+    trust_remote_code=True
+).to('cuda').eval()
+
+query = 'Describe this image'
+image = Image.open(requests.get('https://github.com/THUDM/CogVLM/blob/main/examples/1.png?raw=true', stream=True).raw).convert('RGB')
+inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image])
+inputs = {
+    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
+    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
+    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
+    'images': [[inputs['images'][0].to('cuda').to(torch.bfloat16)]],
+}
+gen_kwargs = {"max_length": 2048, "do_sample": False}
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, **gen_kwargs)
+    outputs = outputs[:, inputs['input_ids'].shape[1]:]
+    print(tokenizer.decode(outputs[0]))
+
+# Two professional basketball players are playing against each other. On the left side, there is Kobe Bryant wearing a yellow jersey with the number 24 on it. He is holding a brown basketball. On the right side, there is another player wearing a blue and red jersey, blocking Kobe's movement. Behind them, there are many spectators watching the game.</s>
+```
+
 
 ## License
 
