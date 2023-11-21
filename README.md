@@ -23,9 +23,9 @@
 | Emu              | LLaMA-13B     | 36.3   | -         | -          |
 | Qwen-VL-Chat     | -             | -      | -         | 645.2      |
 | DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
-| CogVLM           | Vicuna-7B     | 52.8   | 87.6      | 742.0      |
+| CogVLM           | Vicuna-7B     | **52.8**   | **87.6**      | **742.0**      |
 
-🔥 **News**: We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
+🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
 
 [中文版README](./README_zh.md)
 
