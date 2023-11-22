@@ -4,11 +4,11 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
-🔥 **News**: CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
+🔥 **News**: ```2023/11/20``` cogvlm-chat 更新 v1.1 版本，该版本同时支持对话和问答，在多项数据集刷新 SOTA 效果。
 
-🔥 **News**: CogVLM中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
+🔥 **News**: ```2023/10/27``` CogVLM 中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
 
-🔥 **News**: CogVLM的huggingface版已开源！包括[**cogvlm-chat**](https://huggingface.co/THUDM/cogvlm-chat-hf), **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**. 仅使用几行代码即可进行推理，具体使用方法请参考[这里](#-transformers)。
+🔥 **News**: ```2023/11/20``` CogVLM 的 🤗huggingface 版已开源！包括[**cogvlm-chat**](https://huggingface.co/THUDM/cogvlm-chat-hf), **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**. 仅使用几行代码即可进行推理，具体使用方法请参考[这里](#-transformers)。
 
 [README in English](./README.md)
 
@@ -20,6 +20,21 @@
 <div align="center">
     <img src=assets/metrics-min.png width=80% />
 </div>
+
+| Method           | LLM           | MM-VET | POPE(adversarial) | TouchStone |
+| ---------------- | ------------- |--------| --------- |------------|
+| BLIP-2           | Vicuna-13B    | 22.4   | -         | -          |
+| Otter            | MPT-7B        | 24.7   | -         | -          |
+| MiniGPT4         | Vicuna-13B    | 24.4   | 70.4      | 531.7      |
+| InstructBLIP     | Vicuna-13B    | 25.6   | 77.3      | 552.4      |
+| LLaMA-Adapter v2 | LLaMA-7B      | 31.4   | -         | 590.1      |
+| LLaVA            | LLaMA2-7B     | 28.1   | 66.3      | 602.7      |
+| mPLUG-Owl        | LLaMA-7B      | -      | 66.8      | 605.4      |
+| LLaVA-1.5        | Vicuna-13B    | 36.3   | 84.5      | -          |
+| Emu              | LLaMA-13B     | 36.3   | -         | -          |
+| Qwen-VL-Chat     | -             | -      | -         | 645.2      |
+| DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
+| CogVLM           | Vicuna-7B     | **52.8**   | **87.6**      | **742.0**      |
 
 ## 示例
 

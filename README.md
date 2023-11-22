@@ -4,11 +4,22 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
-🔥 **News**: CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
-
-🔥 **News**: CogVLM中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
-
 🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
+
+🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
+
+🔥 **News**: ```2023/10/27``` CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
+
+[中文版README](./README_zh.md)
+
+## Introduction
+- CogVLM is a powerful **open-source visual language model** (**VLM**). CogVLM-17B has 10 billion vision parameters and 7 billion language parameters.
+
+- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**. CogVLM can also [chat with you](http://36.103.203.44:7861) about images.
+
+<div align="center">
+    <img src=assets/metrics-min.png width=80% />
+</div>
 
 | Method           | LLM           | MM-VET | POPE(adversarial) | TouchStone |
 | ---------------- | ------------- |--------| --------- |------------|
@@ -24,19 +35,6 @@
 | Qwen-VL-Chat     | -             | -      | -         | 645.2      |
 | DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
 | CogVLM           | Vicuna-7B     | **52.8**   | **87.6**      | **742.0**      |
-
-🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
-
-[中文版README](./README_zh.md)
-
-## Introduction
-- CogVLM is a powerful **open-source visual language model** (**VLM**). CogVLM-17B has 10 billion vision parameters and 7 billion language parameters.
-
-- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**. CogVLM can also [chat with you](http://36.103.203.44:7861) about images.
-
-<div align="center">
-    <img src=assets/metrics-min.png width=80% />
-</div>
 
 ## Examples
 
