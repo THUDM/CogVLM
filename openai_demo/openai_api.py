@@ -223,22 +223,18 @@ def process_history_and_images(messages: List[ChatMessageInput]) -> Tuple[
     """
     formatted_history = []
     image_list = []
-    last_user_query = None
+    last_user_query = ''
 
     for i, message in enumerate(messages):
         role = message.role
         content = message.content
 
-        if isinstance(content, list):  # 处理列表类型的content
+        if isinstance(content, list):  # text
             text_content = ' '.join(item.text for item in content if isinstance(item, TextContent))
-            if role == 'user':
-                if i == len(messages) - 1:  # 最后一条用户消息
-                    last_user_query = text_content
-                else:
-                    formatted_history.append(('Question: ' + text_content, ''))
-            elif role == 'assistant' and formatted_history:
-                formatted_history[-1] = (formatted_history[-1][0], text_content)
-
+        else:
+            text_content = content
+        
+        if isinstance(content, list):  # image
             for item in content:
                 if isinstance(item, ImageUrlContent):
                     image_url = item.image_url.url
@@ -247,11 +243,21 @@ def process_history_and_images(messages: List[ChatMessageInput]) -> Tuple[
                         image_data = base64.b64decode(base64_encoded_image)
                         image = Image.open(BytesIO(image_data)).convert('RGB')
                         image_list.append(image)
-        elif isinstance(content, str):  # 处理字符串类型的content
-            if role == 'user' and i != len(messages) - 1:
-                formatted_history.append(('Question: ' + content, ''))
-            elif role == 'assistant' and formatted_history:
-                formatted_history[-1] = (formatted_history[-1][0], content)
+        
+        if role == 'user':
+            if i == len(messages) - 1:  # 最后一条用户消息
+                last_user_query = text_content
+            else:
+                formatted_history.append((text_content, ''))
+        elif role == 'assistant':
+            if formatted_history:
+                if formatted_history[-1][1] != '':
+                    assert False, f"the last query is answered. answer again. {formatted_history[-1][0]}, {formatted_history[-1][1]}, {text_content}"
+                formatted_history[-1] = (formatted_history[-1][0], text_content)
+            else:
+                assert False, f"assistant reply before user"
+        else:
+            assert False, f"unrecognized role: {role}"
 
     return last_user_query, formatted_history, image_list
 
@@ -269,7 +275,7 @@ def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenize
     logger.debug(f"==== request ====\n{query}")
 
     #  only can slove the latest picture
-    inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image_list[-1]])
+    inputs = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image_list[-1]])
 
 
     inputs = {
@@ -281,7 +287,7 @@ def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenize
     input_echo_len = len(inputs["input_ids"][0])
     streamer = TextIteratorStreamer(tokenizer, timeout=60.0, skip_prompt=True, skip_special_tokens=True)
     gen_kwargs = {
-        "repetition_penalty": 1.0,
+        "repetition_penalty": repetition_penalty,
         "max_new_tokens": max_new_tokens,
         "do_sample": True if temperature > 1e-5 else False,
         "top_p": top_p,
