@@ -9,3 +9,4 @@ examples/*grounding.png
 archive*
 hostfile
 runs/
+*.idea/
