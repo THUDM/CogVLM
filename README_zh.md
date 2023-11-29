@@ -201,7 +201,7 @@ python openai_demo/openai_api_request.py
 ```
 3. 你将能获得类似如下的输出
 ```
-Yes, this photo is about winter. It showcases a snowy landscape with trees covered in snow, indicating cold weather conditions.
+This image showcases a tranquil natural scene with a wooden pathway leading through a field of lush green grass. In the distance, there are trees and some scattered structures, possibly houses or small buildings. The sky is clear with a few scattered clouds, suggesting a bright and sunny day.
 ```
 
 ## 许可

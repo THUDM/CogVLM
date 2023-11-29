@@ -1,7 +1,8 @@
 """
 This script is designed to mimic the OpenAI API interface to interact with the cogvlm-17B
 It demonstrates the integration of image and text-based inputs for generating responses.
-Currently, this model can only process a single image and does not have the ability to process image history.
+Currently, this model can only process a single image.
+So do not use this script to process multiple images in one conversation.(Including the image in the history)
 And it is only for chat model, not base model.
 """
 import requests
@@ -52,21 +53,17 @@ def encode_image(image_path):
 
 def simple_image_chat(use_stream=True, img_path=None):
     img_url = f"data:image/jpeg;base64,{encode_image(img_path)}"
-
-    # img_url_before if for this demo only.
-    img_url_before = f"data:image/jpeg;base64,{encode_image('demo_summer.jpg')}"
-
     messages = [
         {
             "role": "user",
             "content": [
                 {
-                    "type": "text", "text": "What are they  in these image?"
+                    "type": "text", "text": "What’s in this image?",
                 },
                 {
                     "type": "image_url",
                     "image_url": {
-                        "url": img_url_before
+                        "url": img_url
                     },
                 },
             ],
@@ -79,28 +76,9 @@ def simple_image_chat(use_stream=True, img_path=None):
             "role": "user",
             "content": "Do you think this is a spring or winter photo?"
         },
-        {
-            "role": "assistant",
-            "content": "Based on the lush greenery, the absence of snow, and the overall vibrancy of the scene, it appears to be a spring or summer photo.",
-        },
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": "What about this? this photo is about winter,right?"
-                },
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": img_url
-                    },
-                },
-            ],
-        },
     ]
     create_chat_completion("cogvlm-chat-17b", messages=messages, use_stream=use_stream)
 
 
 if __name__ == "__main__":
-    simple_image_chat(use_stream=False, img_path="demo_winter.jpg")
+    simple_image_chat(use_stream=False, img_path="demo.jpg")
