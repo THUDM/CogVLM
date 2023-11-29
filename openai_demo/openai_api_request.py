@@ -54,7 +54,7 @@ def simple_image_chat(use_stream=True, img_path=None):
     img_url = f"data:image/jpeg;base64,{encode_image(img_path)}"
 
     # img_url_before if for this demo only.
-    img_url_before = f"data:image/jpeg;base64,{encode_image(demo_summer.jpg)}"
+    img_url_before = f"data:image/jpeg;base64,{encode_image('demo_summer.jpg')}"
 
     messages = [
         {
