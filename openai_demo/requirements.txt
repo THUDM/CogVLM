@@ -1,0 +1,7 @@
+openai>=1.3.0
+pydantic>=2.5.1
+sentencepiece
+sse-starlette
+fastapi>=0.104.1
+uvicorn~=0.24.0
+loguru~=0.7.2

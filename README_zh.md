@@ -188,6 +188,22 @@ with torch.no_grad():
 # 4</s>
 ```
 
+### OpenAI Vision formate
+
+我们提供了与 `GPT-4V` 相同的API示例，你可以在 `openai_demo`中查看。
+1. 首先，启动节点
+```
+python openai_demo/openai_api.py
+```
+2. 接着，运行请求示例节点，这是一个连续对话例子
+```
+python openai_demo/openai_api_request.py
+```
+3. 你将能获得类似如下的输出
+```
+Yes, this photo is about winter. It showcases a snowy landscape with trees covered in snow, indicating cold weather conditions.
+```
+
 ## 许可
 
 此存储库中的代码是根据 [Apache-2.0 许可](./LICENSE) 开放源码，而使用 CogVLM 模型权重必须遵循 [模型许可](./MODEL_LICENSE)。

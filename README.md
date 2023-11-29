@@ -251,6 +251,21 @@ with torch.no_grad():
 # 4</s>
 ```
 
+### OpenAI Vision formate
+
+We provide the same API examples as `GPT-4V`, which you can view in `openai_demo`.
+1. First, start the node
+```
+python openai_demo/openai_api.py
+```
+2. Next, run the request example node, which is an example of a continuous dialogue
+```
+python openai_demo/openai_api_request.py
+```
+3. You will get output similar to the following
+```
+Yes, this photo is about winter. It showcases a snowy landscape with trees covered in snow, indicating cold weather conditions.
+```
 
 ## License
 
