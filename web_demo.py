@@ -87,6 +87,7 @@ def post(
         image_prompt,
         result_previous,
         hidden_image,
+        state
         ):
     result_text = [(ele[0], ele[1]) for ele in result_previous]
     for i in range(len(result_text)-1, -1, -1):
@@ -112,7 +113,8 @@ def post(
                     temperature=temperature,
                     top_k=top_k,
                     invalid_slices=text_processor_infer.invalid_slices if hasattr(text_processor_infer, "invalid_slices") else [],
-                    no_prompt=False
+                    no_prompt=False,
+                    args=state['args']
             )
     except Exception as e:
         print("error message", e)
@@ -155,6 +157,7 @@ def main(args):
 
 
     with gr.Blocks(css='style.css') as demo:
+        state = gr.State({'args': args})
 
         gr.Markdown(DESCRIPTION)
         gr.Markdown(NOTES)
@@ -186,9 +189,9 @@ def main(args):
         gr.Markdown(MAINTENANCE_NOTICE1)
 
         print(gr.__version__)
-        run_button.click(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash],
+        run_button.click(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash, state],
                          outputs=[input_text, result_text, hidden_image_hash])
-        input_text.submit(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash],
+        input_text.submit(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash, state],
                          outputs=[input_text, result_text, hidden_image_hash])
         clear_button.click(fn=clear_fn, inputs=clear_button, outputs=[input_text, result_text, image_prompt])
         image_prompt.upload(fn=clear_fn2, inputs=clear_button, outputs=[result_text])
@@ -214,6 +217,7 @@ if __name__ == '__main__':
     parser.add_argument("--no_prompt", action='store_true', help='Sometimes there is no prompt in stage 1')
     parser.add_argument("--fp16", action="store_true")
     parser.add_argument("--bf16", action="store_true")
+    parser.add_argument("--stream_chat", action="store_true")
     args = parser.parse_args()
     rank = int(os.environ.get('RANK', 0))
     world_size = int(os.environ.get('WORLD_SIZE', 1))
