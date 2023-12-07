@@ -4,6 +4,8 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
+🔥 **News**: ```2023/12/7``` CogVLM 支持4-bit量化了！推理只需要占用 **11GB** 显存！[点击](#CLI)查看更多细节。
+
 🔥 **News**: ```2023/11/20``` cogvlm-chat 更新 v1.1 版本，该版本同时支持对话和问答，在多项数据集刷新 SOTA 效果。
 
 🔥 **News**: ```2023/10/27``` CogVLM 中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
@@ -123,6 +125,40 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 该程序会自动下载 sat 模型并在命令行中进行交互。您可以通过输入指令并按 Enter 生成回复。
 输入 clear 可清除对话历史，输入 stop 可停止程序。
 
+我们的模型支持4-bit量化，使用方法如下。
+
+SAT版本：
+
+```bash
+python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --english --stream_chat
+```
+
+huggingface版本：
+
+```python
+tokenizer = LlamaTokenizer.from_pretrained('vicuna-7b-v1.5')
+    model = AutoModelForCausalLM.from_pretrained(
+        'THUDM/cogvlm-chat-hf',
+        load_in_4bit=True,
+        trust_remote_code=True,
+    ).eval()
+query = 'Describe this image in details.'
+image = Image.open('image-path').convert('RGB')
+inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image])  # chat mode
+inputs = {
+    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
+    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
+    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
+    'images': [[inputs['images'][0].to('cuda').to(torch.float16)]],
+}
+gen_kwargs = {"max_length": 2048, "do_sample": False}
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, **gen_kwargs)
+    outputs = outputs[:, inputs['input_ids'].shape[1]:]
+    print(tokenizer.decode(outputs[0]))
+```
+
 ### 🤗 Transformers
 
 使用Transformers对CogVLM进行推理，只需要如下几行代码：
@@ -164,8 +200,6 @@ with torch.no_grad():
 # 24 and the word 'Lakers' written on it, and the other wearing a navy blue jersey with the word 'Washington' and the number 34. The player
 # in yellow is holding a basketball and appears to be dribbling it, while the player in navy blue is reaching out with his arm, possibly
 # trying to block or defend. The background shows a filled stadium with spectators, indicating that this is a professional game.</s>
-
-
 
 # vqa example
 

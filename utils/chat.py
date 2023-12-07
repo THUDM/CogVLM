@@ -12,7 +12,7 @@ from PIL import Image
 from io import BytesIO
 
 import torch
-from sat.generation.autoregressive_sampling import filling_sequence, get_masks_and_position_ids_default
+from sat.generation.autoregressive_sampling import filling_sequence, stream_filling_sequence, get_masks_and_position_ids_default
 from sat.generation.sampling_strategies import BaseStrategy, BeamSearchStrategy
 from sat.mpu import get_model_parallel_rank
 
@@ -35,7 +35,7 @@ def process_image(image_path, img_processor, image):
 def chat(image_path, model, text_processor, img_processor,
         query: str, history: List[Tuple[str, str]] = None, image: Image = None,
         max_length: int = 4096, top_p=0.95, top_k=5, temperature=0.95, repetition_penalty=1.0,
-        invalid_slices=[], no_prompt=False
+        invalid_slices=[], no_prompt=False, args=None
         ):
     if image is None:
         assert image_path is not None
@@ -51,14 +51,14 @@ def chat(image_path, model, text_processor, img_processor,
     if torch_image is not None:
         for k in torch_image:
             if type(torch_image[k]) is torch.Tensor and torch_image[k].dtype is not torch.int and torch_image[k].dtype is not torch.long:
-                torch_image[k] = torch_image[k].to(next(model.parameters()).dtype)
+                torch_image[k] = torch_image[k].to(torch.bfloat16 if args.bf16 else torch.float16)
             if type(torch_image[k]) is torch.Tensor:
                 torch_image[k] = torch_image[k].to(next(model.parameters()).device)
 
     inputs_dic = text_processor(prompt)
     for k in inputs_dic:
         if type(inputs_dic[k]) is torch.Tensor and inputs_dic[k].dtype is not torch.int and inputs_dic[k].dtype is not torch.long:
-            inputs_dic[k] = inputs_dic[k].to(next(model.parameters()).dtype)
+            inputs_dic[k] = inputs_dic[k].to(torch.bfloat16 if args.bf16 else torch.float16)
         if type(inputs_dic[k]) is torch.Tensor:
             inputs_dic[k] = inputs_dic[k].to(next(model.parameters()).device)
     input_ids = inputs_dic['input_ids'].to(model.parameters().__next__().device)[0]
@@ -81,23 +81,50 @@ def chat(image_path, model, text_processor, img_processor,
     inputs_dic.pop('input_ids')
     inputs = {**img_inputs, **inputs_dic}
 
-    output = filling_sequence(
-        model, seq,
-        batch_size=1,
-        get_masks_and_position_ids=get_func,
-        strategy=strategy,
-        **inputs
-    )[0] # drop memory
-    
-    # ---------------
-    # port from inference_glm.py, more general than chat mode
-    # clip -1s and fill back generated things into seq
-    if type(output) is not list:
-        output_list = output.tolist()
-    else:
-        output_list = output
+    if args.stream_chat:
+        filling_stream = stream_filling_sequence(
+            model, seq,
+            batch_size=1,
+            get_masks_and_position_ids=get_func,
+            strategy=strategy,
+            **inputs
+        )
+        if get_model_parallel_rank() == 0:
+            if args.english:
+                print("Model: ", end='')
+            else:
+                print("模型：", end='')
+        offset = len(text_processor.tokenizer.decode(input_ids))
+        for tokens, mems in filling_stream:
+            torch.cuda.empty_cache()
+            tmp_response = text_processor.tokenizer.decode(tokens[0])
+            if tmp_response[-1] != "�":
+                if get_model_parallel_rank() == 0:
+                    print(tmp_response[offset:], end='')
+                offset = len(tmp_response)
+        if get_model_parallel_rank() == 0:
+            print()
+        output = strategy.finalize(tokens, mems)[0]
 
-    response = text_processor.tokenizer.decode(output_list[0])
+        response = text_processor.tokenizer.decode(output[0])
+    else:
+        output = filling_sequence(
+            model, seq,
+            batch_size=1,
+            get_masks_and_position_ids=get_func,
+            strategy=strategy,
+            **inputs
+        )[0] # drop memory
+        
+        # ---------------
+        # port from inference_glm.py, more general than chat mode
+        # clip -1s and fill back generated things into seq
+        if type(output) is not list:
+            output_list = output.tolist()
+        else:
+            output_list = output
+
+        response = text_processor.tokenizer.decode(output_list[0])
     # print('original:', response)
     if hasattr(text_processor, 'process_response'):
         response = text_processor.process_response(response)

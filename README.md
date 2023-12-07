@@ -4,6 +4,8 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
+🔥 **News**: ```2023/12/7``` CogVLM supports 4-bit quantization now! You can inference with just **11GB** GPU memory! See [details](#CLI).
+
 🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
 
 🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
@@ -124,6 +126,38 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 ```
 The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter.
 Enter `clear` to clear the conversation history and `stop` to stop the program.
+
+Quantization is also supported. For SAT version:
+
+```bash
+python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --english --stream_chat
+```
+
+For huggingface version:
+
+```python
+tokenizer = LlamaTokenizer.from_pretrained('vicuna-7b-v1.5')
+    model = AutoModelForCausalLM.from_pretrained(
+        'THUDM/cogvlm-chat-hf',
+        load_in_4bit=True,
+        trust_remote_code=True,
+    ).eval()
+query = 'Describe this image in details.'
+image = Image.open('image-path').convert('RGB')
+inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image])  # chat mode
+inputs = {
+    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
+    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
+    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
+    'images': [[inputs['images'][0].to('cuda').to(torch.float16)]],
+}
+gen_kwargs = {"max_length": 2048, "do_sample": False}
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, **gen_kwargs)
+    outputs = outputs[:, inputs['input_ids'].shape[1]:]
+    print(tokenizer.decode(outputs[0]))
+```
 
 #### Multi-GPU inference
 We also support model parallel inference, which splits model to multiple (2/4/8) GPUs. `--nproc-per-node=[n]` in the following command controls the number of used GPUs.
