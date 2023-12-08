@@ -4,7 +4,7 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
-🔥 **News**: ```2023/12/7``` CogVLM supports 4-bit quantization now! You can inference with just **11GB** GPU memory! See [details](#CLI).
+🔥 **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory! See [details](#CLI).
 
 🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
 
