@@ -5,12 +5,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import argparse
 from sat.model.mixins import CachedAutoregressiveMixin
-from sat.quantization.kernels import quantize
 
-from utils.chat import chat
-from models.cogvlm_model import CogVLMModel
-from utils.language import llama2_tokenizer, llama2_text_processor_inference
-from utils.vision import get_image_processor
+from ..utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor
+from ..utils.models import CogAgentModel
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,22 +16,20 @@ def main():
     parser.add_argument("--top_k", type=int, default=1, help='top k for top k sampling')
     parser.add_argument("--temperature", type=float, default=.8, help='temperature for sampling')
     parser.add_argument("--english", action='store_true', help='only output English')
-    parser.add_argument("--version", type=str, default="chat", help='version to interact with')
-    parser.add_argument("--quant", choices=[8, 4], type=int, default=None, help='quantization bits')
-    parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat-v1.1", help='pretrained ckpt')
-    parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
+    parser.add_argument("--version", type=str, default="chat", choices=['chat', 'vqa'], help='version to interact with')
+    parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat-v1.1", help='pretrained ckpt') # TODO
+    parser.add_argument("--local_tokenizer", type=str, default="/share/official_pretrains/hf_home/vicuna-7b-v1.5", help='tokenizer path') # TODO
     parser.add_argument("--no_prompt", action='store_true', help='Sometimes there is no prompt in stage 1')
     parser.add_argument("--fp16", action="store_true")
     parser.add_argument("--bf16", action="store_true")
-    parser.add_argument("--stream_chat", action="store_true")
     args = parser.parse_args()
     rank = int(os.environ.get('RANK', 0))
     world_size = int(os.environ.get('WORLD_SIZE', 1))
-    parser = CogVLMModel.add_model_specific_args(parser)
+    parser = CogAgentModel.add_model_specific_args(parser)
     args = parser.parse_args()
 
     # load model
-    model, model_args = CogVLMModel.from_pretrained(
+    model, model_args = CogAgentModel.from_pretrained(
         args.from_pretrained,
         args=argparse.Namespace(
         deepspeed=None,
@@ -44,8 +39,8 @@ def main():
         model_parallel_size=world_size,
         mode='inference',
         skip_init=True,
-        use_gpu_initialization=True if (torch.cuda.is_available() and args.quant is None) else False,
-        device='cpu' if args.quant else 'cuda',
+        use_gpu_initialization=True if torch.cuda.is_available() else False,
+        device='cuda',
         **vars(args)
     ), overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {})
     model = model.eval()
@@ -54,11 +49,8 @@ def main():
 
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     image_processor = get_image_processor(model_args.eva_args["image_size"][0])
+    cross_image_processor = get_image_processor(model_args.cross_image_pix)
 
-    if args.quant:
-        quantize(model, args.quant)
-        if torch.cuda.is_available():
-            model = model.cuda()
 
     model.add_mixin('auto-regressive', CachedAutoregressiveMixin())
 
@@ -66,10 +58,10 @@ def main():
 
     if not args.english:
         if rank == 0:
-            print('欢迎使用 CogVLM-CLI ，输入图像URL或本地路径读图，继续输入内容对话，clear 重新开始，stop 终止程序')
+            print('欢迎使用 CogAgent-CLI ，输入图像URL或本地路径读图，继续输入内容对话，clear 重新开始，stop 终止程序')
     else:
         if rank == 0:
-            print('Welcome to CogVLM-CLI. Enter an image URL or local file path to load an image. Continue inputting text to engage in a conversation. Type "clear" to start over, or "stop" to end the program.')
+            print('Welcome to CogAgent-CLI. Enter an image URL or local file path to load an image. Continue inputting text to engage in a conversation. Type "clear" to start over, or "stop" to end the program.')
     with torch.no_grad():
         while True:
             history = None
@@ -121,19 +113,19 @@ def main():
                         image_processor,
                         query,
                         history=history,
+                        cross_img_processor=cross_image_processor,
                         image=cache_image,
                         max_length=args.max_length,
                         top_p=args.top_p,
                         temperature=args.temperature,
                         top_k=args.top_k,
                         invalid_slices=text_processor_infer.invalid_slices,
-                        no_prompt=args.no_prompt,
-                        args=args
+                        no_prompt=args.no_prompt
                         )
                 except Exception as e:
                     print(e)
                     break
-                if rank == 0 and not args.stream_chat:
+                if rank == 0:
                     if not args.english:
                         print("模型："+response)
                         if tokenizer.signal_type == "grounding":

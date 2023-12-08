@@ -1,16 +1,40 @@
-def _history_to_prompt(self, signal_type, query, history):
-    if signal_type == 'base':
-        return '<EOI>' + query
-    if signal_type == 'vqa':
-        answer_format = 'Short answer:'
-    else:
-        answer_format = 'Answer:'
+from sat.model.official.llama_model import LLaMAModel, rotate_half
+from sat.transformer_defaults import attention_fn_default, split_tensor_along_last_dim
+import torch.nn.functional as F
 
-    prompt = '<EOI>'
-    for i, (old_query, response) in enumerate(history):
-        prompt += 'Question: ' + old_query + " {} ".format(answer_format) + response + "\n"
-    prompt += 'Question: {} {}'.format(query, answer_format)
+
+def base_history_to_prompt(self, query, history):
+    prompt = '<EOI>' + query
     return prompt
+
+def chat_history_to_prompt(self, query, history):
+    prompt = "<EOI> [INST] "
+    for i, (old_query, response) in enumerate(history):
+        prompt += old_query + " [/INST] " + response + " [INST] "
+    prompt += query + " [/INST] "
+    return prompt
+
+def vqa_history_to_prompt(self, query, history):
+    # Only support single round chat in vqa mode
+    prompt = "<EOI> Question: "
+    # for i, (old_query, response) in enumerate(history):
+    #     prompt += old_query + " Short answer: " + response + " Question: "
+    prompt += query + " Short answer: "
+    return prompt
+
+def chatqa_history_to_prompt(self, query, history):
+    prompt = "<EOI> Question: "
+    for i, (old_query, response) in enumerate(history):
+        prompt += old_query + " Answer: " + response + "\nQuestion: "
+    prompt += query + " Answer: "
+    return prompt
+
+_history_to_prompt = {
+    "base": base_history_to_prompt,
+    "chat": chat_history_to_prompt,
+    "vqa": vqa_history_to_prompt,
+    "chatqa": chatqa_history_to_prompt, # for cogvlm-v1.1
+}
 
 from transformers import LlamaTokenizer
 
@@ -18,6 +42,8 @@ def llama2_tokenizer(tokenizer_path, signal_type="base"):
     tokenizer = LlamaTokenizer.from_pretrained(tokenizer_path)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = 32000
+    tokenizer.boi = "[IMG]"
+    tokenizer.eoi = "[/IMG]"
     assert signal_type in ["base", "chat", "vqa"]
     tokenizer.signal_type = signal_type
     return tokenizer
@@ -27,7 +53,7 @@ import numpy as np
 import torch
 
 class llama2_text_processor:
-    def __init__(self, tokenizer, max_target_length=2048, image_length=1225):
+    def __init__(self, tokenizer, max_target_length=2048, image_length=257, model=None):
         self.tokenizer = tokenizer
         self.max_target_length = max_target_length
         self.image_length = image_length
@@ -50,7 +76,7 @@ class llama2_text_processor:
             input_ids.extend(tokens_with_img)
         context_length = len(input_ids) + (len(prompt_splits)-1) * (self.image_length + 1)
         if context_length > self.max_target_length - 50:
-            return None  # prompt is too long
+            return None
         if len(caption_splits) > 0:
             input_ids.extend(self.tokenizer.encode(caption_splits[0], add_special_tokens=False))
         for tokens in caption_splits[1:]:
@@ -114,7 +140,7 @@ class llama2_text_processor:
                 }
 
     def history_to_prompt(self, query, history):
-        return _history_to_prompt(self, self.tokenizer.signal_type, query, history)
+        return _history_to_prompt[self.tokenizer.signal_type](self, query, history)
 
     def replace_tags_with_empty(self, text):
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)
@@ -138,19 +164,21 @@ def get_masks_and_position_ids(seq, image_logits_mask):
         position_ids.append(pid)
     position_ids = torch.tensor(position_ids, dtype=torch.long, device=tokens.device)
     position_ids = position_ids.unsqueeze(0)
+
     return tokens, attention_mask, position_ids
 
 class llama2_text_processor_inference:
-    def __init__(self, tokenizer, max_target_length=2048, image_length=1225):
+    def __init__(self, tokenizer, max_target_length=1024, image_length=257, model=None, no_prompt=False, english=True):
         self.tokenizer = tokenizer
         self.max_target_length = max_target_length
         self.image_length = image_length
         if self.tokenizer.signal_type == "chat":
-            self.sep = 'Answer: '
+            self.sep = "[/INST]"
         elif self.tokenizer.signal_type == "vqa":
-            self.sep = 'Short answer: '
+            self.sep = "Short answer: "
         else:
-            self.sep = 'unk'
+            self.sep = "<unk>"
+
         self.invalid_slices = []
         self.no_eoi = True
 
@@ -159,7 +187,7 @@ class llama2_text_processor_inference:
             prompt = self.replace_tags_with_empty(prompt)
             # caption = self.replace_tags_with_empty(caption)
             history = []
-            prompt = self.history_to_prompt(history, prompt)
+            prompt = self.history_to_prompt(prompt, history)
 
         input_ids = [self.tokenizer.bos_token_id]
 
@@ -195,13 +223,13 @@ class llama2_text_processor_inference:
         return {'input_ids': input_ids, 'image_embed_mask': image_embed_mask, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask}
 
     def history_to_prompt(self, query, history):
-        return _history_to_prompt(self, self.tokenizer.signal_type, query, history)
+        return _history_to_prompt[self.tokenizer.signal_type](self, query, history)
 
     def replace_tags_with_empty(self, text):
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)
 
     def process_response(self, response):
-        return response.replace('</s>', '')
+        return response.rstrip('</s>')
     
     def get_func(self, inputs, **kwargs):
         get_func = partial(get_masks_and_position_ids, image_logits_mask=kwargs['image_rope_mask'])

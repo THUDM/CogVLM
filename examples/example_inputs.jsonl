@@ -1,6 +1,0 @@
-{"id":1, "text": "Describe this image", "image": "examples/1.png"}
-{"id":2, "text": "what did Musk talk about?", "image": "examples/2.jpeg"}
-{"id":3, "text": "How many houses are there in this cartoon?", "image": "examples/3.jpg"}
-{"id":4, "text": "Can you provide a description of the image and include the coordinates [[x0,y0,x1,y1]] for each mentioned object?", "image": "examples/4.jpg"}
-{"id":5, "text": "Where is the tree closer to the sun?", "image": "examples/5.jpg"}
-{"id":6, "text": "What color are the clothes of the girl whose hands are holding flowers? Let's think step by step", "image": "examples/6.jpg"}

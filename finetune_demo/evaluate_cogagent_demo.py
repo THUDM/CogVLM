@@ -5,84 +5,85 @@ import argparse
 from sat import mpu, get_args, get_tokenizer
 from sat.training.deepspeed_training import training_main
 from sat.helpers import print_rank0
-from models.cogvlm_model import FineTuneTrainCogVLMModel
-from utils.language import llama2_text_processor, llama2_text_processor_inference
-from utils.vision import get_image_processor
+from collections import defaultdict
 from functools import partial
 
-def disable_untrainable_params(self):
-    total_trainable = 0
-    enable = [('mlp', 'vit')]
-    if self.args.use_ptuning:
-        enable.extend(['ptuning'])
-    if self.args.use_lora or self.args.use_qlora:
-        enable.extend(['matrix_A', 'matrix_B'])
-    for n, p in self.named_parameters():
-        flag = False
-        for e in enable:
-            if type(e) is tuple:
-                if e[0].lower() in n.lower() and e[1].lower() in n.lower() and 55 > int(n[:n.find('.mlp')].split('.')[-1]) > 45:
-                    flag = True
-                    break
-            else:
-                if e.lower() in n.lower():
-                    flag = True
-                    break
-        if not flag:
-            p.requires_grad_(False)
+from ..utils.models import FineTuneTestCogAgentModel
+from ..utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor
+
+
+def data_collator(examples, cross_image_processor=None):
+    def to_tensor(value):
+        """Converts lists or numpy arrays to tensors."""
+        if isinstance(value, list):
+            return torch.tensor(value)
+        elif isinstance(value, np.ndarray):
+            return torch.from_numpy(value)
+        return value
+    
+    def concatenate_tensors(attribute, key):
+        """Concatenates tensors for a specific attribute and key."""
+        if attribute is None:
+            return torch.cat([ex[key] for ex in examples if isinstance(ex[key], torch.Tensor)])
         else:
-            total_trainable += p.numel()
-            print_rank0(n)
-    print_rank0("***** Total trainable parameters: "+str(total_trainable)+" *****")
+            return torch.cat([ex[attribute][key] for ex in examples if isinstance(ex[attribute][key], torch.Tensor)])
 
-FineTuneTrainCogVLMModel.disable_untrainable_params = disable_untrainable_params
-
-def data_collator(examples):
-    examples = [ex for ex in examples if len(ex) > 0] # drop {}
+    # Convert all lists and numpy arrays in examples to tensors
     for example in examples:
-        for k in example:
-            if isinstance(example[k], list):
-                example[k] = torch.tensor(example[k])
-            elif isinstance(example[k], np.ndarray):
-                example[k] = torch.from_numpy(example[k])
+        for key, value in example.items():
+            example[key] = to_tensor(value)
+
+    # Extract and concatenate attributes from examples
     img_args = {}
-    tmp_example = examples[0]
-    for k in tmp_example['vision']:
-        if type(tmp_example['vision'][k]) is torch.Tensor:
-            img_args['vision_'+k] = torch.cat([example['vision'][k] for example in examples])
-        else:
-            img_args['vision_'+k] = example['vision'][k]
-    for example in examples:
-        example.pop('vision')
-        if 'cross' in example:
-            example.pop('cross')
+    for attribute in ['vision', 'cross']:
+        if attribute == 'cross' and cross_image_processor is None:
+            continue
 
-    model_args = {}
-    tmp_example = examples[0]
-    for k in tmp_example:
-        if type(tmp_example[k]) is torch.Tensor:
-            model_args[k] = torch.cat([example[k] for example in examples])
-        else:
-            model_args[k] = tmp_example[k]
+        if attribute in examples[-1]:  # Using the last example as reference
+            for key in examples[-1][attribute]:
+                tensor_key = f"{attribute}_{key}"
+                tensors_to_concatenate = [ex[attribute][key] for ex in examples if isinstance(ex[attribute][key], torch.Tensor)]
+                if tensors_to_concatenate:
+                    img_args[tensor_key] = concatenate_tensors(attribute, key)
+                else:
+                    img_args[tensor_key] = examples[-1][attribute][key]
+
+    # Remove 'vision' and 'cross' keys from examples
+    for example in examples:
+        example.pop('vision', None)
+        example.pop('cross', None)
+
+    # Create model_args by concatenating tensors and copying other attributes
+    model_args = {key: concatenate_tensors(None, key) 
+                  if isinstance(examples[-1][key], torch.Tensor) else examples[-1][key] 
+                  for key in examples[-1]
+                  }
+    
+    # Merge img_args into model_args
     model_args.update(img_args)
     return model_args
 
-from collections import defaultdict
-
 def broadcast_auto(data_dict):
-    type2list = defaultdict(list)
-    other = []
-    for k in data_dict:
-        if type(data_dict[k]) is torch.Tensor:
-            type2list[data_dict[k].dtype].append(k)
+    # Classify keys based on their data type
+    tensor_keys_by_dtype = defaultdict(list)
+    non_tensor_keys = []
+
+    for key, value in data_dict.items():
+        if isinstance(value, torch.Tensor):
+            tensor_keys_by_dtype[value.dtype].append(key)
         else:
-            other.append(k)
-    new_data = {}
-    for k in type2list:
-        new_data.update(mpu.broadcast_data(type2list[k], data_dict, k))
-    for k in other:
-        new_data[k] = data_dict[k]
-    return new_data
+            non_tensor_keys.append(key)
+
+    # Broadcast tensor data and collect in a new dictionary
+    broadcasted_data = {}
+    for dtype, keys in tensor_keys_by_dtype.items():
+        broadcasted_data.update(mpu.broadcast_data(keys, data_dict, dtype))
+
+    # Add non-tensor data to the new dictionary
+    for key in non_tensor_keys:
+        broadcasted_data[key] = data_dict[key]
+
+    return broadcasted_data
 
 def get_batch(data_iterator, args, timers):
     # Broadcast data.
@@ -214,49 +215,32 @@ def forward_step(data_iterator, model, args, timers):
     return loss, {'loss': loss}
 
 from utils.dataset import ItemDataset
-def create_dataset_function(image_processor, text_processor, path, args):
-    dataset = ItemDataset(image_processor, text_processor, args, path)
+def create_dataset_function(image_processor, text_processor, cross_image_processor, path, args):
+    dataset = ItemDataset(image_processor, text_processor, args, path, cross_image_processor=cross_image_processor)
     return dataset
-
-from sat.model.finetune.lora2 import LoraMixin
-from sat.model.finetune.prompt_tuning import PTuningV2Mixin
 
 if __name__ == '__main__':
     py_parser = argparse.ArgumentParser(add_help=False)
     py_parser.add_argument('--max_length', type=int)
     py_parser.add_argument('--ignore_pad_token_for_loss', action='store_false')
     py_parser.add_argument("--version", type=str, default="chat", help='version to interact with')
-    py_parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat", help='pretrained ckpt')
+    py_parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt')
     py_parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     py_parser.add_argument("--vit_checkpoint_activations", action='store_true')
-    py_parser = FineTuneTrainCogVLMModel.add_model_specific_args(py_parser)
+    py_parser = FineTuneTestCogAgentModel.add_model_specific_args(py_parser)
     known, args_list = py_parser.parse_known_args()
     args = get_args(args_list)
     args = argparse.Namespace(**vars(args), **vars(known))
     if args.use_qlora:
         args.device = 'cpu'
 
-    model, args = FineTuneTrainCogVLMModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})
-    if args.use_ptuning:
-        model.add_mixin("ptuning", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))
-    if args.use_lora:
-        model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)
-        model.get_mixin("eva").vit_model.add_mixin("lora", LoraMixin(args.eva_args['num_layers'], args.lora_rank, layer_range=args.layer_range), reinit=True)
-    elif args.use_qlora:
-        model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)
-        
+    model, args = FineTuneTestCogAgentModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})
     if args.use_qlora and torch.cuda.is_available():
         model = model.to('cuda')
     from utils.language import llama2_tokenizer
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     image_processor = get_image_processor(args.eva_args["image_size"][0])
+    cross_image_processor = get_image_processor(args.cross_image_pix)
     text_processor = llama2_text_processor(tokenizer, args.max_length, args.image_length)
 
-    model = training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor), collate_fn=data_collator, forward_step_eval=forward_step_eval)
-    if args.use_lora:
-        model.get_mixin("lora").merge_lora()
-        model.get_mixin("eva").vit_model.get_mixin("lora").merge_lora()
-        args.use_lora = False
-        args.save = "checkpoints/merged_lora_{}".format(args.eva_args["image_size"][0])
-        from sat.training.model_io import save_checkpoint
-        save_checkpoint(1, model, None, None, args)
+    training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor, cross_image_processor), collate_fn=partial(data_collator, cross_image_processor=cross_image_processor), forward_step_eval=forward_step_eval)

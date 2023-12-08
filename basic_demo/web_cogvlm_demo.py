@@ -16,11 +16,9 @@ from sat.model.mixins import CachedAutoregressiveMixin
 from sat.mpu import get_model_parallel_world_size
 
 
-from utils.parser import parse_response
-from utils.chat import chat
-from models.cogvlm_model import CogVLMModel
-from utils.language import llama2_tokenizer, llama2_text_processor_inference
-from utils.vision import get_image_processor
+from ..utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response
+from ..utils.models import CogVLMModel
+
 
 
 DESCRIPTION = '''<h2 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM-17B</a> </h2>'''
