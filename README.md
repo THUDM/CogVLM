@@ -4,9 +4,11 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
+🔥 **News**: ```2023/12/8``` We have updated the checkpoint of cogvlm-grounding-generalist to cogvlm-grounding-generalist-v1.1, with image augmentation during training, therefore more robust. See [details](#Introduction).
+
 🔥 **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory! See [details](#CLI).
 
-🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
+🔥 **News**: ```2023/11/20``` We have updated the checkpoint of cogvlm-chat to cogvlm-chat-v1.1, unified the versions of chat and VQA, and refreshed the SOTA on various datasets. See [details](#Introduction).
 
 🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
 
@@ -23,6 +25,8 @@
     <img src=assets/metrics-min.png width=80% />
 </div>
 
+cogvlm-chat-v1.1:
+
 | Method           | LLM           | MM-VET | POPE(adversarial) | TouchStone |
 | ---------------- | ------------- |--------| --------- |------------|
 | BLIP-2           | Vicuna-13B    | 22.4   | -         | -          |
@@ -37,6 +41,14 @@
 | Qwen-VL-Chat     | -             | -      | -         | 645.2      |
 | DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
 | CogVLM           | Vicuna-7B     | **52.8**   | **87.6**      | **742.0**      |
+
+cogvlm-grounding-generalist-v1.1:
+
+| | RefCOCO | | | RefCOCO+ | | | RefCOCOg | | Visual7W |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | val | testA | testB | val | testA | testB | val | test | test |
+| cogvim-grounding-generalist | 92.51 | 93.95 | 88.73 | 87.52 | 91.81 | 81.43 | 89.46 | 90.09 | 90.96 |
+| cogvim-grounding-generalist-v1.1 | **92.76** | **94.75** | **88.99** | **88.68** | **92.91** | **83.39** | **89.75** | **90.79** | **91.05** |
 
 ## Examples
 
@@ -130,7 +142,7 @@ Enter `clear` to clear the conversation history and `stop` to stop the program.
 Quantization is also supported. For SAT version:
 
 ```bash
-python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --english --stream_chat
+python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --fp16 --quant 4 --english --stream_chat
 ```
 
 For huggingface version:

@@ -4,9 +4,11 @@
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 
+🔥 **News**: ```2023/12/8``` cogvlm-grounding-generalist 更新 v1.1，该版本在训练时加入图像数据增强，表现更加鲁棒。[点击](#简介)查看更多细节。
+
 🔥 **News**: ```2023/12/7``` CogVLM 支持4-bit量化了！推理只需要占用 **11GB** 显存！[点击](#CLI)查看更多细节。
 
-🔥 **News**: ```2023/11/20``` cogvlm-chat 更新 v1.1 版本，该版本同时支持对话和问答，在多项数据集刷新 SOTA 效果。
+🔥 **News**: ```2023/11/20``` cogvlm-chat 更新 v1.1 版本，该版本同时支持对话和问答，在多项数据集刷新 SOTA 效果。[点击](#简介)查看更多细节。
 
 🔥 **News**: ```2023/10/27``` CogVLM 中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
 
@@ -23,6 +25,8 @@
     <img src=assets/metrics-min.png width=80% />
 </div>
 
+cogvlm-chat-v1.1:
+
 | Method           | LLM           | MM-VET | POPE(adversarial) | TouchStone |
 | ---------------- | ------------- |--------| --------- |------------|
 | BLIP-2           | Vicuna-13B    | 22.4   | -         | -          |
@@ -37,6 +41,14 @@
 | Qwen-VL-Chat     | -             | -      | -         | 645.2      |
 | DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
 | CogVLM           | Vicuna-7B     | **52.8**   | **87.6**      | **742.0**      |
+
+cogvlm-grounding-generalist-v1.1:
+
+| | RefCOCO | | | RefCOCO+ | | | RefCOCOg | | Visual7W |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | val | testA | testB | val | testA | testB | val | test | test |
+| cogvim-grounding-generalist | 92.51 | 93.95 | 88.73 | 87.52 | 91.81 | 81.43 | 89.46 | 90.09 | 90.96 |
+| cogvim-grounding-generalist-v1.1 | **92.76** | **94.75** | **88.99** | **88.68** | **92.91** | **83.39** | **89.75** | **90.79** | **91.05** |
 
 ## 示例
 
@@ -130,7 +142,7 @@ python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base 
 SAT版本：
 
 ```bash
-python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --english --stream_chat
+python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --fp16 --quant 4 --english --stream_chat
 ```
 
 huggingface版本：
