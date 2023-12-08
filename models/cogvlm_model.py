@@ -17,13 +17,13 @@ MODEL_URLS["cogvlm-grounding-generalist-v1.1"] = "r2://cogvlm-grounding-generali
 class GLU(nn.Module):
     def __init__(self, args, in_features):
         super().__init__()
-        self.linear_proj = nn.Linear(in_features, args.hidden_size, bias=False)
-        self.norm1 = nn.LayerNorm(args.hidden_size)
+        self.linear_proj = nn.Linear(in_features, args.hidden_size, bias=False, device=args.device)
+        self.norm1 = nn.LayerNorm(args.hidden_size, device=args.device)
         self.act1 = nn.GELU()
         self.act2 = nn.functional.silu
-        self.dense_h_to_4h = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False)
-        self.gate_proj = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False)
-        self.dense_4h_to_h = nn.Linear(args.inner_hidden_size, args.hidden_size, bias=False)
+        self.dense_h_to_4h = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False, device=args.device)
+        self.gate_proj = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False, device=args.device)
+        self.dense_4h_to_h = nn.Linear(args.inner_hidden_size, args.hidden_size, bias=False, device=args.device)
 
     def forward(self, x):
         x = self.linear_proj(x)
@@ -78,8 +78,8 @@ class ImageMixin(BaseMixin):
         self.in_features = 1792
         self.linear_proj = GLU(args, self.in_features)
         self.image_length = args.image_length
-        self.boi = nn.Parameter(torch.zeros(1, 1, args.hidden_size))
-        self.eoi = nn.Parameter(torch.zeros(1, 1, args.hidden_size))
+        self.boi = nn.Parameter(torch.zeros(1, 1, args.hidden_size, device=args.device))
+        self.eoi = nn.Parameter(torch.zeros(1, 1, args.hidden_size, device=args.device))
 
     def word_embedding_forward(self, input_ids, output_cross_layer, **kw_args):
         vision_inputs = {}
@@ -103,9 +103,9 @@ class CogVLMModel(LLaMAModel):
         self.image_length = args.image_length
         self.add_mixin("eva", ImageMixin(args))
         self.del_mixin("mlp")
-        self.add_mixin("mlp", LlamaVisionExpertFCMixin(args.hidden_size, args.inner_hidden_size, args.num_layers, 32))
+        self.add_mixin("mlp", LlamaVisionExpertFCMixin(args.hidden_size, args.inner_hidden_size, args.num_layers, 32, params_dtype=kwargs.get("params_dtype"), device=args.device))
         self.del_mixin("rotary")
-        self.add_mixin("rotary", LlamaVisionExpertAttnMixin(args.hidden_size, args.num_attention_heads, args.num_layers, 32))
+        self.add_mixin("rotary", LlamaVisionExpertAttnMixin(args.hidden_size, args.num_attention_heads, args.num_layers, 32, params_dtype=kwargs.get("params_dtype"), device=args.device))
 
     @classmethod
     def add_model_specific_args(cls, parser):

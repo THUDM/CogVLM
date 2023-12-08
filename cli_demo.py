@@ -27,6 +27,7 @@ def main():
     parser.add_argument("--fp16", action="store_true")
     parser.add_argument("--bf16", action="store_true")
     parser.add_argument("--stream_chat", action="store_true")
+    parser.add_argument("--low_cpu_memory", action="store_true")
     args = parser.parse_args()
     rank = int(os.environ.get('RANK', 0))
     world_size = int(os.environ.get('WORLD_SIZE', 1))
@@ -45,7 +46,7 @@ def main():
         mode='inference',
         skip_init=True,
         use_gpu_initialization=True if (torch.cuda.is_available() and args.quant is None) else False,
-        device='cpu' if args.quant else 'cuda',
+        device='meta' if (args.quant and args.low_cpu_memory) else ('cpu' if args.quant else 'cuda'),
         **vars(args)
     ), overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {})
     model = model.eval()

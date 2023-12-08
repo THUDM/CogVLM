@@ -109,7 +109,7 @@ class EVA2CLIPModel(BaseModel):
             kwargs['activation_func'] = gelu
         super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)
         self.transformer.property = property
-        self.add_mixin("patch_embedding", ImagePatchEmbeddingMixin(args.in_channels, args.hidden_size, property))
+        self.add_mixin("patch_embedding", ImagePatchEmbeddingMixin(args.in_channels, args.hidden_size, property, device=args.device))
         self.add_mixin("pos_embedding", InterpolatedPositionEmbeddingMixin())
         self.add_mixin("final", IdentityMixin())
         self.add_mixin("newpost", NewLayerForward())
