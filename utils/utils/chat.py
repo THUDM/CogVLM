@@ -16,7 +16,7 @@ from sat.generation.autoregressive_sampling import filling_sequence, stream_fill
 from sat.generation.sampling_strategies import BaseStrategy, BeamSearchStrategy
 from sat.mpu import get_model_parallel_rank
 
-def process_image(image_path, img_processor, image):
+def process_image(image_path, img_processor, cross_img_processor, image):
     if image is None:
         if image_path.startswith("http"):
             response = requests.get(image_path, timeout=10)
@@ -27,13 +27,14 @@ def process_image(image_path, img_processor, image):
     if image is not None and isinstance(image, Image.Image):
         pil_img = image.convert('RGB')
         img_dict = img_processor(pil_img)
-        ret = (img_dict, pil_img)
+        cross_img_dict = cross_img_processor(pil_img) if cross_img_processor is not None else {}
+        ret = (img_dict, pil_img, cross_img_dict)
     else:
         ret = image
     return ret
 
 def chat(image_path, model, text_processor, img_processor,
-        query: str, history: List[Tuple[str, str]] = None, image: Image = None,
+        query: str, history: List[Tuple[str, str]] = None, cross_img_processor=None, image: Image = None,
         max_length: int = 4096, top_p=0.95, top_k=5, temperature=0.95, repetition_penalty=1.0,
         invalid_slices=[], no_prompt=False, args=None
         ):
@@ -46,7 +47,7 @@ def chat(image_path, model, text_processor, img_processor,
         query = ''
     prompt = text_processor.history_to_prompt(query, history)
 
-    (torch_image, pil_img) = process_image(image_path, img_processor, image)
+    (torch_image, pil_img, cross_image) = process_image(image_path, img_processor, cross_img_processor, image)
 
     if torch_image is not None:
         for k in torch_image:
@@ -54,6 +55,13 @@ def chat(image_path, model, text_processor, img_processor,
                 torch_image[k] = torch_image[k].to(torch.bfloat16 if args.bf16 else torch.float16)
             if type(torch_image[k]) is torch.Tensor:
                 torch_image[k] = torch_image[k].to(next(model.parameters()).device)
+                
+    if cross_image is not None:
+        for k in cross_image:
+            if type(cross_image[k]) is torch.Tensor and cross_image[k].dtype is not torch.int and cross_image[k].dtype is not torch.long:
+                cross_image[k] = cross_image[k].to(torch.bfloat16 if args.bf16 else torch.float16)
+            if type(cross_image[k]) is torch.Tensor:
+                cross_image[k] = cross_image[k].to(next(model.parameters()).device)
 
     inputs_dic = text_processor(prompt)
     for k in inputs_dic:
@@ -78,6 +86,8 @@ def chat(image_path, model, text_processor, img_processor,
     get_func = text_processor.get_func(input_ids, **inputs_dic) if hasattr(text_processor, 'get_func') else get_masks_and_position_ids_default
 
     img_inputs = {'vision_'+k: v for k, v in torch_image.items()}
+    if cross_image is not None:
+        img_inputs = {**img_inputs, **{'cross_'+k:v for k,v in cross_image.items()}}
     inputs_dic.pop('input_ids')
     inputs = {**img_inputs, **inputs_dic}
 
@@ -133,4 +143,4 @@ def chat(image_path, model, text_processor, img_processor,
         from utils.parser import parse_response
         parse_response(pil_img, response)
     history = history + [(query, response)]
-    return response, history, (torch_image, pil_img)
+    return response, history, (torch_image, pil_img, cross_image)

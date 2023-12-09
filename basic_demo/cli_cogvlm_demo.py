@@ -17,7 +17,7 @@ def main():
     parser.add_argument("--top_k", type=int, default=1, help='top k for top k sampling')
     parser.add_argument("--temperature", type=float, default=.8, help='temperature for sampling')
     parser.add_argument("--english", action='store_true', help='only output English')
-    parser.add_argument("--version", type=str, default="chatqa", help='version to interact with')
+    parser.add_argument("--version", type=str, default="chatqa", choices=['chatqa', 'vqa', 'base'], help='version to interact with')
     parser.add_argument("--quant", choices=[8, 4], type=int, default=None, help='quantization bits')
     parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat-v1.1", help='pretrained ckpt')
     parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
