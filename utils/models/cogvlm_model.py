@@ -3,7 +3,7 @@ import json
 import torch
 from sat.model.base_model import BaseMixin
 import torch.nn as nn
-from models.mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
+from .mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
 
 from sat.resources.urls import MODEL_URLS
 
@@ -32,7 +32,7 @@ class GLU(nn.Module):
         x = self.dense_4h_to_h(x)
         return x
 
-from models.eva_clip_model import EVA2CLIPModel
+from .eva_clip_model import EVA2CLIPModel
 import argparse
 from copy import deepcopy
 def override_dist_dtype_device_args(args, b={}):

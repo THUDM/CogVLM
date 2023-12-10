@@ -2,16 +2,18 @@ import os
 import torch
 import argparse
 from functools import partial
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sat import mpu, get_args, get_tokenizer
 from sat.training.deepspeed_training import training_main
 from sat.helpers import print_rank0
-from ..utils.models import FineTuneTrainCogAgentModel
-from ..utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor
+from utils.models import FineTuneTrainCogAgentModel
+from utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor
 
 def disable_untrainable_params(self):
     total_trainable = 0
-    # enable = ["encoder", "cross_attention", "linear_proj", 'mlp.vision', 'rotary.vision', 'eoi', 'boi']
+    # enable = ['vit']
     enable = ["encoder", "cross_attention", "linear_proj", 'mlp.vision', 'rotary.vision', 'eoi', 'boi', 'vit']
     if self.args.use_ptuning:
         enable.extend(['ptuning'])
@@ -237,7 +239,7 @@ def forward_step(data_iterator, model, args, timers):
 
     return loss, {'loss': loss}
 
-from utils.dataset import ItemDataset
+from utils.utils import ItemDataset
 def create_dataset_function(image_processor, text_processor, cross_image_processor, path, args):
     dataset = ItemDataset(image_processor, text_processor, args, path, cross_image_processor=cross_image_processor)
     return dataset
@@ -249,7 +251,7 @@ if __name__ == '__main__':
     py_parser = argparse.ArgumentParser(add_help=False)
     py_parser.add_argument('--max_length', type=int)
     py_parser.add_argument('--ignore_pad_token_for_loss', action='store_false')
-    py_parser.add_argument("--version", type=str, default="chat", choices=["chat", "vqa", "base"], help='version to interact with')
+    py_parser.add_argument("--version", type=str, default="chat", choices=["chat", "vqa"], help='version to interact with')
     py_parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt') # TODO
     py_parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     py_parser.add_argument("--vit_checkpoint_activations", action='store_true')
@@ -263,6 +265,7 @@ if __name__ == '__main__':
     model, args = FineTuneTrainCogAgentModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})
     if args.use_ptuning: # TODO: wait for SAT updating
         model.add_mixin("ptuning", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))
+
     if args.use_lora:
         model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)
         model.get_mixin("eva").vit_model.add_mixin("lora", LoraMixin(args.eva_args['num_layers'], args.lora_rank, layer_range=args.layer_range), reinit=True)
@@ -271,7 +274,7 @@ if __name__ == '__main__':
         
     if args.use_qlora and torch.cuda.is_available():
         model = model.to('cuda')
-    from utils.language import llama2_tokenizer
+    from utils.utils import llama2_tokenizer
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     image_processor = get_image_processor(args.eva_args["image_size"][0])
     cross_image_processor = get_image_processor(args.cross_image_pix)

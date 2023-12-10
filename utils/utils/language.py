@@ -75,7 +75,7 @@ class llama2_text_processor:
             tokens_with_img = [-100] + self.tokenizer.encode(tokens, add_special_tokens=False)
             input_ids.extend(tokens_with_img)
         context_length = len(input_ids) + (len(prompt_splits)-1) * (self.image_length + 1)
-        if context_length > self.max_target_length - 50:
+        if context_length > self.max_target_length - 10:
             return None
         if len(caption_splits) > 0:
             input_ids.extend(self.tokenizer.encode(caption_splits[0], add_special_tokens=False))

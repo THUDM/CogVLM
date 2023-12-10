@@ -772,12 +772,11 @@ class Eva2LargeEncoder(nn.Module):
         self.config['vision_cfg']['image_size'] = image_size
         
         import os
-        os.environ['delRoPE'] = '1' # to avoid error in rope params when changing image size
         self.model = _build_vision_tower(**self.config)
 
 
-    def forward(self, images):
-        encode = self.model(images, return_all_features=True)[:, 1:, :]
+    def forward(self, image, **kwargs): # diverge from hf version
+        encode = self.model(image, return_all_features=True)[:, 1:, :]
         return encode
 
 class CrossVisionModel(nn.Module):

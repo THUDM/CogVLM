@@ -9,13 +9,14 @@ script_path=$(realpath $0)
 script_dir=$(dirname $script_path)
 main_dir=$(dirname $script_dir)
 MODEL_TYPE="cogagent-chat"
-VERSION="base"
+VERSION="chat"
 MODEL_ARGS="--from_pretrained $MODEL_TYPE \
-    --max_length 319 \
-    --lora_rank 10 \
+    --max_length 400 \
+    --lora_rank 50 \
     --use_lora \
     --local_tokenizer lmsys/vicuna-7b-v1.5 \
     --version $VERSION"
+# TIPS: max_length include low-resolution image sequence (which has 256 tokens) 
 
 OPTIONS_SAT="SAT_HOME=~/.sat_models"
 OPTIONS_NCCL="NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$NUM_GPUS_PER_WORKER"
@@ -28,7 +29,7 @@ gpt_options=" \
        --experiment-name finetune-$MODEL_TYPE \
        --model-parallel-size ${MP_SIZE} \
        --mode finetune \
-       --train-iters 800 \
+       --train-iters 2000 \
        --resume-dataloader \
        $MODEL_ARGS \
        --train-data ${train_data} \
@@ -44,7 +45,7 @@ gpt_options=" \
        --eval-iters 10 \
        --eval-batch-size 1 \
        --split 1. \
-       --deepspeed_config scripts/test_config_bf16.json \
+       --deepspeed_config test_config_bf16.json \
        --skip-init \
        --seed 2023
 "

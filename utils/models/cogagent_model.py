@@ -5,10 +5,11 @@ from functools import partial
 from sat.model.base_model import BaseMixin
 import torch.nn as nn
 import numpy as np
-from models.mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
 from sat.resources.urls import MODEL_URLS
 
 from .eva_clip_L_hf import Eva2LargeEncoder
+from .mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
+
 
 # MODEL_URLS["cogvlm-base-224"] = "r2://cogvlm-base-224.zip"
 
@@ -31,7 +32,7 @@ class GLU(nn.Module):
         x = self.dense_4h_to_h(x)
         return x
 
-from models.eva_clip_model import EVA2CLIPModel
+from .eva_clip_model import EVA2CLIPModel
 import argparse
 from copy import deepcopy
 def override_dist_dtype_device_args(args, b={}):

@@ -140,7 +140,7 @@ def chat(image_path, model, text_processor, img_processor,
         response = text_processor.process_response(response)
     response = response.split(text_processor.sep)[-1].strip()
     if get_model_parallel_rank() == 0:
-        from utils.parser import parse_response
+        from utils.utils.grounding_parser import parse_response
         parse_response(pil_img, response)
     history = history + [(query, response)]
     return response, history, (torch_image, pil_img, cross_image)

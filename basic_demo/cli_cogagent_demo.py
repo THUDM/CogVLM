@@ -8,8 +8,8 @@ from sat.model.mixins import CachedAutoregressiveMixin
 from sat.quantization.kernels import quantize
 
 
-from ..utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor
-from ..utils.models import CogAgentModel
+from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor
+from utils.models import CogAgentModel
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,8 +21,8 @@ def main():
     parser.add_argument("--version", type=str, default="chat", choices=['chat', 'vqa'], help='version to interact with')
     parser.add_argument("--quant", choices=[8, 4], type=int, default=None, help='quantization bits')
 
-    parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat-v1.1", help='pretrained ckpt') # TODO
-    parser.add_argument("--local_tokenizer", type=str, default="/share/official_pretrains/hf_home/vicuna-7b-v1.5", help='tokenizer path') # TODO
+    parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt') # TODO
+    parser.add_argument("--local_tokenizer", type=str, default="/share/official_pretrains/hf_home/vicuna-7b-v1.5", help='tokenizer path') #TODO
     parser.add_argument("--no_prompt", action='store_true', help='Sometimes there is no prompt in stage 1')
     parser.add_argument("--fp16", action="store_true")
     parser.add_argument("--bf16", action="store_true")

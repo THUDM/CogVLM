@@ -16,8 +16,8 @@ from sat.model.mixins import CachedAutoregressiveMixin
 from sat.mpu import get_model_parallel_world_size
 
 
-from ..utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response
-from ..utils.models import CogVLMModel
+from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response
+from utils.models import CogVLMModel
 
 
 

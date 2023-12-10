@@ -2,12 +2,14 @@ import os
 import torch
 import argparse
 from functools import partial
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sat import mpu, get_args, get_tokenizer
 from sat.training.deepspeed_training import training_main
 from sat.helpers import print_rank0
-from ..utils.models import FineTuneTestCogVLMModel
-from ..utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor
+from utils.models import FineTuneTestCogVLMModel
+from utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor
 
 
 def data_collator(examples):
@@ -186,7 +188,7 @@ def forward_step(data_iterator, model, args, timers):
 
     return loss, {'loss': loss}
 
-from utils.dataset import ItemDataset
+from utils.utils import ItemDataset
 def create_dataset_function(image_processor, text_processor, path, args):
     dataset = ItemDataset(image_processor, text_processor, args, path)
     return dataset
@@ -209,7 +211,7 @@ if __name__ == '__main__':
     model, args = FineTuneTestCogVLMModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})
     if args.use_qlora and torch.cuda.is_available():
         model = model.to('cuda')
-    from utils.language import llama2_tokenizer
+    from utils.utils import llama2_tokenizer
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     image_processor = get_image_processor(args.eva_args["image_size"][0])
     text_processor = llama2_text_processor(tokenizer, args.max_length, args.image_length)

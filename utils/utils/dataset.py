@@ -18,13 +18,15 @@ def find_all_files(path, suffix=".jpg"):
     return target_files
 
 class ItemDataset(Dataset):
-    def __init__(self, image_processor, text_processor, args, data_dirs, **kwargs):
+    def __init__(self, image_processor, text_processor, args, data_dirs, cross_image_processor=None, **kwargs):
         super().__init__()
         self.data = self.load_data(data_dirs)
-        self.image_processor, self.text_processor = image_processor, text_processor
+        self.image_processor, self.text_processor, self.cross_image_processor = image_processor, text_processor, cross_image_processor
     
     def process_img(self, img):
         img_dict = {'vision': self.image_processor(img)}
+        if self.cross_image_processor:
+            img_dict.update({'cross': self.cross_image_processor(img)})
         return img_dict
     
     def process_text(self, answer, prompt):

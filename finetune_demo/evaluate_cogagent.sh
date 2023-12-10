@@ -42,7 +42,7 @@ gpt_options=" \
        --strict-eval \
        --eval-batch-size 1 \
        --split 1. \
-       --deepspeed_config scripts/test_config_bf16.json \
+       --deepspeed_config test_config_bf16.json \
        --skip-init \
        --seed 2023
 "
