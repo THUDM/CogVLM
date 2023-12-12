@@ -17,7 +17,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 
-MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat')
+MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat-hf')
 TOKENIZER_PATH = os.environ.get("TOKENIZER_PATH", 'lmsys/vicuna-7b-v1.5')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
