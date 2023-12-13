@@ -226,7 +226,7 @@ if __name__ == '__main__':
     py_parser = argparse.ArgumentParser(add_help=False)
     py_parser.add_argument('--max_length', type=int)
     py_parser.add_argument('--ignore_pad_token_for_loss', action='store_false')
-    py_parser.add_argument("--version", type=str, default="chatqa", help='version to interact with')
+    py_parser.add_argument("--version", type=str, default="chat_old", help='version to interact with')
     py_parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat", help='pretrained ckpt')
     py_parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     py_parser.add_argument("--vit_checkpoint_activations", action='store_true')

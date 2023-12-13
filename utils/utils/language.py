@@ -16,24 +16,25 @@ def chat_history_to_prompt(self, query, history):
 
 def vqa_history_to_prompt(self, query, history):
     # Only support single round chat in vqa mode
-    prompt = "<EOI> Question: "
+    prompt = "<EOI>Question: "
     # for i, (old_query, response) in enumerate(history):
     #     prompt += old_query + " Short answer: " + response + " Question: "
-    prompt += query + " Short answer: "
+    prompt += query + " Short answer:"
     return prompt
 
-def chatqa_history_to_prompt(self, query, history):
-    prompt = "<EOI> Question: "
+def chat_old_history_to_prompt(self, query, history):
+    prompt = "<EOI>Question: "
     for i, (old_query, response) in enumerate(history):
         prompt += old_query + " Answer: " + response + "\nQuestion: "
-    prompt += query + " Answer: "
+    prompt += query + " Answer:"
     return prompt
 
 _history_to_prompt = {
     "base": base_history_to_prompt,
     "chat": chat_history_to_prompt,
     "vqa": vqa_history_to_prompt,
-    "chatqa": chatqa_history_to_prompt, # for cogvlm-v1.1
+    "chat_old": chat_old_history_to_prompt, # for cogvlm-v1.1
+    "grounding": base_history_to_prompt,
 }
 
 from transformers import LlamaTokenizer
@@ -44,7 +45,7 @@ def llama2_tokenizer(tokenizer_path, signal_type="base"):
         tokenizer.pad_token_id = 32000
     tokenizer.boi = "[IMG]"
     tokenizer.eoi = "[/IMG]"
-    assert signal_type in ["base", "chat", "vqa"]
+    assert signal_type in ["base", "chat", "vqa", "chat_old", "grounding"]
     tokenizer.signal_type = signal_type
     return tokenizer
 
@@ -229,7 +230,7 @@ class llama2_text_processor_inference:
         return re.sub('<pad>|<s>|</s>|<EOI>', '', text)
 
     def process_response(self, response):
-        return response.rstrip('</s>')
+        return response.replace('</s>', '')
     
     def get_func(self, inputs, **kwargs):
         get_func = partial(get_masks_and_position_ids, image_logits_mask=kwargs['image_rope_mask'])

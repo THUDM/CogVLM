@@ -100,7 +100,7 @@ def chat(image_path, model, text_processor, img_processor,
             **inputs
         )
         if get_model_parallel_rank() == 0:
-            if args.english:
+            if 'chinese' in args and not args.chinese:
                 print("Model: ", end='')
             else:
                 print("模型：", end='')
@@ -110,7 +110,10 @@ def chat(image_path, model, text_processor, img_processor,
             tmp_response = text_processor.tokenizer.decode(tokens[0])
             if tmp_response[-1] != "�":
                 if get_model_parallel_rank() == 0:
-                    print(tmp_response[offset:], end='')
+                    tmp_response_offseted = tmp_response[offset:]
+                    if hasattr(text_processor, 'process_response'):
+                        tmp_response_offseted = text_processor.process_response(tmp_response_offseted)
+                    print(tmp_response_offseted, end='', flush=True)
                 offset = len(tmp_response)
         if get_model_parallel_rank() == 0:
             print()

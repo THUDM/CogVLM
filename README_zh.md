@@ -1,6 +1,6 @@
 # CogVLM
 
-📖 [Paper（论文）](./assets/cogvlm-paper.pdf)
+📖 [Paper（论文）](https://arxiv.org/abs/2311.03079)
 
 🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
 

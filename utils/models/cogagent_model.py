@@ -173,7 +173,7 @@ class CogAgentModel(LLaMAModel):
     def add_model_specific_args(cls, parser):
         group = parser.add_argument_group('CogAgent', 'CogAgent Configurations')
         group.add_argument('--image_length', type=int, default=256)
-        group.add_argument('--cross_image_pix', type=int, default=1120)
+        group.add_argument('--cross_image_pix', type=int, default=1120) # Standard CogAgent use 1120; if you want to adjust this param, finetune the model first.
         group.add_argument('--eva_args', type=json.loads, default={})
         return super().add_model_specific_args(parser)
 

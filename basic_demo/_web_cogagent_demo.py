@@ -17,17 +17,19 @@ from sat.mpu import get_model_parallel_world_size
 
 
 from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response
-from utils.models import CogVLMModel
+from utils.models import CogAgentModel, CogVLMModel
 
 
 
-DESCRIPTION = '''<h2 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM-17B</a> </h2>'''
+DESCRIPTION = '''<h2 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM/Agent</a> </h2>'''
 
-NOTES = 'This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model.'
+NOTES = 'This app (CogAgent) is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model.'
 
 MAINTENANCE_NOTICE1 = 'Hint 1: If the app report "Something went wrong, connection error out", please turn off your proxy and retry.<br>Hint 2: If you upload a large size of image like 10MB, it may take some time to upload and process. Please be patient and wait.'
 
-GROUNDING_NOTICE = 'Hint: When you check "Grounding", please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/template.py#L344">corresponding prompt</a> or the examples below.'
+GROUNDING_NOTICE = 'Hint: When you check "Grounding", please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344">corresponding prompt</a> or the examples below.'
+
+AGENT_NOTICE = 'Hint: When you check "Agent", please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761">corresponding prompt</a> or the examples below.'
 
 
 
@@ -49,7 +51,7 @@ def process_image_without_resize(image_prompt):
 from sat.quantization.kernels import quantize
 
 def load_model(args): 
-    model, model_args = CogVLMModel.from_pretrained(
+    model, model_args = CogAgentModel.from_pretrained(
         args.from_pretrained,
         args=argparse.Namespace(
         deepspeed=None,
@@ -70,6 +72,7 @@ def load_model(args):
 
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     image_processor = get_image_processor(model_args.eva_args["image_size"][0])
+    cross_image_processor = get_image_processor(model_args.cross_image_pix)
 
     if args.quant:
         quantize(model, args.quant)
@@ -79,7 +82,7 @@ def load_model(args):
 
     text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length)
 
-    return model, image_processor, text_processor_infer
+    return model, image_processor, cross_image_processor, text_processor_infer
 
 
 def post(
@@ -98,7 +101,7 @@ def post(
             del result_text[i]
     print(f"history {result_text}")
     
-    global model, image_processor, text_processor_infer, is_grounding
+    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding
 
     try:
         with torch.no_grad():
@@ -110,6 +113,7 @@ def post(
                     img_processor=image_processor,
                     query=input_text, 
                     history=result_text, 
+                    cross_img_processor=cross_image_processor,
                     image=pil_img, 
                     max_length=2048, 
                     top_p=top_p, 
@@ -145,8 +149,8 @@ def clear_fn2(value):
 
 
 def main(args):
-    global model, image_processor, text_processor_infer, is_grounding
-    model, image_processor, text_processor_infer = load_model(args)
+    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding
+    model, image_processor, cross_image_processor, text_processor_infer = load_model(args)
     is_grounding = 'grounding' in args.from_pretrained
     
     gr.close_all()
@@ -216,7 +220,7 @@ if __name__ == '__main__':
     parser.add_argument("--english", action='store_true', help='only output English')
     parser.add_argument("--version", type=str, default="chat", help='version to interact with')
     parser.add_argument("--quant", choices=[8, 4], type=int, default=None, help='quantization bits')
-    parser.add_argument("--from_pretrained", type=str, default="cogvlm-chat", help='pretrained ckpt')
+    parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt')
     parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     parser.add_argument("--no_prompt", action='store_true', help='Sometimes there is no prompt in stage 1')
     parser.add_argument("--fp16", action="store_true")
@@ -225,6 +229,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     rank = int(os.environ.get('RANK', 0))
     world_size = int(os.environ.get('WORLD_SIZE', 1))
-    parser = CogVLMModel.add_model_specific_args(parser)
+    # parser = CogAgentModel.add_model_specific_args(parser)
     args = parser.parse_args()   
     main(args)
