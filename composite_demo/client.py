@@ -14,8 +14,8 @@ from transformers import AutoTokenizer, TextIteratorStreamer, AutoModelForCausal
 from conversation import Conversation
 
 TOOL_PROMPT = 'Answer the following questions as best as you can. You have access to the following tools:'
-MODEL_PATH = os.environ.get('MODEL_PATH', '/share/official_pretrains/hf_home/cogagent-chat-hf')
-TOKENIZER_PATH = os.environ.get('TOKENIZER_PATH', '/share/official_pretrains/hf_home/vicuna-7b-v1.5')
+MODEL_PATH = os.environ.get('MODEL_PATH', '')
+TOKENIZER_PATH = os.environ.get('TOKENIZER_PATH', '')
 PT_PATH = os.environ.get('PT_PATH', None)
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
