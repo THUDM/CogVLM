@@ -10,26 +10,44 @@ import warnings
 import torch
 from PIL import Image
 from transformers import AutoModelForCausalLM, LlamaTokenizer
+import argparse
 
-MODEL_PATH = 'your path of CogAgent or CogVLM'
-TOKENIZER_PATH = 'your path of vicuna'
+parser = argparse.ArgumentParser()
+parser.add_argument("--quant", choices=[4], type=int, default=None, help='quantization bits')
+parser.add_argument("--from_pretrained", type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt') # TODO
+parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path') #TODO
+parser.add_argument("--fp16", action="store_true")
+parser.add_argument("--bf16", action="store_true")
+
+args = parser.parse_args()
+MODEL_PATH = args.from_pretrained
+TOKENIZER_PATH = args.local_tokenizer
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 tokenizer = LlamaTokenizer.from_pretrained(TOKENIZER_PATH)
-if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
-    torch_type = torch.float16
+if args.bf16:
+    torch_type = torch.bfloat16
 else:
     torch_type = torch.float16
-    warnings.warn("Your GPU does not support bfloat16 type, use fp16 instead")
 
 print("========Use torch type as:{} with device:{}========\n\n".format(torch_type, DEVICE))
 
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_PATH,
-    torch_dtype=torch_type,
-    low_cpu_mem_usage=True,
-    trust_remote_code=True
-).to(DEVICE).eval()
+if args.quant:
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_PATH,
+        torch_dtype=torch_type,
+        low_cpu_mem_usage=True,
+        load_in_4bit=True,
+        trust_remote_code=True
+    ).eval()
+else:
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_PATH,
+        torch_dtype=torch_type,
+        low_cpu_mem_usage=True,
+        load_in_4bit=args.quant is not None,
+        trust_remote_code=True
+    ).to(DEVICE).eval()
 
 while True:
     image_path = input("image path >>>>> ")

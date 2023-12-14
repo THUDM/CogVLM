@@ -10,7 +10,7 @@ script_dir=$(dirname $script_path)
 main_dir=$(dirname $script_dir)
 MODEL_TYPE="cogvlm-base-490"
 VERSION="base"
-MODEL_ARGS="--from_pretrained ./checkpoints/merged_lora \
+MODEL_ARGS="--from_pretrained ./checkpoints/merged_lora_490 \
     --max_length 1288 \
     --lora_rank 10 \
     --use_lora \
@@ -52,7 +52,7 @@ gpt_options=" \
 
               
 
-run_cmd="${OPTIONS_NCCL} ${OPTIONS_SAT} deepspeed --master_port 16666 --hostfile ${HOST_FILE_PATH} evaluate_demo.py ${gpt_options}"
+run_cmd="${OPTIONS_NCCL} ${OPTIONS_SAT} deepspeed --master_port 16666 --hostfile ${HOST_FILE_PATH} evaluate_cogvlm_demo.py ${gpt_options}"
 echo ${run_cmd}
 eval ${run_cmd}
 
