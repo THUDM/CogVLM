@@ -148,11 +148,12 @@ python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --fp16 --qu
 For huggingface version:
 
 ```python
-tokenizer = LlamaTokenizer.from_pretrained('vicuna-7b-v1.5')
+tokenizer = LlamaTokenizer.from_pretrained('lmsys/vicuna-7b-v1.5')
     model = AutoModelForCausalLM.from_pretrained(
         'THUDM/cogvlm-chat-hf',
         load_in_4bit=True,
         trust_remote_code=True,
+        bnb_4bit_compute_dtype=torch.float16,
     ).eval()
 query = 'Describe this image in details.'
 image = Image.open('image-path').convert('RGB')
