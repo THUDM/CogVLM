@@ -51,7 +51,6 @@ def main():
     from sat.mpu import get_model_parallel_world_size
     assert world_size == get_model_parallel_world_size(), "world size must equal to model parallel size for cli_demo!"
 
-    # tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
     language_processor_version = model_args.text_processor_version if 'text_processor_version' in model_args else args.version
     print("[Language processor version]:", language_processor_version)
     tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=language_processor_version)
@@ -139,12 +138,8 @@ def main():
                 if rank == 0 and not args.stream_chat:
                     if args.chinese:
                         print("模型："+response)
-                        if tokenizer.signal_type == "grounding":
-                            print("Grounding 结果已保存至 ./output.png")
                     else:
                         print("Model: "+response)
-                        if tokenizer.signal_type == "grounding":
-                            print("Grounding result is saved at ./output.png")
                 image_path = None
                 if args.chinese:
                     if rank == 0:

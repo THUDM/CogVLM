@@ -22,15 +22,17 @@ from utils.models import CogAgentModel, CogVLMModel
 
 
 
-DESCRIPTION = '''<h2 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM/Agent</a> </h2>'''
+DESCRIPTION = '''<h1 style='text-align: center'> <a href="https://github.com/THUDM/CogVLM">CogVLM / CogAgent</a> </h1>'''
 
-NOTES = 'This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model.'
+NOTES = '<h3> This app is adapted from <a href="https://github.com/THUDM/CogVLM">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model, CogVLM & CogAgent. </h3>'
 
 MAINTENANCE_NOTICE1 = 'Hint 1: If the app report "Something went wrong, connection error out", please turn off your proxy and retry.<br>Hint 2: If you upload a large size of image like 10MB, it may take some time to upload and process. Please be patient and wait.'
 
-GROUNDING_NOTICE = 'Hint: When you check "Grounding", please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344">corresponding prompt</a> or the examples below.'
 
-AGENT_NOTICE = 'Hint: When you check "Agent", please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761">corresponding prompt</a> or the examples below.'
+AGENT_NOTICE = 'Hint 1: To use <strong>Agent</strong> function, please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761">prompts for agents</a>.'
+
+GROUNDING_NOTICE = 'Hint 2: To use <strong>Grounding</strong> function, please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344">prompts for grounding</a>.'
+
 
 
 
@@ -71,7 +73,8 @@ def load_model(args):
     model = model.eval()
     assert world_size == get_model_parallel_world_size(), "world size must equal to model parallel size for cli_demo!"
 
-    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)
+    language_processor_version = model_args.text_processor_version if 'text_processor_version' in model_args else args.version
+    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=language_processor_version)
     image_processor = get_image_processor(model_args.eva_args["image_size"][0])
     cross_image_processor = get_image_processor(model_args.cross_image_pix) if "cross_image_pix" in model_args else None
 
@@ -102,7 +105,7 @@ def post(
             del result_text[i]
     print(f"history {result_text}")
     
-    global model, image_processor, text_processor_infer, is_grounding
+    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding
 
     try:
         with torch.no_grad():
@@ -155,25 +158,21 @@ def main(args):
     is_grounding = 'grounding' in args.from_pretrained
     
     gr.close_all()
-    examples = []
-    example_ids = list(range(3)) if not is_grounding else list(range(3,6,1))
-    with open("./examples/example_inputs.jsonl") as f:
-        for i, line in enumerate(f):
-            if i not in example_ids: continue
-            data = json.loads(line)
-            examples.append(data)
-
 
     with gr.Blocks(css='style.css') as demo:
         state = gr.State({'args': args})
 
         gr.Markdown(DESCRIPTION)
         gr.Markdown(NOTES)
+        
 
         with gr.Row():
-            with gr.Column(scale=4.5):
+            with gr.Column(scale=5):
                 with gr.Group():
+                    gr.Markdown(AGENT_NOTICE)
+                    gr.Markdown(GROUNDING_NOTICE)
                     input_text = gr.Textbox(label='Input Text', placeholder='Please enter text prompt below and press ENTER.')
+                    
                     with gr.Row():
                         run_button = gr.Button('Generate')
                         clear_button = gr.Button('Clear')
@@ -185,14 +184,10 @@ def main(args):
                     top_p = gr.Slider(maximum=1, value=0.4, minimum=0, label='Top P')
                     top_k = gr.Slider(maximum=100, value=10, minimum=1, step=1, label='Top K')
 
-            with gr.Column(scale=5.5):
-                result_text = gr.components.Chatbot(label='Multi-round conversation History', value=[("", "Hi, What do you want to know about this image?")]).style(height=550)
+            with gr.Column(scale=5):
+                result_text = gr.components.Chatbot(label='Multi-round conversation History', value=[("", "Hi, What do you want to know about this image?")], height=600)
                 hidden_image_hash = gr.Textbox(visible=False)
 
-        gr_examples = gr.Examples(examples=[[example["text"], example["image"]] for example in examples], 
-                                  inputs=[input_text, image_prompt],
-                                  label="Example Inputs (Click to insert an example into the input box)",
-                                  examples_per_page=6)
 
         gr.Markdown(MAINTENANCE_NOTICE1)
 
@@ -205,9 +200,8 @@ def main(args):
         image_prompt.upload(fn=clear_fn2, inputs=clear_button, outputs=[result_text])
         image_prompt.clear(fn=clear_fn2, inputs=clear_button, outputs=[result_text])
 
-        print(gr.__version__)
 
-    demo.queue(concurrency_count=10)
+    # demo.queue(concurrency_count=10)
     demo.launch()
 
 
