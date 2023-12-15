@@ -285,6 +285,6 @@ if __name__ == '__main__':
         model.get_mixin("lora").merge_lora()
         model.get_mixin("eva").vit_model.get_mixin("lora").merge_lora()
         args.use_lora = False
-        args.save = "checkpoints/merged_lora_{}".format(args.eva_args["image_size"][0])
+        args.save = "checkpoints/merged_lora_cogagent"
         from sat.training.model_io import save_checkpoint
         save_checkpoint(1, model, None, None, args)

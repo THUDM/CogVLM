@@ -1,85 +1,86 @@
-# CogVLM
+# CogVLM & CogAgent
 
-📖 [Paper（论文）](https://arxiv.org/abs/2311.03079)
+ 
+🔥🔥🔥 🆕 ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed based on CogVLM. It features visual-based GUI Agent capabilities and has further enhancements in image understanding. It supports image input with a resolution of 1120*1120, and possesses multiple abilities including multi-turn dialogue with images, GUI Agent, Grounding, and more.
 
-🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
+🌟 **Jump to detailed introduction: [Introduction to CogVLM](#introduction-to-cogvlm)，  🆕 [Introduction to CogAgent](#introduction-to-cogagent)**
 
-🔥 **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory! See [details](#CLI).
+<table>
+  <tr>
+    <td>
+      <h2> CogVLM </h2>
+      <p> 🌐  Web Demo: <a href="http:http://36.103.203.44:7861">this link</a> </p>
+      <p> 📖  Paper: <a href="https://arxiv.org/abs/2311.03079">CogVLM: Visual Expert for Pretrained Language Models</a></p>
+      <p>CogVLM is a powerful **open-source visual language model (VLM)**. CogVLM-17B has 10 billion visual parameters and 7 billion language parameters, supporting image understanding and multi-turn dialogue with a resolution of 490*490.</p>
+      <p>CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC.</p>
+    </td>
+    <td>
+      <h2> CogAgent </h2>
+      <p> 🌐  Web Demo: <a href="">will launch on December 18th</a> </p>
+      <p> 📖  Paper: <a href="https://arxiv.org/abs/2312.08914">CogAgent: A Visual Language Model for GUI Agents </a></p>
+      <p>CogAgent is an open-source visual language model improved based on CogVLM. CogAgent-18B has 11 billion visual parameters and 7 billion language parameters, supporting image understanding at a resolution of 1120*1120. On top of the capabilities of CogVLM, it possesses GUI image Agent capabilities.</p>
+      <p> CogAgent-18B achieves state-of-the-art generalist performance on 9 classic cross-modal benchmarks, including VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. It significantly surpasses existing models on GUI operation datasets such as AITW and Mind2Web.</p>
+    </td>
+  </tr>
+</table>
 
-🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
+**Table of Contents**
+- [CogVLM \& CogAgent](#cogvlm--cogagent)
+  - [Release](#release)
+  - [Get Started](#get-started)
+    - [Option 1: Inference Using Web Demo.](#option-1-inference-using-web-demo)
+    - [Option 2：Deploy CogVLM / CogAgent by yourself](#option-2deploy-cogvlm--cogagent-by-yourself)
+      - [Situation 2.1 CLI (SAT version)](#situation-21-cli-sat-version)
+      - [Situation 2.1 CLI (Huggingface version)](#situation-21-cli-huggingface-version)
+      - [Situation 2.2 Web Demo](#situation-22-web-demo)
+    - [Option 3：Finetuning CogAgent / CogVLM](#option-3finetuning-cogagent--cogvlm)
+    - [Option 4: OpenAI Vision format](#option-4-openai-vision-format)
+    - [Hardware requirement](#hardware-requirement)
+    - [Checkpoints](#checkpoints)
+  - [Introduction to CogVLM](#introduction-to-cogvlm)
+    - [Examples](#examples)
+  - [Introduction to CogAgent](#introduction-to-cogagent)
+    - [GUI Agent Examples](#gui-agent-examples)
+  - [Cookbook](#cookbook)
+    - [Task Prompts](#task-prompts)
+    - [Which --version to use](#which---version-to-use)
+    - [FAQ](#faq)
+  - [License](#license)
+  - [Citation \& Acknowledgements](#citation--acknowledgements)
 
-🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
+## Release
 
-🔥 **News**: ```2023/10/27``` CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
+- 🔥🔥🔥 **News**: ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed based on CogVLM. It features **visual-based GUI Agent capabilities** and has further enhancements in image understanding. It supports image input with a resolution of 1120*1120, and possesses multiple abilities including multi-turn dialogue with images, GUI Agent, Grounding, and more.
 
-[中文版README](./README_zh.md)
+- 🔥 **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory! See [details](#CLI).
 
-## Introduction
-- CogVLM is a powerful **open-source visual language model** (**VLM**). CogVLM-17B has 10 billion vision parameters and 7 billion language parameters.
+- 🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
 
-- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**. CogVLM can also [chat with you](http://36.103.203.44:7861) about images.
+- 🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
 
-<div align="center">
-    <img src=assets/metrics-min.png width=80% />
-</div>
+-  ```2023/10/27``` CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
 
-| Method           | LLM           | MM-VET | POPE(adversarial) | TouchStone |
-| ---------------- | ------------- |--------| --------- |------------|
-| BLIP-2           | Vicuna-13B    | 22.4   | -         | -          |
-| Otter            | MPT-7B        | 24.7   | -         | -          |
-| MiniGPT4         | Vicuna-13B    | 24.4   | 70.4      | 531.7      |
-| InstructBLIP     | Vicuna-13B    | 25.6   | 77.3      | 552.4      |
-| LLaMA-Adapter v2 | LLaMA-7B      | 31.4   | -         | 590.1      |
-| LLaVA            | LLaMA2-7B     | 28.1   | 66.3      | 602.7      |
-| mPLUG-Owl        | LLaMA-7B      | -      | 66.8      | 605.4      |
-| LLaVA-1.5        | Vicuna-13B    | 36.3   | 84.5      | -          |
-| Emu              | LLaMA-13B     | 36.3   | -         | -          |
-| Qwen-VL-Chat     | -             | -      | -         | 645.2      |
-| DreamLLM         | Vicuna-7B     | 35.9   | 76.5      | -          |
-| CogVLM           | Vicuna-7B     | **52.8**   | **87.6**      | **742.0**      |
+- ```2023/10/5``` CogVLM-17B released。
 
-## Examples
-
-<!-- CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grounding Visual Question Answering**, etc. -->
-* CogVLM can accurately describe images in details with **very few hallucinations**.
-    <details>
-    <summary>Click for comparison with LLAVA-1.5 and MiniGPT-4.</summary>
-
-    ![LLAVA Comparision](assets/llava-comparison-min.png)
-    </details>
-    <br>
-
-* CogVLM can understand and answer various types of questions, and has a **visual grounding** version.
-<div align="center">
-    <img src=assets/pear_grounding.png width=90% />
-</div>
-
-<br>
-
-* CogVLM sometimes captures more detailed content than GPT-4V(ision).
-<div align="center">
-    <img src=assets/compare-min.png width=90% />
-</div>
-
-<!-- ![compare](assets/compare.png) -->
-<br> 
-
-<details>
-<summary>Click to expand more examples.</summary>
-
-![Chat Examples](assets/chat.png)
-
-</details>
-
-## Method
-CogVLM model comprises four fundamental components: a vision transformer (ViT) encoder, an MLP adapter, a pretrained large language model (GPT), and a **visual expert module**. See [Paper](./assets/cogvlm-paper.pdf) for more details.
-
-<div align="center">
-    <img src=assets/method-min.png width=70% />
-</div>
 
 ## Get Started
-We support two GUIs for model inference, **web demo** and **CLI**. If you want to use it in your python code, it is easy to modify the CLI scripts for your case. 
+
+### Option 1: Inference Using Web Demo.
+
+* Click here to enter [CogAgent Web Demo](TODO)
+
+* Click here to enter [CogVLM Web Demo](http://36.103.203.44:7861/)。
+
+If you need to use Agent and Grounding functions, please refer to [Cookbook - Task Prompts](#task-prompts)
+
+### Option 2：Deploy CogVLM / CogAgent by yourself
+
+We support two GUIs for model inference, **CLI** and **web demo** . If you want to use it in your python code, it is easy to modify the CLI scripts for your case. 
+
+
+<!-- ### Online Web Demo
+We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app). -->
+
 
 First, we need to install the dependencies.
 
@@ -88,204 +89,126 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-#### Hardware requirement
-* Model Inference: 1 * A100(80G) or 2 * RTX 3090(24G).
-* Finetuning: 4 * A100(80G) *[Recommend]* or 8* RTX 3090(24G).
+**All code for inference is located under the ``basic_demo/`` directory. Please switch to this directory first before proceeding with further operations.**
 
-<!-- ### Online Web Demo
-We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app). -->
+#### Situation 2.1 CLI (SAT version)
 
-### Web Demo
+Run CLI demo via:
+
+```bash
+# CogAgent
+python cli_demo_sat.py --from_pretrained cogagent-chat --version chat --bf16  --stream_chat
+
+# CogVLM
+python cli_demo_sat.py --from_pretrained cogvlm-chat --version chat_old --bf16  --stream_chat
+python cli_demo_sat.py --from_pretrained cogvlm-grounding-generalist --version base --bf16  --stream_chat
+```
+
+The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter.
+Enter `clear` to clear the conversation history and `stop` to stop the program.
+
+We also support model parallel inference, which splits model to multiple (2/4/8) GPUs. `--nproc-per-node=[n]` in the following command controls the number of used GPUs.
+```
+torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo_sat.py --from_pretrained cogagent-chat --version chat --bf16
+```
+
+- If you want to manually download the weights, you can replace the path after ``--from_pretrained`` with the model path. 
+
+- Our model supports SAT's **4-bit quantization** and **8-bit quantization**. 
+You can change ``--bf16`` to ``--fp16``, or ``--fp16 --quant 4``, or ``--fp16 --quant 8``.
+
+    For example
+
+    ```bash
+    python cli_demo_sat.py --from_pretrained cogagent-chat --fp16 --quant 8 --stream_chat
+    python cli_demo_sat.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --stream_chat
+    # In SAT version，--quant should be used with --fp16
+    ```
+
+- The program provides the following hyperparameters to control the generation process:
+    ```
+    usage: cli_demo_sat.py [-h] [--max_length MAX_LENGTH] [--top_p TOP_P] [--top_k TOP_K] [--temperature TEMPERATURE]
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    --max_length MAX_LENGTH
+                            max length of the total sequence
+    --top_p TOP_P         top p for nucleus sampling
+    --top_k TOP_K         top k for top k sampling
+    --temperature TEMPERATURE
+                            temperature for sampling
+    ```
+
+- Click [here](#which---version-to-use) to view the correspondence between different models and the ``--version`` parameter.
+
+#### Situation 2.1 CLI (Huggingface version)
+
+Run CLI demo via:
+
+```bash
+# CogAgent
+python cli_demo_hf.py --from_pretrained THUDM/cogagent-chat-hf --bf16
+
+# CogVLM
+python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --bf16
+python cli_demo_hf.py --from_pretrained THUDM/cogvlm-grounding-generalist --bf16
+```
+
+- If you want to manually download the weights, you can replace the path after ``--from_pretrained`` with the model path. 
+
+- You can change ``--bf16`` to ``--fp16``, or ``--quant 4``. For example, our model supports Huggingface's **4-bit quantization**:
+
+    ```bash
+    python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --quant 4
+    ```
+
+
+#### Situation 2.2 Web Demo
 We also offer a local web demo based on Gradio. First, install Gradio by running: `pip install gradio`. Then download and enter this repository and run `web_demo.py`. See the next section for detailed usage:
 
 ```bash
-python web_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16
-python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
+python web_demo.py --from_pretrained cogagent-chat --version chat --bf16
+python web_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat_old --bf16
+python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --bf16
 ```
 The GUI of the web demo looks like:
+
 <div align="center">
     <img src=assets/web_demo-min.png width=70% />
 </div>
 
-### CLI
-We open-source different checkpoints for different downstreaming tasks:
+### Option 3：Finetuning CogAgent / CogVLM
 
-* `cogvlm-chat-v1.1` The model supports multiple rounds of chat and vqa simultaneously, with different prompts.
-* `cogvlm-base-224` The original checkpoint after text-image pretraining.
-* `cogvlm-base-490` Amplify the resolution to 490 through position encoding interpolation from `cogvlm-base-224`.
-* `cogvlm-grounding-generalist`. This checkpoint supports different visual grounding tasks, e.g. REC, Grounding Captioning, etc. 
+You may want to use CogVLM in your own task, which needs a **different output style or domain knowledge**. **All code for finetuning is located under the ``finetune_demo/`` directory.**
 
-Run CLI demo via:
-```bash
-# Chat version will provide detailed answers, while vqa version usually only has one word in answer.
-python cli_demo.py --from_pretrained cogvlm-base-224 --version base --english --bf16 --no_prompt
-python cli_demo.py --from_pretrained cogvlm-base-490 --version base --english --bf16 --no_prompt
-python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16
-python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version vqa --english --bf16
-python cli_demo.py --from_pretrained cogvlm-grounding-generalist --version base --english --bf16
-```
-The program will automatically download the sat model and interact in the command line. You can generate replies by entering instructions and pressing enter.
-Enter `clear` to clear the conversation history and `stop` to stop the program.
-
-Quantization is also supported. For SAT version:
-
-```bash
-python cli_demo.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --english --stream_chat
-```
-
-For huggingface version:
-
-```python
-tokenizer = LlamaTokenizer.from_pretrained('vicuna-7b-v1.5')
-    model = AutoModelForCausalLM.from_pretrained(
-        'THUDM/cogvlm-chat-hf',
-        load_in_4bit=True,
-        trust_remote_code=True,
-    ).eval()
-query = 'Describe this image in details.'
-image = Image.open('image-path').convert('RGB')
-inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image])  # chat mode
-inputs = {
-    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
-    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
-    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
-    'images': [[inputs['images'][0].to('cuda').to(torch.float16)]],
-}
-gen_kwargs = {"max_length": 2048, "do_sample": False}
-
-with torch.no_grad():
-    outputs = model.generate(**inputs, **gen_kwargs)
-    outputs = outputs[:, inputs['input_ids'].shape[1]:]
-    print(tokenizer.decode(outputs[0]))
-```
-
-#### Multi-GPU inference
-We also support model parallel inference, which splits model to multiple (2/4/8) GPUs. `--nproc-per-node=[n]` in the following command controls the number of used GPUs.
-```
-torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16
-```
-
-**Note**:
-
-* If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
-* If you have trouble in automatically downloading model with 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) or 🤗[huggingface](https://huggingface.co/THUDM/CogVLM) or 💡[wisemodel](https://www.wisemodel.cn/models/ZhipuAI/CogVLM) manually.
-* Download model using 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), the model will be saved to the default location `~/.sat_models`. Change the default location by setting the environment variable `SAT_HOME`. For example, if you want to save the model to `/path/to/my/models`, you can run `export SAT_HOME=/path/to/my/models` before running the python command.
-
-The program provides the following hyperparameters to control the generation process:
-```
-usage: cli_demo.py [-h] [--max_length MAX_LENGTH] [--top_p TOP_P] [--top_k TOP_K] [--temperature TEMPERATURE] [--english]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --max_length MAX_LENGTH
-                        max length of the total sequence
-  --top_p TOP_P         top p for nucleus sampling
-  --top_k TOP_K         top k for top k sampling
-  --temperature TEMPERATURE
-                        temperature for sampling
-  --english             only output English
-```
-
-### Finetuning
-You may want to use CogVLM in your own task, which needs a **different output style or domain knowledge**. We here provide a finetuning example for **Captcha Recognition**.
+We here provide a finetuning example for **Captcha Recognition** using lora.
 
 1. Start by downloading the [Captcha Images dataset](https://www.kaggle.com/datasets/aadhavvignesh/captcha-images). Once downloaded, extract the contents of the ZIP file.
 
 2. To create a train/validation/test split in the ratio of 80/5/15, execute the following:
     ```bash
-    python scripts/split_dataset.py
+    python utils/split_dataset.py
     ```
 
 3. Start the fine-tuning process with this command:
 
     ```bash
-    bash scripts/finetune_(224/490)_lora.sh
+    bash finetune_demo/finetune_(cogagent/cogvlm)_lora.sh
     ```
 
 4. Merge the model to `model_parallel_size=1`: (replace the 4 below with your training `MP_SIZE`)
 
     ```bash
-    torchrun --standalone --nnodes=1 --nproc-per-node=4 merge_model.py --version base --bf16 --from_pretrained ./checkpoints/merged_lora_(224/490)
+    torchrun --standalone --nnodes=1 --nproc-per-node=4 utils/merge_model.py --version base --bf16 --from_pretrained ./checkpoints/merged_lora_(cogagent/cogvlm490/cogvlm224)
     ```
 
 5. Evaluate the performance of your model.
     ```bash
-    bash scripts/evaluate_(224/490).sh
+    bash finetune_demo/evaluate_(cogagent/cogvlm).sh
     ```
 
-It is recommended to use the `490px` version. However, if you have limited GPU resources (such as only one node with 8* RTX 3090), you can try `224px` version with model parallel. 
 
-The anticipated result of this script is around `95%` accuracy on test set.
-
-It is worth noting that the fine-tuning examples only tune limited parameters. (Expert only) If you want to get `>98%` accuracy, you need to increase the trainable parameters in `finetune_demo.py`.
-
-
-### 🤗 Transformers
-
-To use CogVLM for the inference with transformers, use the following code:
-
-```python
-import torch
-import requests
-from PIL import Image
-from transformers import AutoModelForCausalLM, LlamaTokenizer
-
-tokenizer = LlamaTokenizer.from_pretrained('lmsys/vicuna-7b-v1.5')
-model = AutoModelForCausalLM.from_pretrained(
-    'THUDM/cogvlm-chat-hf',
-    torch_dtype=torch.bfloat16,
-    low_cpu_mem_usage=True,
-    trust_remote_code=True
-).to('cuda').eval()
-
-
-# chat example
-
-query = 'Describe this image'
-image = Image.open(requests.get('https://github.com/THUDM/CogVLM/blob/main/examples/1.png?raw=true', stream=True).raw).convert('RGB')
-inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image])  # chat mode
-inputs = {
-    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
-    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
-    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
-    'images': [[inputs['images'][0].to('cuda').to(torch.bfloat16)]],
-}
-gen_kwargs = {"max_length": 2048, "do_sample": False}
-
-with torch.no_grad():
-    outputs = model.generate(**inputs, **gen_kwargs)
-    outputs = outputs[:, inputs['input_ids'].shape[1]:]
-    print(tokenizer.decode(outputs[0]))
-
-# This image captures a moment from a basketball game. Two players are prominently featured: one wearing a yellow jersey with the number
-# 24 and the word 'Lakers' written on it, and the other wearing a navy blue jersey with the word 'Washington' and the number 34. The player
-# in yellow is holding a basketball and appears to be dribbling it, while the player in navy blue is reaching out with his arm, possibly
-# trying to block or defend. The background shows a filled stadium with spectators, indicating that this is a professional game.</s>
-
-
-
-# vqa example
-
-query = 'How many houses are there in this cartoon?'
-image = Image.open(requests.get('https://github.com/THUDM/CogVLM/blob/main/examples/3.jpg?raw=true', stream=True).raw).convert('RGB')
-inputs = model.build_conversation_input_ids(tokenizer, query=query, history=[], images=[image], template_version='vqa')   # vqa mode
-inputs = {
-    'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
-    'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
-    'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
-    'images': [[inputs['images'][0].to('cuda').to(torch.bfloat16)]],
-}
-gen_kwargs = {"max_length": 2048, "do_sample": False}
-
-with torch.no_grad():
-    outputs = model.generate(**inputs, **gen_kwargs)
-    outputs = outputs[:, inputs['input_ids'].shape[1]:]
-    print(tokenizer.decode(outputs[0]))
-
-# 4</s>
-```
-
-### OpenAI Vision formate
+### Option 4: OpenAI Vision format
 
 We provide the same API examples as `GPT-4V`, which you can view in `openai_demo`.
 1. First, start the node
@@ -301,6 +224,276 @@ python openai_demo/openai_api_request.py
 This image showcases a tranquil natural scene with a wooden pathway leading through a field of lush green grass. In the distance, there are trees and some scattered structures, possibly houses or small buildings. The sky is clear with a few scattered clouds, suggesting a bright and sunny day.
 ```
 
+### Hardware requirement
+
+* Model Inference: 
+    
+    For INT4 quantization: 1 * RTX 3090(24G) 
+
+    For FP16: 1 * A100(80G) or 2 * RTX 3090(24G) 
+
+* Finetuning: 
+
+    For FP16: 4 * A100(80G) *[Recommend]* or 8* RTX 3090(24G).
+
+### Checkpoints
+If you run the `basic_demo/cli_demo*.py` from the code repository, it will automatically download SAT or Hugging Face weights. Alternatively, you can choose to manually download the necessary weights.
+
+- CogAgent
+
+    |   Model name    | Input resolution |                             Introduction                             | Huggingface model | SAT model |
+    | :-----------: | :----: | :----------------------------------------------------------: | :------: | :-------: |
+    | cogagent-chat |  1120  | Chat version of CogAgent. Supports GUI Agent, multiple-round  chat and visual grounding. |  [link](https://huggingface.co/THUDM/cogagent-chat-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
+
+- CogVLM
+
+    |          Model name           | Input resolution |                           Introduction                            | Huggingface model | SAT model |
+    | :-------------------------: | :----: | :-------------------------------------------------------: | :------: | :-------: |
+    |         cogvlm-chat-v1.1         |  490   |  Supports multiple rounds of chat and vqa simultaneously, with different prompts.   |  [link](https://huggingface.co/THUDM/cogvlm-chat-hf)        |    [link](https://huggingface.co/THUDM/CogVLM/tree/main)        |
+    |       cogvlm-base-224       |  224   |               The original checkpoint after text-image pretraining.               |   [link](https://huggingface.co/THUDM/cogvlm-base-224-hf)       |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
+    |       cogvlm-base-490       |  490   |      Amplify the resolution to 490 through position encoding interpolation from `cogvlm-base-224`.      |   [link](https://huggingface.co/THUDM/cogvlm-base-490-hf)       |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
+    | cogvlm-grounding-generalist |  490   | This checkpoint supports different visual grounding tasks, e.g. REC, Grounding Captioning, etc.  |    [link](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)      |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
+
+
+## Introduction to CogVLM
+- CogVLM is a powerful **open-source visual language model** (**VLM**). CogVLM-17B has 10 billion vision parameters and 7 billion language parameters.
+
+- CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC, and rank the 2nd on VQAv2, OKVQA, TextVQA, COCO captioning, etc., **surpassing or matching PaLI-X 55B**. CogVLM can also [chat with you](http://36.103.203.44:7861) about images.
+
+<div align="center">
+    <img src=assets/metrics-min.png width=50% />
+</div>
+
+<details>
+<summary>Click to view results on MM-VET, POPE, TouchStone. </summary>
+
+<table>
+    <tr>
+        <td>Method</td>
+        <td>LLM</td>
+        <td>MM-VET</td>
+        <td>POPE(adversarial)</td>
+        <td>TouchStone</td>
+    </tr>
+    <tr>
+        <td>BLIP-2</td>
+        <td>Vicuna-13B</td>
+        <td>22.4</td>
+        <td>-</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>Otter</td>
+        <td>MPT-7B</td>
+        <td>24.7</td>
+        <td>-</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>MiniGPT4</td>
+        <td>Vicuna-13B</td>
+        <td>24.4</td>
+        <td>70.4</td>
+        <td>531.7</td>
+    </tr>
+    <tr>
+        <td>InstructBLIP</td>
+        <td>Vicuna-13B</td>
+        <td>25.6</td>
+        <td>77.3</td>
+        <td>552.4</td>
+    </tr>
+    <tr>
+        <td>LLaMA-Adapter v2</td>
+        <td>LLaMA-7B</td>
+        <td>31.4</td>
+        <td>-</td>
+        <td>590.1</td>
+    </tr>
+    <tr>
+        <td>LLaVA</td>
+        <td>LLaMA2-7B</td>
+        <td>28.1</td>
+        <td>66.3</td>
+        <td>602.7</td>
+    </tr>
+    <tr>
+        <td>mPLUG-Owl</td>
+        <td>LLaMA-7B</td>
+        <td>-</td>
+        <td>66.8</td>
+        <td>605.4</td>
+    </tr>
+    <tr>
+        <td>LLaVA-1.5</td>
+        <td>Vicuna-13B</td>
+        <td>36.3</td>
+        <td>84.5</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>Emu</td>
+        <td>LLaMA-13B</td>
+        <td>36.3</td>
+        <td>-</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>Qwen-VL-Chat</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>645.2</td>
+    </tr>
+    <tr>
+        <td>DreamLLM</td>
+        <td>Vicuna-7B</td>
+        <td>35.9</td>
+        <td>76.5</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>CogVLM</td>
+        <td>Vicuna-7B</td>
+        <td> <b>52.8</b> </td>
+        <td><b>87.6</b></td>
+        <td><b>742.0</b></td>
+    </tr>
+</table>
+
+</details>
+
+### Examples
+
+<!-- CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grounding Visual Question Answering**, etc. -->
+* CogVLM can accurately describe images in details with **very few hallucinations**.
+    <details>
+    <summary>Click for comparison with LLAVA-1.5 and MiniGPT-4.</summary>
+
+    <img src=assets/llava-comparison-min.png width=50% />
+
+    </details>
+    <br>
+
+* CogVLM can understand and answer various types of questions, and has a **visual grounding** version.
+<div align="center">
+    <img src=assets/pear_grounding.png width=50% />
+</div>
+
+<br>
+
+* CogVLM sometimes captures more detailed content than GPT-4V(ision).
+<div align="center">
+    <img src=assets/compare-min.png width=50% />
+</div>
+
+<!-- ![compare](assets/compare.png) -->
+<br> 
+
+<details>
+<summary>Click to expand more examples.</summary>
+
+![Chat Examples](assets/chat.png)
+
+</details>
+
+
+## Introduction to CogAgent
+
+CogAgent is an open-source visual language model improved based on CogVLM. CogAgent-18B has 11 billion visual parameters and 7 billion language parameters
+
+CogAgent-18B achieves state-of-the-art generalist performance on 9 classic cross-modal benchmarks, including VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. It significantly surpasses existing models on GUI operation datasets such as AITW and Mind2Web.
+
+In addition to all the features already present in CogVLM (visual multi-round dialogue, visual grounding), CogAgent:
+
+1. Supports higher resolution visual input and dialogue question-answering. **It supports ultra-high-resolution image inputs of 1120x1120.**
+
+2. **Possesses the capabilities of a visual Agent**, being able to return a plan, next action, and specific operations with coordinates for any given task on any GUI screenshot.
+
+3. **Enhanced GUI-related question-answering capabilities**, allowing it to handle questions about any GUI screenshot, such as web pages, PC apps, mobile applications, etc.
+
+4. Enhanced capabilities in OCR-related tasks through improved pre-training and fine-tuning.
+
+
+
+<div align="center">
+    <img src=assets/cogagent_function.jpg width=50% />
+</div>
+
+### GUI Agent Examples
+
+<div align="center">
+    <img src=assets/cogagent_main_demo.jpg width=90% />
+</div>
+
+
+## Cookbook
+
+### Task Prompts
+1. **General Multi-Round Dialogue**: Say whatever you want.
+
+2. **GUI Agent Task**: Use the [Agent template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761) and replace \<TASK\> with the task instruction enclosed in double quotes. This query can make CogAgent infer Plan and Next Action. If adding ``(with grounding)`` at the end of the query, the model will return a formalized action representation with coordinates.
+
+For example, to ask the model how to complete the task "Search for CogVLM" on a current GUI screenshot, follow these steps:
+
+    1. Randomly select a template from the [Agent template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761). Here, we choose ``What steps do I need to take to <TASK>?``.
+
+    2. Replace <TASK> with the task instruction enclosed in double quotes, for example, ``What steps do I need to take to "Search for CogVLM"?`` . Inputting this to the model yields:
+
+    > Plan: 1. Type 'CogVLM' into the Google search bar. 2. Review the search results that appear. 3. Click on a relevant result to read more about CogVLM or access further resources.
+    > 
+    > Next Action: Move the cursor to the Google search bar, and type 'CogVLM' into it.
+
+    3. If adding ``(with grounding)`` at the end, i.e. changing the input to ``What steps do I need to take to "Search for CogVLM"?(with grounding)``, the output of CogAgent would be:
+
+    > Plan: 1. Type 'CogVLM' into the Google search bar. 2. Review the search results that appear. 3. Click on a relevant result to read more about CogVLM or access further resources.
+    > 
+    > Next Action: Move the cursor to the Google search bar, and type 'CogVLM' into it.
+    Grounded Operation:[combobox] Search -> TYPE: CogVLM at the box [[212,498,787,564]]
+
+    Tip: For GUI Agent tasks, it is recommended to conduct only single-round dialogues for each image for better results.
+
+3. **Visual Grounding**. Three modes of grounding are supported:
+
+    - Image description with grounding coordinates (bounding box). Use any template from [caption_with_box template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L537) as model input. For example: 
+    
+    > Can you provide a description of the image and include the coordinates [[x0,y0,x1,y1]] for each mentioned object?
+
+    - Returning grounding coordinates (bounding box) based on the description of objects. Use any template from [caption2box template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L345), replacing ``<expr>`` with the object's description. For example:
+    
+    > Can you point out *children in blue T-shirts* in the image and provide the bounding boxes of their location?
+
+    - Providing a description based on bounding box coordinates. Use a template from [box2caption template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L400), replacing ``<objs>`` with the position coordinates. For example: 
+    
+    > Tell me what you see within the designated area *[[086,540,400,760]]* in the picture.
+
+
+**Format of coordination:** The bounding box coordinates in the model's input and output use the format ``[[x1, y1, x2, y2]]``, with the origin at the top left corner, the x-axis to the right, and the y-axis downward. (x1, y1) and (x2, y2) are the top-left and bottom-right corners, respectively, with values as relative coordinates multiplied by 1000 (prefixed with zeros to three digits).
+
+
+### Which --version to use
+
+Due to differences in model functionalities, different model versions may have distinct ``--version`` specifications for the text processor, meaning the format of the prompts used varies.
+
+|          model name           | --version |
+| :-------------------------: | :-------: |
+|        cogagent-chat        |   chat    |
+|         cogvlm-chat         | chat_old  |
+|      cogvlm-chat-v1.1       | chat_old  |
+| cogvlm-grounding-generalist |   base    |
+|       cogvlm-base-224       |   base    |
+|       cogvlm-base-490       |   base    |
+
+
+
+### FAQ
+
+* If you have trouble in accessing huggingface.co, you can add `--local_tokenizer /path/to/vicuna-7b-v1.5` to load the tokenizer.
+* If you have trouble in automatically downloading model with 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), try downloading from 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) or 🤗[huggingface](https://huggingface.co/THUDM/CogVLM) or 💡[wisemodel](https://www.wisemodel.cn/models/ZhipuAI/CogVLM) manually.
+* Download model using 🔨[SAT](https://github.com/THUDM/SwissArmyTransformer), the model will be saved to the default location `~/.sat_models`. Change the default location by setting the environment variable `SAT_HOME`. For example, if you want to save the model to `/path/to/my/models`, you can run `export SAT_HOME=/path/to/my/models` before running the python command.
+
+
+
 ## License
 
 The code in this repository is open source under the [Apache-2.0 license](./LICENSE), while the use of the CogVLM model weights must comply with the [Model License](./MODEL_LICENSE).
@@ -308,8 +501,8 @@ The code in this repository is open source under the [Apache-2.0 license](./LICE
 ## Citation & Acknowledgements
 
 If you find our work helpful, please consider citing the following papers
-```
-@article{wang2023cogvlm,
+
+@misc{wang2023cogvlm,
       title={CogVLM: Visual Expert for Pretrained Language Models}, 
       author={Weihan Wang and Qingsong Lv and Wenmeng Yu and Wenyi Hong and Ji Qi and Yan Wang and Junhui Ji and Zhuoyi Yang and Lei Zhao and Xixuan Song and Jiazheng Xu and Bin Xu and Juanzi Li and Yuxiao Dong and Ming Ding and Jie Tang},
       year={2023},
@@ -317,5 +510,15 @@ If you find our work helpful, please consider citing the following papers
       archivePrefix={arXiv},
       primaryClass={cs.CV}
 }
+
+@misc{hong2023cogagent,
+      title={CogAgent: A Visual Language Model for GUI Agents}, 
+      author={Wenyi Hong and Weihan Wang and Qingsong Lv and Jiazheng Xu and Wenmeng Yu and Junhui Ji and Yan Wang and Zihan Wang and Yuxiao Dong and Ming Ding and Jie Tang},
+      year={2023},
+      eprint={2312.08914},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
 ```
 In the instruction fine-tuning phase of the CogVLM, there are some English image-text data from the [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), [LLaVAR](https://github.com/SALT-NLP/LLaVAR) and [Shikra](https://github.com/shikras/shikra) projects, as well as many classic cross-modal work datasets. We sincerely thank them for their contributions.

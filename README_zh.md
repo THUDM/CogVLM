@@ -1,4 +1,4 @@
-# CogVLM 
+# CogVLM & CogAgent
 
 🔥🔥🔥 🆕 ```2023/12/15```: **CogAgent 正式上线！** CogAgent是基于CogVLM的开发优化的图像理解模型，具备**基于视觉的GUI Agent**能力，并在图像理解能力上有进一步提升。支持1120*1120分辨率的图像输入，具备图像多轮对话、GUI Agent、Grounding等多种能力。
 
@@ -126,7 +126,7 @@ python cli_demo_sat.py --from_pretrained cogvlm-grounding-generalist --version b
 若您希望手动下载权重，则可将``--from_pretrained``后替换为模型路径。
 
 我们的模型支持SAT的**4-bit量化**和**8-bit量化**，
-您可以将``--bf16``调整为``--fp16``，或``--fp16 quant 4``，或``--fp16 quant 8``。
+您可以将``--bf16``调整为``--fp16``，或``--fp16 --quant 4``，或``--fp16 --quant 8``。
 
 例如，
 
@@ -152,7 +152,7 @@ python cli_demo_hf.py --from_pretrained THUDM/cogvlm-grounding-generalist --bf16
 ```
 若您希望手动下载权重，则可将``--from_pretrained``后替换为模型路径。
 
-您可以将``--bf16``调整为``--fp16``，或``quant 4``。例如，我们的模型支持hf的**4-bit量化**，
+您可以将``--bf16``调整为``--fp16``，或``--quant 4``。例如，我们的模型支持hf的**4-bit量化**，
 
 ```bash
 python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --quant 4
@@ -198,7 +198,7 @@ This image showcases a tranquil natural scene with a wooden pathway leading thro
 </div>
 
 <details>
-<summary>点击MM-VET, POPE, TouchStone结果。</summary>
+<summary>点击查看MM-VET, POPE, TouchStone结果。</summary>
 
 <table>
     <tr>
@@ -365,6 +365,7 @@ CogAgent-18B 在9个跨模态基准测试上取得了 SOTA 的通用性能，包
 1. 普通多轮对话：正常问答即可。
 
 2. GUI（屏幕截图）的Agent任务：使用[Agent模板](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761)，将其中的\<TASK\>替换为用双引号包围的任务指令。该方法可以获得模型推测的Plan和Next Action。若在句末加上``(with grounding)``，则模型会进一步返回含坐标的形式化表示。
+
     例如：若想让模型告诉我，对当前GUI截图，如何完成“Search for CogVLM”这一任务，我们需要依次完成以下几步：
 
     1. 在[Agent模板](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761)中随机选一个模板。这里我们选择了 ``What steps do I need to take to <TASK>?``。
