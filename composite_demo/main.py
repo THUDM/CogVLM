@@ -35,6 +35,12 @@ with st.sidebar:
         'Output length', 1, 2048, 2048, step=1
     )
     uploaded_file = st.file_uploader("Choose an image...", type=['.jpg', '.png', '.jpeg'], accept_multiple_files=False)
+
+    cols = st.columns(2)
+    export_btn = cols[0]
+    clear_history = cols[1].button("Clear History", use_container_width=True)
+    retry = export_btn.button("Retry", use_container_width=True)
+
 prompt_text = st.chat_input(
     'Chat with CogAgent-chat-17B | CogVLM-chat-17B Demo',
     key='chat_input',
@@ -53,24 +59,32 @@ if tab == Mode.VAgent.value:
         st.info("""
 Only support for CogAgent-chat-17B and please choose one template below to get better performance. and you Just need to write your <TASK>.""")
         selected_template = st.selectbox("Select a Template", templates)
+
+if clear_history or retry:
+    prompt_text = ""
+
 match tab:
     case Mode.VQA:
-        demo_vqa.main(top_p=top_p,
-                      temperature=temperature,
-                      prompt_text=prompt_text,
-                      metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
-                      top_k=top_k,
-                      max_new_tokens=max_new_token
-                      )
+        demo_vqa.main(
+            retry=retry,
+            top_p=top_p,
+            temperature=temperature,
+            prompt_text=prompt_text,
+            metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
+            top_k=top_k,
+            max_new_tokens=max_new_token
+        )
     case Mode.VAgent:
-        demo_vagent.main(top_p=top_p,
-                         temperature=temperature,
-                         prompt_text=prompt_text,
-                         metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
-                         top_k=top_k,
-                         max_new_tokens=max_new_token,
-                         grounding=grounding,
-                         template=selected_template
-                         )
+        demo_vagent.main(
+            retry=retry,
+            top_p=top_p,
+            temperature=temperature,
+            prompt_text=prompt_text,
+            metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
+            top_k=top_k,
+            max_new_tokens=max_new_token,
+            grounding=grounding,
+            template=selected_template
+        )
     case _:
         st.error(f'Unexpected tab: {tab}')
