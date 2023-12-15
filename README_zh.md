@@ -108,9 +108,7 @@ python -m spacy download en_core_web_sm
 
 **所有代码均位于``basic_demo/``下，请先切换到该目录下，再进行后续操作。**
 
-#### 情况2.1 命令行界面（CLI）
-
-##### SAT版
+#### 情况2.1 命令行界面（CLI） - SAT版
 通过CLI执行以下命令。
 
 ```bash
@@ -140,7 +138,7 @@ python cli_demo_sat.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --str
 
 在[这里](#which---version-to-use)查看不同模型和``--version``的对应关系。
 
-##### huggingface版
+#### 情况2.1 命令行界面（CLI） - huggingface版
 
 通过CLI执行以下命令。
 
@@ -417,20 +415,20 @@ CogAgent-18B 在9个跨模态基准测试上取得了 SOTA 的通用性能，包
 如果您觉得我们的工作有帮助，请考虑引用以下论文：
 ```
 
-@misc{hong2023cogagent,
-      title={CogAgent: A Visual Language Model for GUI Agents}, 
-      author={Wenyi Hong and Weihan Wang and Qingsong Lv and Jiazheng Xu and Wenmeng Yu and Junhui Ji and Yan Wang and Zihan Wang and Yuxiao Dong and Ming Ding and Jie Tang},
-      year={2023},
-      eprint={2312.08914},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
-
 @misc{wang2023cogvlm,
       title={CogVLM: Visual Expert for Pretrained Language Models}, 
       author={Weihan Wang and Qingsong Lv and Wenmeng Yu and Wenyi Hong and Ji Qi and Yan Wang and Junhui Ji and Zhuoyi Yang and Lei Zhao and Xixuan Song and Jiazheng Xu and Bin Xu and Juanzi Li and Yuxiao Dong and Ming Ding and Jie Tang},
       year={2023},
       eprint={2311.03079},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
+@misc{hong2023cogagent,
+      title={CogAgent: A Visual Language Model for GUI Agents}, 
+      author={Wenyi Hong and Weihan Wang and Qingsong Lv and Jiazheng Xu and Wenmeng Yu and Junhui Ji and Yan Wang and Zihan Wang and Yuxiao Dong and Ming Ding and Jie Tang},
+      year={2023},
+      eprint={2312.08914},
       archivePrefix={arXiv},
       primaryClass={cs.CV}
 }
