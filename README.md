@@ -88,6 +88,7 @@ We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gr
 First, we need to install the dependencies.
 
 ```bash
+# CUDA >= 11.8
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
