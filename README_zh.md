@@ -196,7 +196,7 @@ This image showcases a tranquil natural scene with a wooden pathway leading thro
 - CogVLM-17B 在 10 个经典跨模态基准测试上取得了 SOTA 性能，包括 NoCaps、Flicker30k captioning、RefCOCO、RefCOCO+、RefCOCOg、Visual7W、GQA、ScienceQA、VizWiz VQA 和 TDIUC，而在 VQAv2、OKVQA、TextVQA、COCO captioning 等方面则排名第二，超越或与 PaLI-X 55B 持平。您可以通过线上 [demo](http://36.103.203.44:7861) 体验 CogVLM 多模态对话。
 
 <div align="center">
-    <img src=assets/metrics-min.png width=80% />
+    <img src=assets/metrics-min.png width=50% />
 </div>
 
 <details>
@@ -305,20 +305,21 @@ This image showcases a tranquil natural scene with a wooden pathway leading thro
     <details>
     <summary>点击查看与 LLAVA-1.5 和 MiniGPT-4 的比较。</summary>
 
-    ![LLAVA Comparision](assets/llava-comparison-min.png)
+    <img src=assets/llava-comparison-min.png width=50% />
+
     </details>
     <br>
 
 * CogVLM 能理解和回答各种类型的问题，并有一个**视觉定位**版本。
 <div align="center">
-    <img src=assets/pear_grounding.png width=90% />
+    <img src=assets/pear_grounding.png width=50% />
 </div>
 
 <br>
 
 * CogVLM 有时比 GPT-4V(ision) 提取到更多的细节信息。
 <div align="center">
-    <img src=assets/compare-min.png width=90% />
+    <img src=assets/compare-min.png width=50% />
 </div>
 
 <!-- ![compare](assets/compare.png) -->
@@ -350,13 +351,13 @@ CogAgent-18B 在9个跨模态基准测试上取得了 SOTA 的通用性能，包
 
 
 <div align="center">
-    <img src=assets/cogagent_function_cn.png width=80% />
+    <img src=assets/cogagent_function_cn.jpg width=50% />
 </div>
 
 ## GUI Agent示例
 
 <div align="center">
-    <img src=assets/cogagent_main_demo.png width=90% />
+    <img src=assets/cogagent_main_demo.jpg width=90% />
 </div>
 
 
