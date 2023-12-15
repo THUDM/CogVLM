@@ -34,7 +34,6 @@ _history_to_prompt = {
     "chat": chat_history_to_prompt,
     "vqa": vqa_history_to_prompt,
     "chat_old": chat_old_history_to_prompt, # for cogvlm-v1.1
-    "grounding": base_history_to_prompt,
 }
 
 from transformers import LlamaTokenizer
@@ -45,7 +44,7 @@ def llama2_tokenizer(tokenizer_path, signal_type="base"):
         tokenizer.pad_token_id = 32000
     tokenizer.boi = "[IMG]"
     tokenizer.eoi = "[/IMG]"
-    assert signal_type in ["base", "chat", "vqa", "chat_old", "grounding"]
+    assert signal_type in ["base", "chat", "vqa", "chat_old"]
     tokenizer.signal_type = signal_type
     return tokenizer
 
@@ -176,7 +175,9 @@ class llama2_text_processor_inference:
         if self.tokenizer.signal_type == "chat":
             self.sep = "[/INST]"
         elif self.tokenizer.signal_type == "vqa":
-            self.sep = "Short answer: "
+            self.sep = " Short answer:"
+        elif self.tokenizer.signal_type == "chat_old":
+            self.sep = " Answer:"
         else:
             self.sep = "<unk>"
 
