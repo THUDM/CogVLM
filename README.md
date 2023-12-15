@@ -234,7 +234,7 @@ This image showcases a tranquil natural scene with a wooden pathway leading thro
 
 * Model Inference: 
     
-    For INT4 quantization: 1 * RTX 3090(24G) 
+    For INT4 quantization: 1 * RTX 3090(24G)   (CogAgent takes ~ 12.6GB, CogVLM takes ~ 11GB)
 
     For FP16: 1 * A100(80G) or 2 * RTX 3090(24G) 
 
