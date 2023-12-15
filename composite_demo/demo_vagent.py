@@ -20,7 +20,8 @@ def append_conversation(
     conversation.show(placeholder)
 
 
-def main(top_p: float,
+def main(retry: bool,
+         top_p: float,
          temperature: float,
          prompt_text: str,
          metadata: str,
@@ -36,6 +37,16 @@ def main(top_p: float,
 
     for conversation in history:
         conversation.show()
+
+    if retry:
+        last_user_conversation_idx = None
+        for idx, conversation in enumerate(history):
+            if conversation.role == Role.USER:
+                last_user_conversation_idx = idx
+        if last_user_conversation_idx is not None:
+            del history[last_user_conversation_idx:]
+        prompt_text = history[last_user_conversation_idx].content_show
+
     if prompt_text:
         image = Image.open(BytesIO(base64.b64decode(metadata))).convert('RGB') if metadata else None
         image.thumbnail((1120, 1120))
@@ -84,3 +95,5 @@ def main(top_p: float,
             history=history,
             placeholder=placeholder.chat_message(name="assistant", avatar="assistant")
         )
+    else:
+        st.session_state.chat_history = []
