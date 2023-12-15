@@ -25,6 +25,7 @@
   </tr>
 </table>
 
+<<<<<<< HEAD
 **Table of Contents**
 - [CogVLM \& CogAgent](#cogvlm--cogagent)
   - [Release](#release)
@@ -48,6 +49,7 @@
     - [FAQ](#faq)
   - [License](#license)
   - [Citation \& Acknowledgements](#citation--acknowledgements)
+>>>>>>> main
 
 ## Release
 
