@@ -1,8 +1,11 @@
 # CogVLM
+🔥 **News**: ```2023/12/15``` Our new model, **CogAgent**, is about to launch. Developed based on CogVLM, CogAgent possesses visual GUI agent capabilities and has further improvements in image understanding. 
+- 📖 Check the CogAgent paper at [this link](https://arxiv.org/abs/2312.08914).
+- 🌐 The code, model, and web-based demo will come out in one day.
 
-📖 [Paper（论文）](https://arxiv.org/abs/2311.03079)
+📖 [CogVLM Paper（论文）](https://arxiv.org/abs/2311.03079)
 
-🌐 [web demo（测试网址）](http://36.103.203.44:7861/)
+🌐 [CogVLM web demo（测试网址）](http://36.103.203.44:7861/)
 
 🔥 **News**: ```2023/12/8``` We have updated the checkpoint of cogvlm-grounding-generalist to cogvlm-grounding-generalist-v1.1, with image augmentation during training, therefore more robust. See [details](#Introduction).
 
