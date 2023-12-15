@@ -9,6 +9,8 @@ from PIL import Image
 from utils import images_are_same
 
 client = get_client()
+
+
 def append_conversation(
         conversation: Conversation,
         history: list[Conversation],
@@ -17,11 +19,12 @@ def append_conversation(
     history.append(conversation)
     conversation.show(placeholder)
 
+
 def main(top_p: float,
          temperature: float,
          prompt_text: str,
          metadata: str,
-         repetition_penalty: float,
+         top_k: int,
          max_new_tokens: int,
          grounding: bool = False,
          template: str = ""
@@ -67,7 +70,7 @@ def main(top_p: float,
                 max_new_tokens=max_new_tokens,
                 temperature=temperature,
                 top_p=top_p,
-                repetition_penalty=repetition_penalty,
+                top_k=top_k,
         ):
             output_text += response.token.text
             assistant_conversation.markdown(output_text.strip() + '▌')

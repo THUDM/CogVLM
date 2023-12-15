@@ -52,9 +52,16 @@ class Conversation:
 
         # for Chinese WebUI show
         if self.role == Role.USER:
-            self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
+            # show in Chinese and turn it to english
+            # self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
+            self.content = self.content_show
         if self.role == Role.ASSISTANT:
-            self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
+            # and turn it to Chinese and show
+            # self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
+            self.content_show = self.content
+
+            self.content_show = self.content_show.replace('\n', '  \n')
+
         message.markdown(self.content_show)
         if self.image:
             message.image(self.image)
@@ -99,6 +106,7 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
             text = text.replace(f"[[{','.join(coords)}]]", f"[[{','.join(coords)}]]{color_text}", 1)
     return text, img
 
+
 # def postprocess_image(text: str, img: Image) -> (str, Image):
 #     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
 #
@@ -130,20 +138,23 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
 #     return text, img
 
 def translate_baidu(translate_text, source_lan, target_lan):
-    # add your baidu key
-    url = "https://aip.baidubce.com/rpc/2.0/mt/texttrans/v1?access_token=your_key"
+    # add your baidu translate key
+    url = "https://aip.baidubce.com/rpc/2.0/mt/texttrans/v1?access_token="
     headers = {'Content-Type': 'application/json'}
     payload = {
         'q': translate_text,
         'from': source_lan,
         'to': target_lan
     }
-
     try:
-        r = requests.post(url, params=payload, headers=headers)
+        r = requests.post(url, json=payload, headers=headers)
         result = r.json()
-        result = result['result']['trans_result'][0]['dst']
+        final_translation = ''
+
+        # 遍历每个翻译结果
+        for item in result['result']['trans_result']:
+            final_translation += item['dst'] + '\n'
     except Exception as e:
         print(e)
         return "error"
-    return result
+    return final_translation

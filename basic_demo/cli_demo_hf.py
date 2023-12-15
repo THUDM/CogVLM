@@ -48,7 +48,6 @@ while True:
             history=history,
             images=[image]
         )
-
         inputs = {
             'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
             'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
@@ -69,3 +68,4 @@ while True:
             response = response.split("</s>")[0]
             print("\nCog:", response)
         history.append((query, response))
+
