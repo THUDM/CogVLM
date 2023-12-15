@@ -22,8 +22,8 @@ def main():
     parser.add_argument("--version", type=str, default="chat", choices=['chat', 'vqa', 'chat_old', 'base'], help='version of language process. if there is \"text_processor_version\" in model_config.json, this option will be overwritten')
     parser.add_argument("--quant", choices=[8, 4], type=int, default=None, help='quantization bits')
 
-    parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt') # TODO
-    parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path') #TODO
+    parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt')
+    parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     parser.add_argument("--fp16", action="store_true")
     parser.add_argument("--bf16", action="store_true")
     parser.add_argument("--stream_chat", action="store_true")
@@ -159,9 +159,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-# TODO: delete it 
-# /share/official_pretrains/sat_home/cogvlm-chat-v1.1
-# /share/hwy/code/CogVLM_release/checkpoints/cogagent_release

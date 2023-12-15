@@ -11,7 +11,7 @@ from .eva_clip_L_hf import Eva2LargeEncoder
 from .mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
 
 
-# MODEL_URLS["cogvlm-base-224"] = "r2://cogvlm-base-224.zip"
+MODEL_URLS["cogagent-chat"] = "r2://cogagent-chat.zip"
 
 
 class GLU(nn.Module):

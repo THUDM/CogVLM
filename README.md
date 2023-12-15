@@ -53,11 +53,13 @@
 
 - 🔥🔥🔥 **News**: ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed based on CogVLM. It features **visual-based GUI Agent capabilities** and has further enhancements in image understanding. It supports image input with a resolution of 1120*1120, and possesses multiple abilities including multi-turn dialogue with images, GUI Agent, Grounding, and more.
 
+- 🔥 **News**: ```2023/12/8``` We have updated the checkpoint of cogvlm-grounding-generalist to cogvlm-grounding-generalist-v1.1, with image augmentation during training, therefore more robust. See [details](#introduction-to-cogvlm).
+
 - 🔥 **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory! See [details](#CLI).
 
-- 🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
+- 🔥 **News**: ```2023/11/20``` We have updated the checkpoint of cogvlm-chat to cogvlm-chat-v1.1, unified the versions of chat and VQA, and refreshed the SOTA on various datasets. See [details](#introduction-to-cogvlm)
 
-- 🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#situation-22-cli-huggingface-version) now!
+-  **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#situation-22-cli-huggingface-version) now!
 
 -  ```2023/10/27``` CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
 
@@ -364,6 +366,61 @@ If you run the `basic_demo/cli_demo*.py` from the code repository, it will autom
 
 </details>
 
+<details>
+<summary>Click to view results of cogvlm-grounding-generalist-v1.1. </summary>
+
+<table>
+    <tr>
+        <td></td>
+        <td>RefCOCO</td>
+        <td></td>
+        <td></td>
+        <td>RefCOCO+</td>
+        <td></td>
+        <td></td>
+        <td>RefCOCOg</td>
+        <td></td>
+        <td>Visual7W</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>val</td>
+        <td>testA</td>
+        <td>testB</td>
+        <td>val</td>
+        <td>testA</td>
+        <td>testB</td>
+        <td>val</td>
+        <td>test</td>
+        <td>test</td>
+    </tr>
+    <tr>
+        <td>cogvim-grounding-generalist</td>
+        <td>92.51</td>
+        <td>93.95</td>
+        <td>88.73</td>
+        <td>87.52</td>
+        <td>91.81</td>
+        <td>81.43</td>
+        <td>89.46</td>
+        <td>90.09</td>
+        <td>90.96</td>
+    </tr>
+    <tr>
+        <td>cogvim-grounding-generalist-v1.1</td>
+        <td>**92.76**</td>
+        <td>**94.75**</td>
+        <td>**88.99**</td>
+        <td>**88.68**</td>
+        <td>**92.91**</td>
+        <td>**83.39**</td>
+        <td>**89.75**</td>
+        <td>**90.79**</td>
+        <td>**91.05**</td>
+    </tr>
+</table>
+</details>
+
 ### Examples
 
 <!-- CogVLM is powerful for answering various types of visual questions, including **Detailed Description & Visual Question Answering**,  **Complex Counting**, **Visual Math Problem Solving**, **OCR-Free Reasonging**, **OCR-Free Visual Question Answering**, **World Knowledge**, **Referring Expression Comprehension**, **Programming with Visual Input**, **Grounding with Caption**, **Grounding Visual Question Answering**, etc. -->
@@ -437,22 +494,22 @@ In addition to all the features already present in CogVLM (visual multi-round di
 
 For example, to ask the model how to complete the task "Search for CogVLM" on a current GUI screenshot, follow these steps:
 
-    1. Randomly select a template from the [Agent template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761). Here, we choose ``What steps do I need to take to <TASK>?``.
+ 1. Randomly select a template from the [Agent template](https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761). Here, we choose ``What steps do I need to take to <TASK>?``.
 
-    2. Replace <TASK> with the task instruction enclosed in double quotes, for example, ``What steps do I need to take to "Search for CogVLM"?`` . Inputting this to the model yields:
+ 2. Replace <TASK> with the task instruction enclosed in double quotes, for example, ``What steps do I need to take to "Search for CogVLM"?`` . Inputting this to the model yields:
 
-    > Plan: 1. Type 'CogVLM' into the Google search bar. 2. Review the search results that appear. 3. Click on a relevant result to read more about CogVLM or access further resources.
-    > 
-    > Next Action: Move the cursor to the Google search bar, and type 'CogVLM' into it.
+ > Plan: 1. Type 'CogVLM' into the Google search bar. 2. Review the search results that appear. 3. Click on a relevant result to read more about CogVLM or access further resources.
+ > 
+ > Next Action: Move the cursor to the Google search bar, and type 'CogVLM' into it.
 
-    3. If adding ``(with grounding)`` at the end, i.e. changing the input to ``What steps do I need to take to "Search for CogVLM"?(with grounding)``, the output of CogAgent would be:
+ 3. If adding ``(with grounding)`` at the end, i.e. changing the input to ``What steps do I need to take to "Search for CogVLM"?(with grounding)``, the output of CogAgent would be:
 
-    > Plan: 1. Type 'CogVLM' into the Google search bar. 2. Review the search results that appear. 3. Click on a relevant result to read more about CogVLM or access further resources.
-    > 
-    > Next Action: Move the cursor to the Google search bar, and type 'CogVLM' into it.
-    Grounded Operation:[combobox] Search -> TYPE: CogVLM at the box [[212,498,787,564]]
+ > Plan: 1. Type 'CogVLM' into the Google search bar. 2. Review the search results that appear. 3. Click on a relevant result to read more about CogVLM or access further resources.
+ > 
+ > Next Action: Move the cursor to the Google search bar, and type 'CogVLM' into it.
+ Grounded Operation:[combobox] Search -> TYPE: CogVLM at the box [[212,498,787,564]]
 
-    Tip: For GUI Agent tasks, it is recommended to conduct only single-round dialogues for each image for better results.
+ Tip: For GUI Agent tasks, it is recommended to conduct only single-round dialogues for each image for better results.
 
 3. **Visual Grounding**. Three modes of grounding are supported:
 

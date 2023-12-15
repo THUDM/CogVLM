@@ -252,7 +252,7 @@ if __name__ == '__main__':
     py_parser.add_argument('--max_length', type=int)
     py_parser.add_argument('--ignore_pad_token_for_loss', action='store_false')
     py_parser.add_argument("--version", type=str, default="chat", choices=["chat", "vqa"], help='version to interact with')
-    py_parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt') # TODO
+    py_parser.add_argument("--from_pretrained", type=str, default="cogagent-chat", help='pretrained ckpt')
     py_parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
     py_parser.add_argument("--vit_checkpoint_activations", action='store_true')
     py_parser = FineTuneTrainCogAgentModel.add_model_specific_args(py_parser)
