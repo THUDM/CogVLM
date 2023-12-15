@@ -1,7 +1,8 @@
 # CogVLM & CogAgent
 
+📗 [中文版README](./README_zh.md)
  
-🔥🔥🔥 🆕 ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed based on CogVLM. It features visual-based GUI Agent capabilities and has further enhancements in image understanding. It supports image input with a resolution of 1120*1120, and possesses multiple abilities including multi-turn dialogue with images, GUI Agent, Grounding, and more.
+🔥🔥🔥 🆕 ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed based on CogVLM. It features **visual-based GUI Agent capabilities** and **has further enhancements in image understanding**. It supports image input with a **resolution of 1120*1120**, and possesses multiple abilities including **multi-turn dialogue with images, GUI Agent, Grounding**, and more.
 
 🌟 **Jump to detailed introduction: [Introduction to CogVLM](#introduction-to-cogvlm)，  🆕 [Introduction to CogAgent](#introduction-to-cogagent)**
 
@@ -11,15 +12,15 @@
       <h2> CogVLM </h2>
       <p> 🌐  Web Demo: <a href="http:http://36.103.203.44:7861">this link</a> </p>
       <p> 📖  Paper: <a href="https://arxiv.org/abs/2311.03079">CogVLM: Visual Expert for Pretrained Language Models</a></p>
-      <p>CogVLM is a powerful **open-source visual language model (VLM)**. CogVLM-17B has 10 billion visual parameters and 7 billion language parameters, supporting image understanding and multi-turn dialogue with a resolution of 490*490.</p>
-      <p>CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC.</p>
+      <p><b>CogVLM</b> is a powerful open-source visual language model (VLM). CogVLM-17B has 10 billion visual parameters and 7 billion language parameters, <b>supporting image understanding and multi-turn dialogue with a resolution of 490*490</b>.</p>
+      <p><b>CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks</b>, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC.</p>
     </td>
     <td>
       <h2> CogAgent </h2>
-      <p> 🌐  Web Demo: <a href="">will launch on December 18th</a> </p>
+      <p> 🌐  Web Demo: <a href="">Coming soon</a> </p>
       <p> 📖  Paper: <a href="https://arxiv.org/abs/2312.08914">CogAgent: A Visual Language Model for GUI Agents </a></p>
-      <p>CogAgent is an open-source visual language model improved based on CogVLM. CogAgent-18B has 11 billion visual parameters and 7 billion language parameters, supporting image understanding at a resolution of 1120*1120. On top of the capabilities of CogVLM, it possesses GUI image Agent capabilities.</p>
-      <p> CogAgent-18B achieves state-of-the-art generalist performance on 9 classic cross-modal benchmarks, including VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. It significantly surpasses existing models on GUI operation datasets such as AITW and Mind2Web.</p>
+      <p><b>CogAgent</b> is an open-source visual language model improved based on CogVLM. CogAgent-18B has 11 billion visual parameters and 7 billion language parameters, <b>supporting image understanding at a resolution of 1120*1120</b>. <b>On top of the capabilities of CogVLM, it further possesses GUI image Agent capabilities</b>.</p>
+      <p> <b>CogAgent-18B achieves state-of-the-art generalist performance on 9 classic cross-modal benchmarks</b>, including VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. <b>It significantly surpasses existing models on GUI operation datasets</b> including AITW and Mind2Web.</p>
     </td>
   </tr>
 </table>
@@ -31,12 +32,12 @@
     - [Option 1: Inference Using Web Demo.](#option-1-inference-using-web-demo)
     - [Option 2：Deploy CogVLM / CogAgent by yourself](#option-2deploy-cogvlm--cogagent-by-yourself)
       - [Situation 2.1 CLI (SAT version)](#situation-21-cli-sat-version)
-      - [Situation 2.1 CLI (Huggingface version)](#situation-21-cli-huggingface-version)
-      - [Situation 2.2 Web Demo](#situation-22-web-demo)
+      - [Situation 2.2 CLI (Huggingface version)](#situation-22-cli-huggingface-version)
+      - [Situation 2.3 Web Demo](#situation-23-web-demo)
     - [Option 3：Finetuning CogAgent / CogVLM](#option-3finetuning-cogagent--cogvlm)
     - [Option 4: OpenAI Vision format](#option-4-openai-vision-format)
     - [Hardware requirement](#hardware-requirement)
-    - [Checkpoints](#checkpoints)
+    - [Model checkpoints](#model-checkpoints)
   - [Introduction to CogVLM](#introduction-to-cogvlm)
     - [Examples](#examples)
   - [Introduction to CogAgent](#introduction-to-cogagent)
@@ -56,7 +57,7 @@
 
 - 🔥 **News**: ```2023/11/20``` We have updated the checkpoint, unified the versions of chat and VQA, and refreshed the SOTA on various datasets.
 
-- 🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#-transformers) now!
+- 🔥 **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#situation-22-cli-huggingface-version) now!
 
 -  ```2023/10/27``` CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
 
@@ -67,7 +68,7 @@
 
 ### Option 1: Inference Using Web Demo.
 
-* Click here to enter [CogAgent Web Demo](TODO)
+* Click here to enter [CogAgent Web Demo (Coming soon)](TODO)
 
 * Click here to enter [CogVLM Web Demo](http://36.103.203.44:7861/)。
 
@@ -141,7 +142,7 @@ You can change ``--bf16`` to ``--fp16``, or ``--fp16 --quant 4``, or ``--fp16 --
 
 - Click [here](#which---version-to-use) to view the correspondence between different models and the ``--version`` parameter.
 
-#### Situation 2.1 CLI (Huggingface version)
+#### Situation 2.2 CLI (Huggingface version)
 
 Run CLI demo via:
 
@@ -163,7 +164,7 @@ python cli_demo_hf.py --from_pretrained THUDM/cogvlm-grounding-generalist --bf16
     ```
 
 
-#### Situation 2.2 Web Demo
+#### Situation 2.3 Web Demo
 We also offer a local web demo based on Gradio. First, install Gradio by running: `pip install gradio`. Then download and enter this repository and run `web_demo.py`. See the next section for detailed usage:
 
 ```bash
@@ -236,7 +237,7 @@ This image showcases a tranquil natural scene with a wooden pathway leading thro
 
     For FP16: 4 * A100(80G) *[Recommend]* or 8* RTX 3090(24G).
 
-### Checkpoints
+### Model checkpoints
 If you run the `basic_demo/cli_demo*.py` from the code repository, it will automatically download SAT or Hugging Face weights. Alternatively, you can choose to manually download the necessary weights.
 
 - CogAgent
@@ -417,7 +418,7 @@ In addition to all the features already present in CogVLM (visual multi-round di
 
 
 <div align="center">
-    <img src=assets/cogagent_function.jpg width=50% />
+    <img src=assets/cogagent_function.jpg width=60% />
 </div>
 
 ### GUI Agent Examples
@@ -502,6 +503,7 @@ The code in this repository is open source under the [Apache-2.0 license](./LICE
 
 If you find our work helpful, please consider citing the following papers
 
+```
 @misc{wang2023cogvlm,
       title={CogVLM: Visual Expert for Pretrained Language Models}, 
       author={Weihan Wang and Qingsong Lv and Wenmeng Yu and Wenyi Hong and Ji Qi and Yan Wang and Junhui Ji and Zhuoyi Yang and Lei Zhao and Xixuan Song and Jiazheng Xu and Bin Xu and Juanzi Li and Yuxiao Dong and Ming Ding and Jie Tang},

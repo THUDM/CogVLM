@@ -15,7 +15,7 @@
     </td>
     <td>
       <h2> CogAgent </h2>
-      <p> 🌐  测试Demo：<a href="">12.18上线</a> </p>
+      <p> 🌐  测试Demo：<a href="">即将上线</a> </p>
       <p> 📖  论文：<a href="https://arxiv.org/abs/2312.08914">CogAgent: A Visual Language Model for GUI Agents </a></p>
       <p>CogAgent 是基于CogVLM改进的开源视觉语言模型。CogAgent-18B 拥有110亿视觉参数和70亿语言参数，支持1120*1120分辨率的图像理解，在CogVLM功能的基础上，具备GUI图像的Agent能力。</p>
       <p> CogAgent-18B 在9个跨模态基准测试上取得了 SOTA 的通用性能，包括VQAv2、OK-VQA、TextVQA、ST-VQA、ChartQA、infoVQA、DocVQA、MM-Vet、和 POPE。在AITW、Mind2Web等GUI操作数据集上大幅超过已有模型。 </p>
@@ -23,6 +23,26 @@
   </tr>
 </table>
 
+- [CogVLM \& CogAgent](#cogvlm--cogagent)
+  - [Release](#release)
+  - [快速入门](#快速入门)
+    - [情况1：直接使用网页端Demo进行推理。](#情况1直接使用网页端demo进行推理)
+    - [情况2：本地部署 CogVLM / CogAgent 进行推理](#情况2本地部署-cogvlm--cogagent-进行推理)
+      - [硬件要求](#硬件要求)
+      - [模型权重](#模型权重)
+      - [情况2.1 命令行界面（CLI） - SAT版](#情况21-命令行界面cli---sat版)
+      - [情况2.2 命令行界面（CLI） - huggingface版](#情况22-命令行界面cli---huggingface版)
+      - [情况2.3 网页演示](#情况23-网页演示)
+    - [情况3：OpenAI Vision format](#情况3openai-vision-format)
+  - [CogVLM介绍](#cogvlm介绍)
+  - [示例](#示例)
+  - [CogAgent介绍](#cogagent介绍)
+  - [GUI Agent示例](#gui-agent示例)
+  - [修炼手册](#修炼手册)
+    - [Task Prompts](#task-prompts)
+    - [Which --version to use](#which---version-to-use)
+  - [许可](#许可)
+  - [引用 \& 鸣谢](#引用--鸣谢)
 
 
 <!-- **CogAgent: A Visual Language Model for GUI Agents**
@@ -50,7 +70,7 @@
 
 - 🔥 ```2023/11/20``` cogvlm-chat 更新 v1.1 版本，该版本同时支持对话和问答，在多项数据集刷新 SOTA 效果。
 
-- 🔥 ```2023/11/20``` CogVLM 的 🤗huggingface 版已开源！包括[**cogvlm-chat**](https://huggingface.co/THUDM/cogvlm-chat-hf), **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**. 仅使用几行代码即可进行推理，具体使用方法请参考[这里](#huggingface版)。
+- 🔥 ```2023/11/20``` CogVLM 的 🤗huggingface 版已开源！包括[**cogvlm-chat**](https://huggingface.co/THUDM/cogvlm-chat-hf), **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**. 仅使用几行代码即可进行推理，具体使用方法请参考[这里](#情况22-命令行界面cli---huggingface版)。
 
 - ```2023/10/27``` CogVLM 中英双语版正式[上线](https://chatglm.cn/)了！欢迎体验！
 
@@ -138,7 +158,7 @@ python cli_demo_sat.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --str
 
 在[这里](#which---version-to-use)查看不同模型和``--version``的对应关系。
 
-#### 情况2.1 命令行界面（CLI） - huggingface版
+#### 情况2.2 命令行界面（CLI） - huggingface版
 
 通过CLI执行以下命令。
 
@@ -159,7 +179,7 @@ python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --quant 4
 ```
 
 
-#### 情况2.2 网页演示
+#### 情况2.3 网页演示
 我们还提供基于Gradio的本地网页演示。首先，通过运行 pip install gradio 安装Gradio。然后运行 web_demo.py（样例代码使用SAT实现的模型），具体使用方式如下：
 
 ```bash
