@@ -1,10 +1,10 @@
+import requests
+import re
+import streamlit as st
+
 from dataclasses import dataclass
 from enum import auto, Enum
 from PIL.Image import Image
-import requests
-import re
-
-import streamlit as st
 from PIL import ImageDraw
 from streamlit.delta_generator import DeltaGenerator
 
@@ -33,7 +33,7 @@ class Conversation:
     role: Role = Role.USER
     content: str = ""
     image: Image | None = None
-    content_show: str | None = None  # English translation of content
+    content_show: str | None = None  # Content_show in WebUI
 
     def __str__(self) -> str:
         print(self.role, self.content)
@@ -50,16 +50,18 @@ class Conversation:
         else:
             message = self.role.get_message()
 
+        # for Chinese WebUI show
         if self.role == Role.USER:
-            if contains_chinese(self.content_show):
-                self.content = translate_query(
-                    "问：Translate the following texts into English: \n\n{}\n答：\n".format(self.content_show))
-            else:
-                self.content = self.content_show
-
+            # show in Chinese and turn it to english
             # self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
+            self.content = self.content_show
         if self.role == Role.ASSISTANT:
-            self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
+            # and turn it to Chinese and show
+            # self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
+            self.content_show = self.content
+
+            self.content_show = self.content_show.replace('\n', '  \n')
+
         message.markdown(self.content_show)
         if self.image:
             message.image(self.image)
@@ -104,6 +106,7 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
             text = text.replace(f"[[{','.join(coords)}]]", f"[[{','.join(coords)}]]{color_text}", 1)
     return text, img
 
+
 # def postprocess_image(text: str, img: Image) -> (str, Image):
 #     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
 #
@@ -118,10 +121,10 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
 #         boxes = [tuple(map(int, pos.split(','))) for pos in positions if pos.replace(',', '').isdigit()]
 #
 #         for i, box in enumerate(boxes):
-#             if box not in processed:  # 检查是否已经处理过这个坐标
-#                 processed.add(box)  # 添加到已处理集合中
+#             if box not in processed:
+#                 processed.add(box)
 #
-#                 # 将百分比坐标转换为实际像素坐标
+#
 #                 scaled_box = (
 #                     int(box[0] * 0.001 * img.width),
 #                     int(box[1] * 0.001 * img.height),
@@ -134,14 +137,24 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
 #
 #     return text, img
 
-
-def contains_chinese(text):
-    for character in text:
-        if '\u4e00' <= character <= '\u9fff':
-            return True
-    return False
-
-def translate_query(query: str) -> str:
-    return query
 def translate_baidu(translate_text, source_lan, target_lan):
-    return translate_text
+    # add your baidu translate key
+    url = "https://aip.baidubce.com/rpc/2.0/mt/texttrans/v1?access_token="
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        'q': translate_text,
+        'from': source_lan,
+        'to': target_lan
+    }
+    try:
+        r = requests.post(url, json=payload, headers=headers)
+        result = r.json()
+        final_translation = ''
+
+        # 遍历每个翻译结果
+        for item in result['result']['trans_result']:
+            final_translation += item['dst'] + '\n'
+    except Exception as e:
+        print(e)
+        return "error"
+    return final_translation

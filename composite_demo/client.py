@@ -1,5 +1,9 @@
-from __future__ import annotations
+"""
+This is the client part.
+We strongly suggest using GPU in bfloat16
+"""
 
+from __future__ import annotations
 from threading import Thread
 
 import streamlit as st
@@ -13,10 +17,8 @@ from huggingface_hub.inference._text_generation import TextGenerationStreamRespo
 from transformers import AutoTokenizer, TextIteratorStreamer, AutoModelForCausalLM
 from conversation import Conversation
 
-TOOL_PROMPT = 'Answer the following questions as best as you can. You have access to the following tools:'
-MODEL_PATH = os.environ.get('MODEL_PATH', '')
-TOKENIZER_PATH = os.environ.get('TOKENIZER_PATH', '')
-PT_PATH = os.environ.get('PT_PATH', None)
+MODEL_PATH = os.environ.get('MODEL_PATH', 'your cogagent-chat-hf path')
+TOKENIZER_PATH = os.environ.get('TOKENIZER_PATH', 'your vicuna-7b-v1.5 path')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
@@ -90,25 +92,25 @@ class HFClient(Client):
         if grounding:
             query += "(with grounding)"
 
-        inputs = self.model.build_conversation_input_ids(
+        input_by_model = self.model.build_conversation_input_ids(
             self.tokenizer,
             query=query,
             history=history,
             images=[image]
         )
         inputs = {
-            'input_ids': inputs['input_ids'].unsqueeze(0).to(DEVICE),
-            'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to(DEVICE),
-            'attention_mask': inputs['attention_mask'].unsqueeze(0).to(DEVICE),
-            'images': [[inputs['images'][0].to(DEVICE).to(torch_type)]],
-            'cross_images': [[inputs['cross_images'][0].to(DEVICE).to(torch_type)]] if inputs[
-                'cross_images'] else None,
+            'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
+            'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
+            'attention_mask': input_by_model['attention_mask'].unsqueeze(0).to(DEVICE),
+            'images': [[input_by_model['images'][0].to(DEVICE).to(torch_type)]],
         }
+        if 'cross_images' in input_by_model and input_by_model['cross_images']:
+            inputs['cross_images'] = [[input_by_model['cross_images'][0].to(DEVICE).to(torch_type)]]
+
         streamer = TextIteratorStreamer(self.tokenizer, timeout=20.0, skip_prompt=True, skip_special_tokens=True)
         parameters['streamer'] = streamer
         gen_kwargs = {**parameters, **inputs}
         with torch.no_grad():
-            self.model.generate(**inputs, **parameters)
             thread = Thread(target=self.model.generate, kwargs=gen_kwargs)
             thread.start()
             for next_text in streamer:

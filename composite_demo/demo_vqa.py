@@ -5,6 +5,7 @@ from PIL import Image
 from io import BytesIO
 from streamlit.delta_generator import DeltaGenerator
 from client import get_client
+from utils import images_are_same
 from conversation import Conversation, Role, postprocess_image
 
 client = get_client()
@@ -19,17 +20,11 @@ def append_conversation(
     conversation.show(placeholder)
 
 
-def images_are_same(img1: Image, img2: Image) -> bool:
-    if img1.size != img2.size or img1.mode != img2.mode:
-        return False
-    return list(img1.getdata()) == list(img2.getdata())
-
-
 def main(top_p: float,
          temperature: float,
          prompt_text: str,
          metadata: str,
-         repetition_penalty: float,
+         top_k: int,
          max_new_tokens: int):
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
@@ -52,9 +47,14 @@ def main(top_p: float,
                 st.session_state.chat_history = []
                 history = []
 
+        # Set conversation
         user_conversation = Conversation(role=Role.USER, content_show=prompt_text.strip(), image=image_input)
         append_conversation(user_conversation, history)
+        placeholder = st.empty()
+        assistant_conversation = placeholder.chat_message(name="assistant", avatar="assistant")
+        assistant_conversation = assistant_conversation.empty()
 
+        # steam Answer
         output_text = ''
         for response in client.generate_stream(
                 history=history,
@@ -62,10 +62,17 @@ def main(top_p: float,
                 max_new_tokens=max_new_tokens,
                 temperature=temperature,
                 top_p=top_p,
-                repetition_penalty=repetition_penalty,
+                top_k=top_k,
         ):
             output_text += response.token.text
+            assistant_conversation.markdown(output_text.strip() + '▌')
+
+        ## Final Answer with image.
         print("\n==Output:==\n", output_text)
         content_output, image_output = postprocess_image(output_text, image)
         assistant_conversation = Conversation(role=Role.ASSISTANT, content=content_output, image=image_output)
-        append_conversation(assistant_conversation, history)
+        append_conversation(
+            conversation=assistant_conversation,
+            history=history,
+            placeholder=placeholder.chat_message(name="assistant", avatar="assistant")
+        )
