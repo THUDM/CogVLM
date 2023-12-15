@@ -1,7 +1,15 @@
-from enum import Enum
+"""
+This is a demo for using Chat Version about CogAgent and CogVLM in WebDEMO
+Make sure you have installed vicuna-7b-v1.5 tokenizer model (https://huggingface.co/lmsys/vicuna-7b-v1.5), full checkpoint of vicuna-7b-v1.5 LLM is not required.
+Mention that only one picture can be processed at one conversation, which means you can not replace or insert another picture during the conversation.
+This Demo support models in 1 GPU, 1 Batch Only.S trongly suggest to use GPU with bfloat16 support, otherwise, it will be slow.
+"""
+
 import streamlit as st
-import demo_vqa, demo_vagent
+from enum import Enum
+
 from utils import encode_file_to_base64, templates
+import demo_vqa, demo_vagent
 
 st.markdown("<h3>CogAgent & CogVLM Chat Demo</h3>", unsafe_allow_html=True)
 st.markdown(
@@ -49,13 +57,13 @@ if tab == Mode.VAgent.value:
 
 match tab:
     case Mode.VQA:
-            demo_vqa.main(top_p=top_p,
-                          temperature=temperature,
-                          prompt_text=prompt_text,
-                          metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
-                          repetition_penalty=repetition_penalty,
-                          max_new_tokens=max_new_token
-                          )
+        demo_vqa.main(top_p=top_p,
+                      temperature=temperature,
+                      prompt_text=prompt_text,
+                      metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
+                      repetition_penalty=repetition_penalty,
+                      max_new_tokens=max_new_token
+                      )
     case Mode.VAgent:
         demo_vagent.main(top_p=top_p,
                          temperature=temperature,

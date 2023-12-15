@@ -1,10 +1,10 @@
+import requests
+import re
+import streamlit as st
+
 from dataclasses import dataclass
 from enum import auto, Enum
 from PIL.Image import Image
-import requests
-import re
-
-import streamlit as st
 from PIL import ImageDraw
 from streamlit.delta_generator import DeltaGenerator
 
@@ -33,7 +33,7 @@ class Conversation:
     role: Role = Role.USER
     content: str = ""
     image: Image | None = None
-    content_show: str | None = None  # English translation of content
+    content_show: str | None = None  # Content_show in WebUI
 
     def __str__(self) -> str:
         print(self.role, self.content)
@@ -50,14 +50,9 @@ class Conversation:
         else:
             message = self.role.get_message()
 
+        # for Chinese WebUI show
         if self.role == Role.USER:
-            if contains_chinese(self.content_show):
-                self.content = translate_query(
-                    "问：Translate the following texts into English: \n\n{}\n答：\n".format(self.content_show))
-            else:
-                self.content = self.content_show
-
-            # self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
+            self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
         if self.role == Role.ASSISTANT:
             self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
         message.markdown(self.content_show)
@@ -118,10 +113,10 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
 #         boxes = [tuple(map(int, pos.split(','))) for pos in positions if pos.replace(',', '').isdigit()]
 #
 #         for i, box in enumerate(boxes):
-#             if box not in processed:  # 检查是否已经处理过这个坐标
-#                 processed.add(box)  # 添加到已处理集合中
+#             if box not in processed:
+#                 processed.add(box)
 #
-#                 # 将百分比坐标转换为实际像素坐标
+#
 #                 scaled_box = (
 #                     int(box[0] * 0.001 * img.width),
 #                     int(box[1] * 0.001 * img.height),
@@ -134,14 +129,21 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
 #
 #     return text, img
 
-
-def contains_chinese(text):
-    for character in text:
-        if '\u4e00' <= character <= '\u9fff':
-            return True
-    return False
-
-def translate_query(query: str) -> str:
-    return query
 def translate_baidu(translate_text, source_lan, target_lan):
-    return translate_text
+    # add your baidu key
+    url = "https://aip.baidubce.com/rpc/2.0/mt/texttrans/v1?access_token=your_key"
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        'q': translate_text,
+        'from': source_lan,
+        'to': target_lan
+    }
+
+    try:
+        r = requests.post(url, params=payload, headers=headers)
+        result = r.json()
+        result = result['result']['trans_result'][0]['dst']
+    except Exception as e:
+        print(e)
+        return "error"
+    return result

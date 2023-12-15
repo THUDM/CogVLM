@@ -1,5 +1,11 @@
-from io import BytesIO
 import base64
+from io import BytesIO
+from PIL import Image
+
+def images_are_same(img1: Image, img2: Image) -> bool:
+    if img1.size != img2.size or img1.mode != img2.mode:
+        return False
+    return list(img1.getdata()) == list(img2.getdata())
 
 
 def encode_file_to_base64(file):

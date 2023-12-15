@@ -5,49 +5,31 @@ In this demo, We us chat template, you can use others to replace such as 'vqa'.
 Strongly suggest to use GPU with bfloat16 support, otherwise, it will be slow.
 Mention that only one picture can be processed at one conversation, which means you can not replace or insert another picture during the conversation.
 """
-
+import os
 import warnings
 import torch
 from PIL import Image
 from transformers import AutoModelForCausalLM, LlamaTokenizer
-import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--quant", choices=[4], type=int, default=None, help='quantization bits')
-parser.add_argument("--from_pretrained", type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt') # TODO
-parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path') #TODO
-parser.add_argument("--fp16", action="store_true")
-parser.add_argument("--bf16", action="store_true")
-
-args = parser.parse_args()
-MODEL_PATH = args.from_pretrained
-TOKENIZER_PATH = args.local_tokenizer
+MODEL_PATH = os.environ.get('MODEL_PATH', 'your cogagent-chat-hf path')
+TOKENIZER_PATH = os.environ.get('TOKENIZER_PATH', 'your vicuna-7b-v1.5 path')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 tokenizer = LlamaTokenizer.from_pretrained(TOKENIZER_PATH)
-if args.bf16:
+if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
     torch_type = torch.bfloat16
 else:
     torch_type = torch.float16
+    warnings.warn("Your GPU does not support bfloat16 type, use fp16 instead")
 
 print("========Use torch type as:{} with device:{}========\n\n".format(torch_type, DEVICE))
 
-if args.quant:
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_PATH,
-        torch_dtype=torch_type,
-        low_cpu_mem_usage=True,
-        load_in_4bit=True,
-        trust_remote_code=True
-    ).eval()
-else:
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_PATH,
-        torch_dtype=torch_type,
-        low_cpu_mem_usage=True,
-        load_in_4bit=args.quant is not None,
-        trust_remote_code=True
-    ).to(DEVICE).eval()
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_PATH,
+    torch_dtype=torch_type,
+    low_cpu_mem_usage=True,
+    trust_remote_code=True,
+).to(DEVICE).eval()
 
 while True:
     image_path = input("image path >>>>> ")
@@ -60,15 +42,21 @@ while True:
         query = input("Human:")
         if query == "clear":
             break
-        inputs = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image])
+        input_by_model = model.build_conversation_input_ids(
+            tokenizer,
+            query=query,
+            history=history,
+            images=[image]
+        )
+
         inputs = {
-            'input_ids': inputs['input_ids'].unsqueeze(0).to(DEVICE),
-            'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to(DEVICE),
-            'attention_mask': inputs['attention_mask'].unsqueeze(0).to(DEVICE),
-            'images': [[inputs['images'][0].to(DEVICE).to(torch_type)]],
-            'cross_images': [[inputs['cross_images'][0].to(DEVICE).to(torch_type)]] if inputs[
-                'cross_images'] else None,
+            'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
+            'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
+            'attention_mask': input_by_model['attention_mask'].unsqueeze(0).to(DEVICE),
+            'images': [[input_by_model['images'][0].to(DEVICE).to(torch_type)]],
         }
+        if 'cross_images' in input_by_model and input_by_model['cross_images']:
+            inputs['cross_images'] = [[input_by_model['cross_images'][0].to(DEVICE).to(torch_type)]]
 
         # add any transformers params here.
         gen_kwargs = {"max_length": 2048,
