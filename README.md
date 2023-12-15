@@ -1,7 +1,7 @@
 # CogVLM
 🔥 **News**: ```2023/12/15``` Our new model, **CogAgent**, is about to launch. Developed based on CogVLM, CogAgent possesses visual GUI agent capabilities and has further improvements in image understanding. 
 - 📖 Check the CogAgent paper at [this link](https://arxiv.org/abs/2312.08914).
-- 🌐 The code, model, and web-based demo will come out in one day.
+- 🌐 The code, model will come out in one day.
 
 📖 [CogVLM Paper（论文）](https://arxiv.org/abs/2311.03079)
 
