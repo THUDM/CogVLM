@@ -102,6 +102,7 @@ Run CLI demo via:
 ```bash
 # CogAgent
 python cli_demo_sat.py --from_pretrained cogagent-chat --version chat --bf16  --stream_chat
+python cli_demo_sat.py --from_pretrained cogagent-vqa --version chat_old --bf16  --stream_chat
 
 # CogVLM
 python cli_demo_sat.py --from_pretrained cogvlm-chat --version chat_old --bf16  --stream_chat
@@ -152,6 +153,7 @@ Run CLI demo via:
 ```bash
 # CogAgent
 python cli_demo_hf.py --from_pretrained THUDM/cogagent-chat-hf --bf16
+python cli_demo_hf.py --from_pretrained THUDM/cogagent-vqa-hf --bf16
 
 # CogVLM
 python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --bf16
@@ -172,6 +174,7 @@ We also offer a local web demo based on Gradio. First, install Gradio by running
 
 ```bash
 python web_demo.py --from_pretrained cogagent-chat --version chat --bf16
+python web_demo.py --from_pretrained cogagent-vqa --version chat_old --bf16
 python web_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat_old --bf16
 python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --bf16
 ```
@@ -248,6 +251,7 @@ If you run the `basic_demo/cli_demo*.py` from the code repository, it will autom
     |   Model name    | Input resolution |                             Introduction                             | Huggingface model | SAT model |
     | :-----------: | :----: | :----------------------------------------------------------: | :------: | :-------: |
     | cogagent-chat |  1120  | Chat version of CogAgent. Supports GUI Agent, multiple-round  chat and visual grounding. |  [link](https://huggingface.co/THUDM/cogagent-chat-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
+    | cogagent-vqa |  1120  | VQA version of CogAgent. Has stronger capabilities in single-turn visual dialogue. Recommended for VQA benchmarks. |  [link](https://huggingface.co/THUDM/cogagent-vqa-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
 
 - CogVLM
 
