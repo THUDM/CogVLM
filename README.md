@@ -10,7 +10,7 @@
   <tr>
     <td>
       <h2> CogVLM </h2>
-      <p> 🌐  Web Demo: <a href="http:http://36.103.203.44:7861">this link</a> </p>
+      <p> 🌐  Web Demo: <a href="http://36.103.203.44:7861">this link</a> </p>
       <p> 📖  Paper: <a href="https://arxiv.org/abs/2311.03079">CogVLM: Visual Expert for Pretrained Language Models</a></p>
       <p><b>CogVLM</b> is a powerful open-source visual language model (VLM). CogVLM-17B has 10 billion visual parameters and 7 billion language parameters, <b>supporting image understanding and multi-turn dialogue with a resolution of 490*490</b>.</p>
       <p><b>CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks</b>, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC.</p>
