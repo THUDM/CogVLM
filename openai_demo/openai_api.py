@@ -1,8 +1,10 @@
 import os
 import gc
 import time
+import base64
+
 from contextlib import asynccontextmanager
-from typing import List, Literal, Optional, Union, Tuple, Optional
+from typing import List, Literal, Union, Tuple, Optional
 import torch
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -12,10 +14,9 @@ from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 from transformers import AutoModelForCausalLM, LlamaTokenizer, PreTrainedModel, PreTrainedTokenizer, \
     TextIteratorStreamer
-import requests
 from PIL import Image
 from io import BytesIO
-import base64
+
 
 MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat')
 TOKENIZER_PATH = os.environ.get("TOKENIZER_PATH", 'lmsys/vicuna-7b-v1.5')
@@ -233,7 +234,7 @@ def process_history_and_images(messages: List[ChatMessageInput]) -> Tuple[
             text_content = ' '.join(item.text for item in content if isinstance(item, TextContent))
         else:
             text_content = content
-        
+
         if isinstance(content, list):  # image
             for item in content:
                 if isinstance(item, ImageUrlContent):
@@ -243,7 +244,7 @@ def process_history_and_images(messages: List[ChatMessageInput]) -> Tuple[
                         image_data = base64.b64decode(base64_encoded_image)
                         image = Image.open(BytesIO(image_data)).convert('RGB')
                         image_list.append(image)
-        
+
         if role == 'user':
             if i == len(messages) - 1:  # 最后一条用户消息
                 last_user_query = text_content
@@ -269,23 +270,24 @@ def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenize
     repetition_penalty = float(params.get("repetition_penalty", 1.0))
     top_p = float(params.get("top_p", 1.0))
     max_new_tokens = int(params.get("max_tokens", 256))
-    echo = params.get("echo", True)
     query, history, image_list = process_history_and_images(messages)
 
     logger.debug(f"==== request ====\n{query}")
 
     #  only can slove the latest picture
-    inputs = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image_list[-1]])
-
-
+    input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history,
+                                                        images=[image_list[-1]])
     inputs = {
-        'input_ids': inputs['input_ids'].unsqueeze(0).to(DEVICE),
-        'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to(DEVICE),
-        'attention_mask': inputs['attention_mask'].unsqueeze(0).to(DEVICE),
-        'images': [[inputs['images'][0].to(DEVICE).to(torch.bfloat16)]]
+        'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
+        'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
+        'attention_mask': input_by_model['attention_mask'].unsqueeze(0).to(DEVICE),
+        'images': [[input_by_model['images'][0].to(DEVICE).to(torch_type)]],
     }
+    if 'cross_images' in input_by_model and input_by_model['cross_images']:
+        inputs['cross_images'] = [[input_by_model['cross_images'][0].to(DEVICE).to(torch_type)]]
+
     input_echo_len = len(inputs["input_ids"][0])
-    streamer = TextIteratorStreamer(tokenizer, timeout=60.0, skip_prompt=True, skip_special_tokens=True)
+    streamer = TextIteratorStreamer(tokenizer=tokenizer, timeout=60.0, skip_prompt=True, skip_special_tokens=True)
     gen_kwargs = {
         "repetition_penalty": repetition_penalty,
         "max_new_tokens": max_new_tokens,
@@ -328,15 +330,22 @@ if __name__ == "__main__":
     tokenizer = LlamaTokenizer.from_pretrained(
         TOKENIZER_PATH,
         trust_remote_code=True)
-    # AMD, NVIDIA GPU can use BF16 Precision
+
+    if torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:
+        torch_type = torch.bfloat16
+    else:
+        torch_type = torch.float16
+
+    print("========Use torch type as:{} with device:{}========\n\n".format(torch_type, DEVICE))
+
     if 'cuda' in DEVICE:
         model = AutoModelForCausalLM.from_pretrained(
             MODEL_PATH,
             trust_remote_code=True,
-            torch_dtype=torch.bfloat16,
+            torch_dtype=torch_type,
             low_cpu_mem_usage=True
         ).to(DEVICE).eval()
-    # CPU, Intel GPU and other GPU can use Float16 Precision Only
+
     else:
         model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, trust_remote_code=True).float().to(DEVICE).eval()
     uvicorn.run(app, host='0.0.0.0', port=8000, workers=1)
