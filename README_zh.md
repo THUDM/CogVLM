@@ -419,6 +419,7 @@ CogAgent-18B 在9个跨模态基准测试上取得了 SOTA 的通用性能，包
 |          模型名称           | --version |
 | :-------------------------: | :-------: |
 |        cogagent-chat        |   chat    |
+|        cogagent-vqa        |   chat_old    |
 |         cogvlm-chat         | chat_old  |
 |      cogvlm-chat-v1.1       | chat_old  |
 | cogvlm-grounding-generalist |   base    |

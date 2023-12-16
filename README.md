@@ -541,6 +541,7 @@ Due to differences in model functionalities, different model versions may have d
 |          model name           | --version |
 | :-------------------------: | :-------: |
 |        cogagent-chat        |   chat    |
+|        cogagent-vqa        |   chat_old    |
 |         cogvlm-chat         | chat_old  |
 |      cogvlm-chat-v1.1       | chat_old  |
 | cogvlm-grounding-generalist |   base    |
