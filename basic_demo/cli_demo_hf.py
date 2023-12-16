@@ -6,11 +6,11 @@ Strongly suggest to use GPU with bfloat16 support, otherwise, it will be slow.
 Mention that only one picture can be processed at one conversation, which means you can not replace or insert another picture during the conversation.
 """
 
-import warnings
+import argparse
 import torch
+
 from PIL import Image
 from transformers import AutoModelForCausalLM, LlamaTokenizer
-import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--quant", choices=[4], type=int, default=None, help='quantization bits')
