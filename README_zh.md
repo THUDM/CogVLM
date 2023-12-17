@@ -107,6 +107,7 @@ We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gr
     |   模型名称    | 分辨率 |                             简介                             | Huggingface model | SAT model |
     | :-----------: | :----: | :----------------------------------------------------------: | :------: | :-------: |
     | cogagent-chat |  1120  | CogAgent模型的对话版本，支持GUI Agent、图像多轮对话、视觉定位等功能 |  [link](https://huggingface.co/THUDM/cogagent-chat-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
+    | cogagent-vqa |  1120  | CogAgent模型的VQA版本。拥有更强的单轮视觉问答性能。推荐用于视觉问答榜单。 |  [link](https://huggingface.co/THUDM/cogagent-vqa-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
 
 - CogVLM
 
@@ -134,6 +135,7 @@ python -m spacy download en_core_web_sm
 ```bash
 # CogAgent
 python cli_demo_sat.py --from_pretrained cogagent-chat --version chat --bf16  --stream_chat
+python cli_demo_sat.py --from_pretrained cogagent-vqa --version chat_old --bf16  --stream_chat
 
 # CogVLM
 python cli_demo_sat.py --from_pretrained cogvlm-chat --version chat_old --bf16  --stream_chat
@@ -165,6 +167,7 @@ python cli_demo_sat.py --from_pretrained cogvlm-chat-v1.1 --fp16 --quant 4 --str
 ```bash
 # CogAgent
 python cli_demo_hf.py --from_pretrained THUDM/cogagent-chat-hf --bf16
+python cli_demo_hf.py --from_pretrained THUDM/cogagent-vqa-hf --bf16
 
 # CogVLM
 python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --bf16
@@ -184,6 +187,7 @@ python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --quant 4
 
 ```bash
 python web_demo.py --from_pretrained cogagent-chat --version chat --bf16
+python web_demo.py --from_pretrained cogagent-vqa --version chat_old --bf16
 python web_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat_old --bf16
 python web_demo.py --from_pretrained cogvlm-grounding-generalist --version base --bf16
 ```
@@ -424,6 +428,7 @@ CogAgent-18B 在9个跨模态基准测试上取得了 SOTA 的通用性能，包
 |          模型名称           | --version |
 | :-------------------------: | :-------: |
 |        cogagent-chat        |   chat    |
+|        cogagent-vqa        |   chat_old    |
 |         cogvlm-chat         | chat_old  |
 |      cogvlm-chat-v1.1       | chat_old  |
 | cogvlm-grounding-generalist |   base    |
