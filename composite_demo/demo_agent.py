@@ -1,12 +1,12 @@
-import streamlit as st
-import base64
-
-from PIL import Image
 from io import BytesIO
+import base64
+import streamlit as st
+
 from streamlit.delta_generator import DeltaGenerator
 from client import get_client
+from conversation import postprocess_text, Conversation, Role, postprocess_image
+from PIL import Image
 from utils import images_are_same
-from conversation import Conversation, Role, postprocess_image
 
 client = get_client()
 
@@ -26,7 +26,10 @@ def main(retry: bool,
          prompt_text: str,
          metadata: str,
          top_k: int,
-         max_new_tokens: int):
+         max_new_tokens: int,
+         grounding: bool = False,
+         template: str = ""
+         ):
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
 
@@ -34,15 +37,15 @@ def main(retry: bool,
 
     for conversation in history:
         conversation.show()
+
     if retry:
         last_user_conversation_idx = None
         for idx, conversation in enumerate(history):
             if conversation.role == Role.USER:
                 last_user_conversation_idx = idx
         if last_user_conversation_idx is not None:
-            prompt_text =  history[last_user_conversation_idx].content_show
-            print(prompt_text)
             del history[last_user_conversation_idx:]
+        prompt_text = history[last_user_conversation_idx].content_show
 
     if prompt_text:
         image = Image.open(BytesIO(base64.b64decode(metadata))).convert('RGB') if metadata else None
@@ -53,12 +56,17 @@ def main(retry: bool,
                 (conv.image for conv in reversed(history) if conv.role == Role.USER and conv.image), None)
             if last_user_image and images_are_same(image, last_user_image):
                 image_input = None
-            else:
-                st.session_state.chat_history = []
-                history = []
+
+            # Not necessary to clear history
+            # else:
+            #     # new picture means new conversation
+            #     st.session_state.chat_history = []
+            #     history = []
 
         # Set conversation
-        user_conversation = Conversation(role=Role.USER, content_show=prompt_text.strip(), image=image_input)
+        user_conversation = Conversation(role=Role.USER,
+                                         content_show=postprocess_text(template=template, text=prompt_text.strip()),
+                                         image=image_input)
         append_conversation(user_conversation, history)
         placeholder = st.empty()
         assistant_conversation = placeholder.chat_message(name="assistant", avatar="assistant")
@@ -67,6 +75,8 @@ def main(retry: bool,
         # steam Answer
         output_text = ''
         for response in client.generate_stream(
+                model_use='agent_chat',
+                grounding=grounding,
                 history=history,
                 do_sample=True,
                 max_new_tokens=max_new_tokens,
