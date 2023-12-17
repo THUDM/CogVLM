@@ -3,16 +3,24 @@ from io import BytesIO
 from PIL import Image
 
 def images_are_same(img1: Image, img2: Image) -> bool:
+    """
+        Compare two PIL images.
+    """
     if img1.size != img2.size or img1.mode != img2.mode:
         return False
     return list(img1.getdata()) == list(img2.getdata())
 
 
 def encode_file_to_base64(file):
+    """
+       Convert a file to base64.
+    """
     buffer = BytesIO()
     buffer.write(file.read())
     return base64.b64encode(buffer.getvalue()).decode()
 
+
+# The templates is for CogAgent
 
 templates = [
     "Can you advise me on how to <TASK>?",
