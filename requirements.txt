@@ -12,3 +12,10 @@ streamlit>=1.29.0
 timm>=0.9.12
 accelerate>=0.25.0
 pydantic>=2.5.2
+
+# for openai demo
+openai>=1.4.0
+sse-starlette>=1.8.2
+fastapi>=0.105.0
+httpx>=0.25.2
+uvicorn~=0.24.0

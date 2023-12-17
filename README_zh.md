@@ -208,6 +208,15 @@ python openai_demo/openai_api_request.py
 This image showcases a tranquil natural scene with a wooden pathway leading through a field of lush green grass. In the distance, there are trees and some scattered structures, possibly houses or small buildings. The sky is clear with a few scattered clouds, suggesting a bright and sunny day.
 ```
 
+### 情况4: Composite_demo
+你可以使用我们的 `composite_demo` 来完成目前 Cog 系列所有模型的对话。
+1. 首先，在`composite_demo/client.py`中根据你使用的模型来进行配置。
+2. 接着，启动节点
+```
+CUDA_VISIBLE_DEVICES=0 streamlit run main.py --server.address 127.0.0.1 
+```
+接着就可以正常对话。
+
 ## CogVLM介绍
 - CogVLM 是一个强大的开源视觉语言模型（VLM）。CogVLM-17B 拥有 100 亿视觉参数和 70 亿语言参数，支持490*490分辨率的图像理解。
 
