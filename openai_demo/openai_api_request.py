@@ -1,9 +1,9 @@
 """
-This script is designed to mimic the OpenAI API interface to interact with the cogvlm-17B
-It demonstrates the integration of image and text-based inputs for generating responses.
-Currently, this model can only process a single image.
-So do not use this script to process multiple images in one conversation.(Including the image in the history)
-And it is only for chat model, not base model.
+This script is designed to mimic the OpenAI API interface with CogVLM & CogAgent Chat
+It demonstrates how to integrate image and text-based input to generate a response.
+Currently, the model can only handle a single image.
+Therefore, do not use this script to process multiple images in one conversation. (includes images from history)
+And it only works on the chat model, not the base model.
 """
 import requests
 import json
@@ -13,6 +13,21 @@ base_url = "http://127.0.0.1:8000"
 
 
 def create_chat_completion(model, messages, temperature=0.8, max_tokens=2048, top_p=0.8, use_stream=False):
+    """
+    This function sends a request to the chat API to generate a response based on the given messages.
+
+    Args:
+        model (str): The name of the model to use for generating the response.
+        messages (list): A list of message dictionaries representing the conversation history.
+        temperature (float): Controls randomness in response generation. Higher values lead to more random responses.
+        max_tokens (int): The maximum length of the generated response.
+        top_p (float): Controls diversity of response by filtering less likely options.
+        use_stream (bool): Determines whether to use a streaming response or a single response.
+
+    The function constructs a JSON payload with the specified parameters and sends a POST request to the API.
+    It then handles the response, either as a stream (for ongoing responses) or a single message.
+    """
+
     data = {
         "model": model,
         "messages": messages,
@@ -46,12 +61,32 @@ def create_chat_completion(model, messages, temperature=0.8, max_tokens=2048, to
 
 
 def encode_image(image_path):
-    """Getting the base64 string"""
+    """
+    Encodes an image file into a base64 string.
+    Args:
+        image_path (str): The path to the image file.
+
+    This function opens the specified image file, reads its content, and encodes it into a base64 string.
+    The base64 encoding is used to send images over HTTP as text.
+    """
+
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
 def simple_image_chat(use_stream=True, img_path=None):
+    """
+    Facilitates a simple chat interaction involving an image.
+
+    Args:
+        use_stream (bool): Specifies whether to use streaming for chat responses.
+        img_path (str): Path to the image file to be included in the chat.
+
+    This function encodes the specified image and constructs a predefined conversation involving the image.
+    It then calls `create_chat_completion` to generate a response from the model.
+    The conversation includes asking about the content of the image and a follow-up question.
+    """
+
     img_url = f"data:image/jpeg;base64,{encode_image(img_path)}"
     messages = [
         {

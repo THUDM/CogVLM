@@ -18,13 +18,17 @@ from PIL import Image
 from io import BytesIO
 
 
-MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat')
+MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat-hf')
 TOKENIZER_PATH = os.environ.get("TOKENIZER_PATH", 'lmsys/vicuna-7b-v1.5')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):  # collects GPU memory
+async def lifespan(app: FastAPI):
+    """
+    An asynchronous context manager for managing the lifecycle of the FastAPI app.
+    It ensures that GPU memory is cleared after the app's lifecycle ends, which is essential for efficient resource management in GPU environments.
+    """
     yield
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
@@ -43,6 +47,10 @@ app.add_middleware(
 
 
 class ModelCard(BaseModel):
+    """
+    A Pydantic model representing a model card, which provides metadata about a machine learning model.
+    It includes fields like model ID, owner, and creation time.
+    """
     id: str
     object: str = "model"
     created: int = Field(default_factory=lambda: int(time.time()))
@@ -128,7 +136,11 @@ class ChatCompletionResponse(BaseModel):
 
 @app.get("/v1/models", response_model=ModelList)
 async def list_models():
-    model_card = ModelCard(id="cogvlm-chat-17b")
+    """
+    An endpoint to list available models. It returns a list of model cards.
+    This is useful for clients to query and understand what models are available for use.
+    """
+    model_card = ModelCard(id="cogvlm-chat-17b") # can be replaced by your model id like cogagent-chat-18b
     return ModelList(data=[model_card])
 
 
@@ -171,6 +183,11 @@ async def create_chat_completion(request: ChatCompletionRequest):
 
 
 async def predict(model_id: str, params: dict):
+    """
+    Handle streaming predictions. It continuously generates responses for a given input stream.
+    This is particularly useful for real-time, continuous interactions with the model.
+    """
+
     global model, tokenizer
 
     choice_data = ChatCompletionResponseStreamChoice(
@@ -205,6 +222,11 @@ async def predict(model_id: str, params: dict):
 
 
 def generate_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenizer, params: dict):
+    """
+    Generates a response using the CogVLM model. It processes the chat history and image data, if any,
+    and then invokes the model to generate a response.
+    """
+
     for response in generate_stream_cogvlm(model, tokenizer, params):
         pass
     return response
@@ -216,8 +238,9 @@ def process_history_and_images(messages: List[ChatMessageInput]) -> Tuple[
     Process history messages to extract text, identify the last user query,
     and convert base64 encoded image URLs to PIL images.
 
-    :param messages: List of ChatMessageInput objects.
-    :return: A tuple of three elements:
+    Args:
+        messages(List[ChatMessageInput]): List of ChatMessageInput objects.
+    return: A tuple of three elements:
              - The last user query as a string.
              - Text history formatted as a list of tuples for the model.
              - List of PIL Image objects extracted from the messages.
@@ -265,6 +288,10 @@ def process_history_and_images(messages: List[ChatMessageInput]) -> Tuple[
 
 @torch.inference_mode()
 def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenizer, params: dict):
+    """
+    Generates a stream of responses using the CogVLM model in inference mode.
+    It's optimized to handle continuous input-output interactions with the model in a streaming manner.
+    """
     messages = params["messages"]
     temperature = float(params.get("temperature", 1.0))
     repetition_penalty = float(params.get("repetition_penalty", 1.0))
