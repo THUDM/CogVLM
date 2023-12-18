@@ -43,24 +43,23 @@ class Role(Enum):
 @dataclass
 class Conversation:
     """
-        Represents a single conversation turn within a dialogue.
+    Represents a single conversation turn within a dialogue.
+    Attributes:
+        role (Role): The role of the speaker in the conversation (USER or ASSISTANT).
+        content (str): The textual content of the conversation turn.
+        image (Image, optional): An optional image associated with the conversation turn.
+        content_show (str, optional): The content to be displayed in the WebUI. This may differ
+            from `content` if translation or other processing is applied.
+        translate （bool, optional): Whether to translate the content of the conversation turn.
 
-        Attributes:
-            role (Role): The role of the speaker in the conversation (USER or ASSISTANT).
-            content (str): The textual content of the conversation turn.
-            image (Image, optional): An optional image associated with the conversation turn.
-            content_show (str, optional): The content to be displayed in the WebUI. This may differ
-                from `content` if translation or other processing is applied.
-            translate （bool, optional): Whether to translate the content of the conversation turn.
+    Methods:
+        __str__(self) -> str:
+            Returns a string representation of the conversation turn, including the role and content.
 
-        Methods:
-            __str__(self) -> str:
-                Returns a string representation of the conversation turn, including the role and content.
-
-            show(self, placeholder: DeltaGenerator | None = None) -> str:
-                Displays the conversation turn in the WebUI. If `placeholder` is provided, the content
-                is shown in the specified Streamlit container. Otherwise, it uses the message style
-                determined by the role.
+        show(self, placeholder: DeltaGenerator | None = None) -> str:
+            Displays the conversation turn in the WebUI. If `placeholder` is provided, the content
+            is shown in the specified Streamlit container. Otherwise, it uses the message style
+            determined by the role.
     """
 
     role: Role = Role.USER
@@ -89,7 +88,7 @@ class Conversation:
             if self.translate:
                 self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
                 if self.content == "error":
-                    self.content_show = "请填写百度翻译key"
+                    self.content_show = "Please Enter your Baidu Translation API Key in function translate_baidu()"
             else:
                 self.content = self.content_show
         if self.role == Role.ASSISTANT:
@@ -107,14 +106,13 @@ class Conversation:
 
 def preprocess_text(history: list[Conversation], ) -> str:
     """
-        Prepares the conversation history for processing by concatenating the content of each turn.
+    Prepares the conversation history for processing by concatenating the content of each turn.
+     Args:
+        history (list[Conversation]): The conversation history, a list of Conversation objects.
 
-        Args:
-            history (list[Conversation]): The conversation history, a list of Conversation objects.
-
-        Returns:
-            str: A single string that concatenates the content of each conversation turn, followed by
-            the ASSISTANT role indicator. This string is suitable for use as input to a text generation model.
+    Returns:
+        str: A single string that concatenates the content of each conversation turn, followed by
+        the ASSISTANT role indicator. This string is suitable for use as input to a text generation model.
     """
 
     prompt = ""
@@ -127,7 +125,6 @@ def preprocess_text(history: list[Conversation], ) -> str:
 def postprocess_text(template: str, text: str) -> str:
     """
     Post-processes the generated text by incorporating it into a given template.
-
     Args:
         template (str): A template string containing a placeholder for the generated text.
         text (str): The generated text to be incorporated into the template.
@@ -140,6 +137,18 @@ def postprocess_text(template: str, text: str) -> str:
 
 
 def postprocess_image(text: str, img: Image) -> (str, Image):
+    """
+    Processes the given text to identify and draw bounding boxes on the provided image.
+    This function searches for patterns in the text that represent coordinates for bounding
+    boxes and draws rectangles on the image at these coordinates. Each box is drawn in a
+    different color for distinction.
+    Args:
+        text (str): The text containing bounding box coordinates in a specific pattern.
+        img (Image): The image on which to draw the bounding boxes.
+    Returns:
+        tuple[str, Image]: The processed text with additional annotations for each bounding
+        box, and the image with the drawn bounding boxes.
+    """
     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
     pattern = r"\[\[((?:\d+,){1,3}\d+)\]\]"
     matches = re.findall(pattern, text)
