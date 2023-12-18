@@ -78,27 +78,33 @@ if clear_history or retry:
 
 match tab:
     case Mode.CogVLM:
-        demo_vlm.main(
-            retry=retry,
-            top_p=top_p,
-            top_k=top_k,
-            temperature=temperature,
-            prompt_text=prompt_text,
-            metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
-            max_new_tokens=max_new_token,
-            grounding=grounding
-        )
+        if uploaded_file is not None:
+            demo_vlm.main(
+                retry=retry,
+                top_p=top_p,
+                top_k=top_k,
+                temperature=temperature,
+                prompt_text=prompt_text,
+                metadata=encode_file_to_base64(uploaded_file),
+                max_new_tokens=max_new_token,
+                grounding=grounding
+            )
+        else:
+            st.error(f'Please upload an image to start')
     case Mode.CogAgent:
-        demo_agent.main(
-            retry=retry,
-            top_p=top_p,
-            top_k=top_k,
-            temperature=temperature,
-            prompt_text=prompt_text,
-            metadata=encode_file_to_base64(uploaded_file) if uploaded_file else None,
-            max_new_tokens=max_new_token,
-            grounding=grounding,
-            template=selected_template  # only used in CogAgent
-        )
+        if uploaded_file is not None:
+            demo_agent.main(
+                retry=retry,
+                top_p=top_p,
+                top_k=top_k,
+                temperature=temperature,
+                prompt_text=prompt_text,
+                metadata=encode_file_to_base64(uploaded_file),
+                max_new_tokens=max_new_token,
+                grounding=grounding,
+                template=selected_template  # only used in CogAgent
+            )
+        else:
+            st.error(f'Please upload an image to start')
     case _:
         st.error(f'Unexpected tab: {tab}')
