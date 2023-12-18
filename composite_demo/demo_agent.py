@@ -1,6 +1,7 @@
 from io import BytesIO
 import base64
 import streamlit as st
+import re
 
 from streamlit.delta_generator import DeltaGenerator
 from client import get_client
@@ -64,9 +65,16 @@ def main(retry: bool,
             #     history = []
 
         # Set conversation
-        user_conversation = Conversation(role=Role.USER,
-                                         content_show=postprocess_text(template=template, text=prompt_text.strip()),
-                                         image=image_input)
+        if re.search('[\u4e00-\u9fff]', prompt_text):
+            translate = True
+        else:
+            translate = False
+
+        user_conversation = Conversation(
+            role=Role.USER,
+            content_show=postprocess_text(template=template, text=prompt_text.strip()),
+            image=image_input
+        )
         append_conversation(user_conversation, history)
         placeholder = st.empty()
         assistant_conversation = placeholder.chat_message(name="assistant", avatar="assistant")
@@ -90,11 +98,16 @@ def main(retry: bool,
         ## Final Answer with image.
         print("\n==Output:==\n", output_text)
         content_output, image_output = postprocess_image(output_text, image)
-        assistant_conversation = Conversation(role=Role.ASSISTANT, content=content_output, image=image_output)
+        assistant_conversation = Conversation(
+            role=Role.ASSISTANT,
+            content=content_output,
+            image=image_output,
+
+        )
         append_conversation(
             conversation=assistant_conversation,
             history=history,
-            placeholder=placeholder.chat_message(name="assistant", avatar="assistant")
+            placeholder=placeholder.chat_message(name="assistant", avatar="assistant"),
         )
     else:
         st.session_state.chat_history = []
