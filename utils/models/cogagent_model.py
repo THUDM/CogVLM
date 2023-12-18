@@ -12,6 +12,7 @@ from .mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
 
 
 MODEL_URLS["cogagent-chat"] = "r2://cogagent-chat.zip"
+MODEL_URLS["cogagent-vqa"] = "r2://cogagent-vqa.zip"
 
 
 class GLU(nn.Module):
