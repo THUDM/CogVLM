@@ -21,20 +21,25 @@ def append_conversation(
     conversation.show(placeholder)
 
 
-def main(retry: bool,
-         top_p: float,
-         temperature: float,
-         prompt_text: str,
-         metadata: str,
-         top_k: int,
-         max_new_tokens: int,
-         grounding: bool = False
-         ):
+def main(
+        top_p: float = 0.8,
+        temperature: float = 0.95,
+        prompt_text: str = "",
+        metadata: str = "",
+        top_k: int = 2,
+        max_new_tokens: int = 2048,
+        grounding: bool = False,
+        retry: bool = False,
+):
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
 
-    history: list[Conversation] = st.session_state.chat_history
+    if prompt_text == "" and retry == False:
+        print("\n== Clean ==\n")
+        st.session_state.chat_history = []
+        return
 
+    history: list[Conversation] = st.session_state.chat_history
     for conversation in history:
         conversation.show()
     if retry:
@@ -104,5 +109,3 @@ def main(retry: bool,
             history=history,
             placeholder=placeholder.chat_message(name="assistant", avatar="assistant")
         )
-    else:
-        st.session_state.chat_history = []
