@@ -78,6 +78,7 @@ def main(
 
         user_conversation = Conversation(
             role=Role.USER,
+            translate=translate,
             content_show=postprocess_text(template=template, text=prompt_text.strip()),
             image=image_input
         )
@@ -108,7 +109,7 @@ def main(
             role=Role.ASSISTANT,
             content=content_output,
             image=image_output,
-
+            translate=translate,
         )
         append_conversation(
             conversation=assistant_conversation,

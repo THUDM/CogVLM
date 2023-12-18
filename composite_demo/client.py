@@ -23,18 +23,18 @@ else:
 # if you use all of Our model, include cogagent-chat cogvlm-chat cogvlm-grounding and put it in different devices, you can do like this.
 models_info = {
     'tokenizer': {
-        'path': os.environ.get('TOKENIZER_PATH', '/share/official_pretrains/hf_home/vicuna-7b-v1.5'),
+        'path': os.environ.get('TOKENIZER_PATH', 'lmsys/vicuna-7b-v1.5'),
     },
     'agent_chat': {
-        'path': os.environ.get('MODEL_PATH_AGENT_CHAT', '/share/official_pretrains/hf_home/cogagent-chat-hf'),
+        'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THDUM/cogagent-chat-hf'),
         'device': ['cuda:0']
     },
     'vlm_chat': {
-        'path': os.environ.get('MODEL_PATH_VLM_CHAT', '/share/official_pretrains/hf_home/cogvlm-chat-v1-1-hf'),
+        'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THDUM/cogvlm-chat-v1-1-hf'),
         'device': ['cuda:3']
     },
     'vlm_grounding': {
-        'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','/share/official_pretrains/hf_home/cogvlm-grounding-generalist-hf'),
+        'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','THDUM/cogvlm-grounding-generalist-hf'),
         'device': ['cuda:6']
     }
 }
