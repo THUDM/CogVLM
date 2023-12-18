@@ -28,7 +28,7 @@ import demo_vlm, demo_agent
 
 st.markdown("<h3>CogAgent & CogVLM Chat Demo</h3>", unsafe_allow_html=True)
 st.markdown(
-    "<sub>智谱AI 更多使用方法请参考文档: https://lslfd0slxc.feishu.cn/wiki/WvQbwIJ9tiPAxGk8ywDck6yfnof </sub> \n\n",
+    "<sub>更多使用方法请参考文档: https://lslfd0slxc.feishu.cn/wiki/WvQbwIJ9tiPAxGk8ywDck6yfnof </sub> \n\n",
     unsafe_allow_html=True)
 
 
@@ -41,7 +41,7 @@ with st.sidebar:
         'top_p', 0.0, 1.0, 0.8, step=0.01
     )
     temperature = st.slider(
-        'temperature', 0.0, 1.0, 0.90, step=0.01
+        'temperature', 0.01, 1.0, 0.90, step=0.01
     )
     top_k = st.slider(
         'top_k', 1, 20, 5, step=1

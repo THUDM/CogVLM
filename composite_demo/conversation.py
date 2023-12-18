@@ -150,38 +150,42 @@ def postprocess_image(text: str, img: Image) -> (str, Image):
         box, and the image with the drawn bounding boxes.
     """
     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
-    pattern = r"\[\[((?:\d+,){1,3}\d+)\]\]"
+
+    # Updated pattern to match single or multiple coordinate groups
+    pattern = r"\[\[([\d,]+(?:;[\d,]+)*)\]\]"
     matches = re.findall(pattern, text)
-    unique_matches = []
     draw = ImageDraw.Draw(img)
 
-    if matches == []:
+    if not matches:
         return text, None
 
-    for i, coords_str in enumerate(matches):
-        coords = coords_str.split(',')
-        if coords not in unique_matches:
-            unique_matches.append(coords)
-            if len(coords) == 4:
+    for i, match in enumerate(matches):
+        # Splitting the matched string into individual coordinate groups
+        coords_groups = match.split(';')
+
+        # Determining the color for the current match
+        color = colors[i % len(colors)]
+
+        for coords_str in coords_groups:
+            coords = coords_str.split(',')
+
+            if len(coords) == 4:  # Rectangle
                 scaled_coords = (
                     int(float(coords[0]) * 0.001 * img.width),
                     int(float(coords[1]) * 0.001 * img.height),
                     int(float(coords[2]) * 0.001 * img.width),
                     int(float(coords[3]) * 0.001 * img.height)
                 )
-                draw.rectangle(scaled_coords, outline=colors[i % len(colors)], width=3)
-                color_text = f"(in {colors[i % len(colors)]} box)"
-            elif len(coords) == 2:
+                draw.rectangle(scaled_coords, outline=color, width=3)
+            elif len(coords) == 2:  # Point
                 scaled_coords = (
                     int(float(coords[0]) * 0.001 * img.width),
                     int(float(coords[1]) * 0.001 * img.height)
                 )
-                radius = 10
+                radius = 5
                 draw.ellipse([scaled_coords[0] - radius, scaled_coords[1] - radius,
                               scaled_coords[0] + radius, scaled_coords[1] + radius],
-                             fill=colors[i % len(colors)])
-                color_text = f"(at {colors[i % len(colors)]} point)"
-            text = text.replace(f"[[{','.join(coords)}]]", f"[[{','.join(coords)}]]{color_text}", 1)
+                             fill=color)
 
     return text, img
 

@@ -11,7 +11,7 @@ dialogue with images, GUI Agent, Grounding**, and more.
 🌟 **Jump to detailed introduction: [Introduction to CogVLM](#introduction-to-cogvlm)，
 🆕 [Introduction to CogAgent](#introduction-to-cogagent)**
 
-📔 For more detailed usage information, please refer to: [CogVLM(Only Chinese)](https://zhipu-ai.feishu.cn/wiki/LXQIwqo1OiIVTykMh9Lc3w1Fn7g) technical documentation
+📔 For more detailed usage information, please refer to: [CogVLM technical documentation(Only Chinese)](https://zhipu-ai.feishu.cn/wiki/LXQIwqo1OiIVTykMh9Lc3w1Fn7g) 
 
 <table>
   <tr>
@@ -80,12 +80,7 @@ dialogue with images, GUI Agent, Grounding**, and more.
 - **News**: ```2023/11/20``` We have updated the checkpoint of cogvlm-chat to cogvlm-chat-v1.1, unified the versions of
   chat and VQA, and refreshed the SOTA on various datasets. See [details](#introduction-to-cogvlm)
 
-- **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, *
-  *[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)
-  **, *
-  *[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)
-  ** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#situation-22-cli-huggingface-version)
-  now!
+- **News**: ```2023/11/20``` We release **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)** on 🤗Huggingface. you can infer with transformers in [a few lines of code](#situation-22-cli-huggingface-version)now!
 
 - ```2023/10/27``` CogVLM bilingual version is available [online](https://chatglm.cn/)! Welcome to try it out!
 
@@ -292,14 +287,14 @@ weights. Alternatively, you can choose to manually download the necessary weight
 - CogAgent
 
   |   Model name    | Input resolution |                             Introduction                             | Huggingface model | SAT model |
-      | :-----------: | :----: | :----------------------------------------------------------: | :------: | :-------: |
+  | :-----------: | :----: | :----------------------------------------------------------: | :------: | :-------: |
   | cogagent-chat |  1120  | Chat version of CogAgent. Supports GUI Agent, multiple-round  chat and visual grounding. |  [link](https://huggingface.co/THUDM/cogagent-chat-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
   | cogagent-vqa |  1120  | VQA version of CogAgent. Has stronger capabilities in single-turn visual dialogue. Recommended for VQA benchmarks. |  [link](https://huggingface.co/THUDM/cogagent-vqa-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
 
 - CogVLM
 
   |          Model name           | Input resolution |                           Introduction                            | Huggingface model | SAT model |
-      | :-------------------------: | :----: | :-------------------------------------------------------: | :------: | :-------: |
+  | :-------------------------: | :----: | :-------------------------------------------------------: | :------: | :-------: |
   |         cogvlm-chat-v1.1         |  490   |  Supports multiple rounds of chat and vqa simultaneously, with different prompts.   |  [link](https://huggingface.co/THUDM/cogvlm-chat-hf)        |    [link](https://huggingface.co/THUDM/CogVLM/tree/main)        |
   |       cogvlm-base-224       |  224   |               The original checkpoint after text-image pretraining.               |   [link](https://huggingface.co/THUDM/cogvlm-base-224-hf)       |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
   |       cogvlm-base-490       |  490   |      Amplify the resolution to 490 through position encoding interpolation from `cogvlm-base-224`.      |   [link](https://huggingface.co/THUDM/cogvlm-base-490-hf)       |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
