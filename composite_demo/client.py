@@ -5,7 +5,6 @@ import streamlit as st
 import torch
 import warnings
 import os
-import random
 
 from typing import Any, Protocol
 from collections.abc import Iterable
@@ -21,23 +20,36 @@ else:
     torch_type = torch.float16
     warnings.warn("Your GPU does not support bfloat16 type, use fp16 instead")
 
+# if you use all of Our model, include cogagent-chat cogvlm-chat cogvlm-grounding and put it in different devices, you can do like this.
 models_info = {
     'tokenizer': {
         'path': os.environ.get('TOKENIZER_PATH', '/share/official_pretrains/hf_home/vicuna-7b-v1.5'),
     },
     'agent_chat': {
         'path': os.environ.get('MODEL_PATH_AGENT_CHAT', '/share/official_pretrains/hf_home/cogagent-chat-hf'),
-        'device': ['cuda:0', 'cuda:1', 'cuda:2']
+        'device': ['cuda:0']
     },
     'vlm_chat': {
         'path': os.environ.get('MODEL_PATH_VLM_CHAT', '/share/official_pretrains/hf_home/cogvlm-chat-v1-1-hf'),
-        'device': ['cuda:3', 'cuda:4', 'cuda:5']
+        'device': ['cuda:3']
     },
     'vlm_grounding': {
         'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','/share/official_pretrains/hf_home/cogvlm-grounding-generalist-hf'),
-        'device': ['cuda:6', 'cuda:7']
+        'device': ['cuda:6']
     }
 }
+
+
+# if you just use one model, use like this
+# models_info = {
+#     'tokenizer': {
+#         'path': os.environ.get('TOKENIZER_PATH', 'lmsys/vicuna-7b-v1.5'),
+#     },
+#     'agent_chat': {
+#         'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THUDM/cogagent-chat-hf'),
+#         'device': ['cuda:0']
+#     },
+
 
 
 @st.cache_resource
@@ -105,14 +117,12 @@ class HFClient(Client):
         The class loads each model based on the provided information and assigns it to the
         specified CUDA device. It also handles the tokenizer used across all models.
         """
-
     def __init__(self, models_info):
         self.models = {}
-        self.model_devices = {}
+        self.tokenizer = AutoTokenizer.from_pretrained(models_info['tokenizer']['path'], trust_remote_code=True)
         for model_name, model_info in models_info.items():
-            if model_name == 'tokenizer':
-                self.tokenizer = AutoTokenizer.from_pretrained(model_info['path'], trust_remote_code=True)
-            else:
+            if model_name != 'tokenizer':
+                self.models[model_name] = []
                 for device in model_info['device']:
                     model = AutoModelForCausalLM.from_pretrained(
                         model_info['path'],
@@ -120,11 +130,21 @@ class HFClient(Client):
                         low_cpu_mem_usage=True,
                         trust_remote_code=True,
                     ).to(device).eval()
-                    if model_name not in self.models:
-                        self.models[model_name] = []
-                        self.model_devices[model_name] = []
                     self.models[model_name].append(model)
-                    self.model_devices[model_name].append(device)
+
+    def select_best_gpu(self, model_name):
+        min_memory_used = None
+        selected_model = None
+
+        for model in self.models[model_name]:
+            device = next(model.parameters()).device
+            mem_used = torch.cuda.memory_allocated(device=device)
+
+            if min_memory_used is None or mem_used < min_memory_used:
+                min_memory_used = mem_used
+                selected_model = model
+
+        return selected_model
 
     def generate_stream(self,
                         history: list,
@@ -161,17 +181,15 @@ class HFClient(Client):
         if grounding:
             query += "(with grounding)"
 
-        index = random.randint(0, len(self.model_devices[model_use])-1)
-        model = self.models[model_use][index]
-        device = self.model_devices[model_use][index]
-        # device = next(model.parameters()).device
+        model = self.select_best_gpu(model_use)
+        device = next(model.parameters()).device
 
         # Print user input info
 
-        print("\n== Device ==\n", device)
         print("\n== Input ==\n", query)
         print("\n==History==\n", history)
         print("\n== Model ==\n\n", model.config.name_or_path)
+        print("\n== Device ==\n\n", device)
 
         input_by_model = model.build_conversation_input_ids(
             self.tokenizer,
