@@ -45,8 +45,8 @@ def main(retry: bool,
             if conversation.role == Role.USER:
                 last_user_conversation_idx = idx
         if last_user_conversation_idx is not None:
+            prompt_text = history[last_user_conversation_idx].content_show
             del history[last_user_conversation_idx:]
-        prompt_text = history[last_user_conversation_idx].content_show
 
     if prompt_text:
         image = Image.open(BytesIO(base64.b64decode(metadata))).convert('RGB') if metadata else None

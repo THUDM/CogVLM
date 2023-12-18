@@ -44,7 +44,6 @@ def main(retry: bool,
                 last_user_conversation_idx = idx
         if last_user_conversation_idx is not None:
             prompt_text = history[last_user_conversation_idx].content_show
-            print(prompt_text)
             del history[last_user_conversation_idx:]
 
     if prompt_text:
