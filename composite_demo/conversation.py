@@ -51,6 +51,7 @@ class Conversation:
             image (Image, optional): An optional image associated with the conversation turn.
             content_show (str, optional): The content to be displayed in the WebUI. This may differ
                 from `content` if translation or other processing is applied.
+            translate （bool, optional): Whether to translate the content of the conversation turn.
 
         Methods:
             __str__(self) -> str:
@@ -66,7 +67,7 @@ class Conversation:
     content: str = ""
     image: Image | None = None
     content_show: str | None = None
-
+    translate: bool = False
 
     def __str__(self) -> str:
         print(self.role, self.content)
@@ -85,13 +86,16 @@ class Conversation:
 
         # for Chinese WebUI show
         if self.role == Role.USER:
-            # show in Chinese and turn it to english
-            # self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
-            self.content = self.content_show
+            print(self.translate,self.content)
+            if self.translate:
+                self.content = translate_baidu(self.content_show, source_lan="zh", target_lan="en")
+            else:
+                self.content = self.content_show
         if self.role == Role.ASSISTANT:
-            # and turn it to Chinese and show
-            # self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
-            self.content_show = self.content
+            if self.translate:
+                self.content_show = translate_baidu(self.content, source_lan="en", target_lan="zh")
+            else:
+                self.content_show = self.content
 
             self.content_show = self.content_show.replace('\n', '  \n')
 
@@ -134,74 +138,74 @@ def postprocess_text(template: str, text: str) -> str:
     return template.replace("<TASK>", quoted_text).strip()
 
 
-# def postprocess_image(text: str, img: Image) -> (str, Image):
-#     """
-#        Processes the given text to identify and draw bounding boxes on the provided image.
-#
-#        This function searches for patterns in the text that represent coordinates for bounding
-#        boxes and draws rectangles on the image at these coordinates. Each box is drawn in a
-#        different color for distinction.
-#
-#        Args:
-#            text (str): The text containing bounding box coordinates in a specific pattern.
-#            img (Image): The image on which to draw the bounding boxes.
-#
-#        Returns:
-#            tuple[str, Image]: The processed text with additional annotations for each bounding
-#            box, and the image with the drawn bounding boxes.
-#        """
-#     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
-#     pattern = r"\[\[(\d+),(\d+),(\d+),(\d+)\]\]"
-#     matches = re.findall(pattern, text)
-#     unique_matches = []
-#     draw = ImageDraw.Draw(img)
-#     if matches == []:
-#         return text, None
-#
-#     for i, coords in enumerate(matches):
-#         if coords not in unique_matches:
-#             unique_matches.append(coords)
-#             scaled_coords = (
-#                 int(float(coords[0]) * 0.001 * img.width),
-#                 int(float(coords[1]) * 0.001 * img.height),
-#                 int(float(coords[2]) * 0.001 * img.width),
-#                 int(float(coords[3]) * 0.001 * img.height)
-#             )
-#             draw.rectangle(scaled_coords, outline=colors[i % len(colors)], width=3)
-#             color_text = f"(in {colors[i % len(colors)]} box)"
-#             text = text.replace(f"[[{','.join(coords)}]]", f"[[{','.join(coords)}]]{color_text}", 1)
-#     return text, img
-
-
 def postprocess_image(text: str, img: Image) -> (str, Image):
+    """
+       Processes the given text to identify and draw bounding boxes on the provided image.
+
+       This function searches for patterns in the text that represent coordinates for bounding
+       boxes and draws rectangles on the image at these coordinates. Each box is drawn in a
+       different color for distinction.
+
+       Args:
+           text (str): The text containing bounding box coordinates in a specific pattern.
+           img (Image): The image on which to draw the bounding boxes.
+
+       Returns:
+           tuple[str, Image]: The processed text with additional annotations for each bounding
+           box, and the image with the drawn bounding boxes.
+       """
     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
-
-    pattern = r"\[\[(.*?)\]\]"
+    pattern = r"\[\[(\d+),(\d+),(\d+),(\d+)\]\]"
     matches = re.findall(pattern, text)
-    if not matches:
-        return text, None
-    processed = set()
+    unique_matches = []
     draw = ImageDraw.Draw(img)
-    for match in matches:
-        positions = match.group(1).split(';')
-        boxes = [tuple(map(int, pos.split(','))) for pos in positions if pos.replace(',', '').isdigit()]
+    if matches == []:
+        return text, None
 
-        for i, box in enumerate(boxes):
-            if box not in processed:
-                processed.add(box)
-
-
-                scaled_box = (
-                    int(box[0] * 0.001 * img.width),
-                    int(box[1] * 0.001 * img.height),
-                    int(box[2] * 0.001 * img.width),
-                    int(box[3] * 0.001 * img.height)
-                )
-                draw.rectangle(scaled_box, outline=colors[i % len(colors)], width=3)
-                color_text = f"(in {colors[i % len(colors)]} box)"
-                text = text.replace(f"[[{','.join(map(str, box))}]]", f"[[{','.join(map(str, box))}]]{color_text}", 1)
-
+    for i, coords in enumerate(matches):
+        if coords not in unique_matches:
+            unique_matches.append(coords)
+            scaled_coords = (
+                int(float(coords[0]) * 0.001 * img.width),
+                int(float(coords[1]) * 0.001 * img.height),
+                int(float(coords[2]) * 0.001 * img.width),
+                int(float(coords[3]) * 0.001 * img.height)
+            )
+            draw.rectangle(scaled_coords, outline=colors[i % len(colors)], width=3)
+            color_text = f"(in {colors[i % len(colors)]} box)"
+            text = text.replace(f"[[{','.join(coords)}]]", f"[[{','.join(coords)}]]{color_text}", 1)
     return text, img
+
+
+# def postprocess_image(text: str, img: Image) -> (str, Image):
+#     colors = ["red", "green", "blue", "yellow", "purple", "orange"]
+#
+#     pattern = r"\[\[(.*?)\]\]"
+#     matches = re.findall(pattern, text)
+#     if not matches:
+#         return text, None
+#     processed = set()
+#     draw = ImageDraw.Draw(img)
+#     for match in matches:
+#         positions = match.group(1).split(';')
+#         boxes = [tuple(map(int, pos.split(','))) for pos in positions if pos.replace(',', '').isdigit()]
+#
+#         for i, box in enumerate(boxes):
+#             if box not in processed:
+#                 processed.add(box)
+#
+#
+#                 scaled_box = (
+#                     int(box[0] * 0.001 * img.width),
+#                     int(box[1] * 0.001 * img.height),
+#                     int(box[2] * 0.001 * img.width),
+#                     int(box[3] * 0.001 * img.height)
+#                 )
+#                 draw.rectangle(scaled_box, outline=colors[i % len(colors)], width=3)
+#                 color_text = f"(in {colors[i % len(colors)]} box)"
+#                 text = text.replace(f"[[{','.join(map(str, box))}]]", f"[[{','.join(map(str, box))}]]{color_text}", 1)
+#
+#     return text, img
 
 def translate_baidu(translate_text, source_lan, target_lan):
     """

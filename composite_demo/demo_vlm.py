@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import re
 
 from PIL import Image
 from io import BytesIO
@@ -43,7 +44,6 @@ def main(retry: bool,
                 last_user_conversation_idx = idx
         if last_user_conversation_idx is not None:
             prompt_text = history[last_user_conversation_idx].content_show
-            print(prompt_text)
             del history[last_user_conversation_idx:]
 
     if prompt_text:
@@ -60,7 +60,17 @@ def main(retry: bool,
                 history = []
 
         # Set conversation
-        user_conversation = Conversation(role=Role.USER, content_show=prompt_text.strip(), image=image_input)
+        if re.search('[\u4e00-\u9fff]', prompt_text):
+            translate = True
+        else:
+            translate = False
+
+        user_conversation = Conversation(
+            role=Role.USER,
+            content_show=prompt_text.strip(),
+            image=image_input,
+            translate=translate
+        )
         append_conversation(user_conversation, history)
         placeholder = st.empty()
         assistant_conversation = placeholder.chat_message(name="assistant", avatar="assistant")
@@ -83,7 +93,12 @@ def main(retry: bool,
 
         print("\n==Output:==\n", output_text)
         content_output, image_output = postprocess_image(output_text, image)
-        assistant_conversation = Conversation(role=Role.ASSISTANT, content=content_output, image=image_output)
+        assistant_conversation = Conversation(
+            role=Role.ASSISTANT,
+            content=content_output,
+            image=image_output,
+            translate=translate
+        )
         append_conversation(
             conversation=assistant_conversation,
             history=history,
