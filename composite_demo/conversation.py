@@ -133,7 +133,7 @@ def postprocess_text(template: str, text: str) -> str:
         str: The template with the generated text replacing the placeholder.
     """
     quoted_text = f'"{text.strip()}"'
-    return template.replace("<TASK>", quoted_text).strip()
+    return template.replace("<TASK>", quoted_text).strip() if template != "" else text.strip()
 
 
 def postprocess_image(text: str, img: Image) -> (str, Image):

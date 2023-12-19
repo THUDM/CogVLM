@@ -22,7 +22,7 @@ Web Demo user operation logic is as follows:
 
 import streamlit as st
 from enum import Enum
-from utils import encode_file_to_base64, templates_agent_cogagent
+from utils import encode_file_to_base64, templates_agent_cogagent, template_grounding_cogvlm
 import demo_chat_cogvlm, demo_agent_cogagent, demo_chat_cogagent
 
 st.markdown("<h3>CogAgent & CogVLM Chat Demo</h3>", unsafe_allow_html=True)
@@ -68,13 +68,18 @@ tab = st.radio(
     label_visibility='hidden',
 )
 grounding = False
+selected_template_grounding_cogvlm = None
+
 if tab != Mode.CogAgent_Chat.value:
     with st.sidebar:
         grounding = st.checkbox("Grounding")
+        if tab == Mode.CogVLM_Chat.value and grounding:
+            selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
+
 
 if tab == Mode.CogAgent_Agent.value:
     with st.sidebar:
-        selected_template = st.selectbox("Select a Template", templates_agent_cogagent)
+        selected_template_agent_cogagent = st.selectbox("Template For Agent", templates_agent_cogagent)
 
 
 
@@ -93,7 +98,8 @@ match tab:
                 prompt_text=prompt_text,
                 metadata=encode_file_to_base64(uploaded_file),
                 max_new_tokens=max_new_token,
-                grounding=grounding
+                grounding=grounding,
+                template=selected_template_grounding_cogvlm
             )
         else:
             st.error(f'Please upload an image to start')
@@ -126,7 +132,7 @@ match tab:
                 metadata=encode_file_to_base64(uploaded_file),
                 max_new_tokens=max_new_token,
                 grounding=grounding,
-                template=selected_template  # only used in CogAgent
+                template=selected_template_agent_cogagent
             )
         else:
             st.error(f'Please upload an image to start')

@@ -7,7 +7,7 @@ from io import BytesIO
 from streamlit.delta_generator import DeltaGenerator
 from client import get_client
 from utils import images_are_same
-from conversation import Conversation, Role, postprocess_image
+from conversation import Conversation, Role, postprocess_image, postprocess_text
 
 client = get_client()
 
@@ -30,6 +30,7 @@ def main(
         max_new_tokens: int = 2048,
         grounding: bool = False,
         retry: bool = False,
+        template: str = "",
 ):
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
@@ -72,9 +73,9 @@ def main(
 
         user_conversation = Conversation(
             role=Role.USER,
-            content_show=prompt_text.strip(),
-            image=image_input,
-            translate=translate
+            translate=translate,
+            content_show=postprocess_text(template=template, text=prompt_text.strip()),
+            image=image_input
         )
         append_conversation(user_conversation, history)
         placeholder = st.empty()
