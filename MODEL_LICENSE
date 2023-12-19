@@ -33,10 +33,10 @@ This license shall be governed and construed in accordance with the laws of Peop
 
 Note that the license is subject to update to a more comprehensive version.  For any questions related to the license and copyright, please contact us at license@zhipuai.cn.
 
-7. Commercialization Application
+7. Llama2 and EVA-CLIP2 License
 
-For commercial activities involving the models mentioned in this repository, registration and approval must be completed [here](https://open.bigmodel.cn/mla/form).
-Without this, you are not allowed to use this model for commercial purposes.
+For CogVLM-17B version, Llama2 license conditions (https://ai.meta.com/llama/license/) and EVA license conditions (MIT, https://github.com/baaivision/EVA/blob/master/LICENSE) Also applies to model weights.
+
 
 1. 定义
 
@@ -70,3 +70,7 @@ Without this, you are not allowed to use this model for commercial purposes.
 本许可受中华人民共和国法律管辖并按其解释。 因本许可引起的或与本许可有关的任何争议应提交北京市海淀区人民法院。
 
 请注意，许可证可能会更新到更全面的版本。 有关许可和版权的任何问题，请通过 license@zhipuai.cn 与我们联系。
+
+7. Llama2 和 EVA-CLIP2 许可
+
+针对 CogVLM-17B 版本， Llama2 许可条件 (https://ai.meta.com/llama/license/) 和 EVA 许可条件 (MIT, https://github.com/baaivision/EVA/blob/master/LICENSE) 同时适用于模型权重。
