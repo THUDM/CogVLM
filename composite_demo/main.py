@@ -22,9 +22,8 @@ Web Demo user operation logic is as follows:
 
 import streamlit as st
 from enum import Enum
-
-from utils import encode_file_to_base64, templates
-import demo_vlm, demo_agent
+from utils import encode_file_to_base64, templates_agent_cogagent, template_grounding_cogvlm
+import demo_chat_cogvlm, demo_agent_cogagent, demo_chat_cogagent
 
 st.markdown("<h3>CogAgent & CogVLM Chat Demo</h3>", unsafe_allow_html=True)
 st.markdown(
@@ -33,7 +32,7 @@ st.markdown(
 
 
 class Mode(str, Enum):
-    CogVLM, CogAgent = '💬CogVLM', '🧑‍💻 CogAgent'
+    CogVLM_Chat, CogAgent_Chat, CogAgent_Agent = '💬CogVLM-Chat', '🧑‍💻 CogAgent-Chat', '💡 CogAgent-Agent'
 
 
 with st.sidebar:
@@ -49,7 +48,6 @@ with st.sidebar:
     max_new_token = st.slider(
         'Output length', 1, 2048, 2048, step=1
     )
-    grounding = st.checkbox("Grounding")
 
     uploaded_file = st.file_uploader("Choose an image...", type=['.jpg', '.png', '.jpeg'], accept_multiple_files=False)
 
@@ -69,31 +67,30 @@ tab = st.radio(
     horizontal=True,
     label_visibility='hidden',
 )
-if tab == Mode.CogAgent.value:
+grounding = False
+selected_template_grounding_cogvlm = None
+
+if tab != Mode.CogAgent_Chat.value:
     with st.sidebar:
-        selected_template = st.selectbox("Select a Template", templates)
+        grounding = st.checkbox("Grounding")
+        if tab == Mode.CogVLM_Chat.value and grounding:
+            selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
+
+
+if tab == Mode.CogAgent_Agent.value:
+    with st.sidebar:
+        selected_template_agent_cogagent = st.selectbox("Template For Agent", templates_agent_cogagent)
+
+
 
 if clear_history or retry:
     prompt_text = ""
 
 match tab:
-    case Mode.CogVLM:
+    case Mode.CogVLM_Chat:
+        st.info("This is a demo using the VQA and Chat type about CogVLM")
         if uploaded_file is not None:
-            demo_vlm.main(
-                retry=retry,
-                top_p=top_p,
-                top_k=top_k,
-                temperature=temperature,
-                prompt_text=prompt_text,
-                metadata=encode_file_to_base64(uploaded_file),
-                max_new_tokens=max_new_token,
-                grounding=grounding
-            )
-        else:
-            st.error(f'Please upload an image to start')
-    case Mode.CogAgent:
-        if uploaded_file is not None:
-            demo_agent.main(
+            demo_chat_cogvlm.main(
                 retry=retry,
                 top_p=top_p,
                 top_k=top_k,
@@ -102,7 +99,40 @@ match tab:
                 metadata=encode_file_to_base64(uploaded_file),
                 max_new_tokens=max_new_token,
                 grounding=grounding,
-                template=selected_template  # only used in CogAgent
+                template=selected_template_grounding_cogvlm
+            )
+        else:
+            st.error(f'Please upload an image to start')
+
+    case Mode.CogAgent_Chat:
+        st.info("This is a demo using the VQA and Chat type about CogAgent")
+        if uploaded_file is not None:
+            demo_chat_cogagent.main(
+                retry=retry,
+                top_p=top_p,
+                top_k=top_k,
+                temperature=temperature,
+                prompt_text=prompt_text,
+                metadata=encode_file_to_base64(uploaded_file),
+                max_new_tokens=max_new_token,
+                grounding=False
+            )
+        else:
+            st.error(f'Please upload an image to start')
+
+    case Mode.CogAgent_Agent:
+        st.info("This is a demo using the Agent type about CogAgent")
+        if uploaded_file is not None:
+            demo_agent_cogagent.main(
+                retry=retry,
+                top_p=top_p,
+                top_k=top_k,
+                temperature=temperature,
+                prompt_text=prompt_text,
+                metadata=encode_file_to_base64(uploaded_file),
+                max_new_tokens=max_new_token,
+                grounding=grounding,
+                template=selected_template_agent_cogagent
             )
         else:
             st.error(f'Please upload an image to start')

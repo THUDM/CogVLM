@@ -30,7 +30,7 @@ models_info = {
         'device': ['cuda:0']
     },
     'vlm_chat': {
-        'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THDUM/cogvlm-chat-v1-1-hf'),
+        'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THDUM/cogvlm-chat-hf'),
         'device': ['cuda:3']
     },
     'vlm_grounding': {

@@ -84,7 +84,7 @@ def main(
         # steam Answer
         output_text = ''
         for response in client.generate_stream(
-                model_use='vlm_grounding' if grounding else 'vlm_chat',
+                model_use='agent_chat',
                 grounding=False,
                 history=history,
                 do_sample=True,
