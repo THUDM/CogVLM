@@ -16,13 +16,13 @@ Agent、Grounding等多种能力。
     <td>
       <h2> CogVLM </h2>
       <p> 📖  Paper: <a href="https://arxiv.org/abs/2311.03079">CogVLM: Visual Expert for Pretrained Language Models</a></p>
-      <p><b>CogVLM</b> 是一个强大的开源视觉语言模型（VLM）。CogVLM-17B拥有100亿的视觉参数和70亿的语言参数，支持490*490分辨率的图像理解和多轮对话。</b>.</p>
-      <p><b>CogVLM-17B 17B在10个经典的跨模态基准测试中取得了最先进的性能</b>包括NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA 和 TDIUC 基准测试.</p>
+      <p><b>CogVLM</b> 是一个强大的开源视觉语言模型（VLM）。CogVLM-17B拥有100亿的视觉参数和70亿的语言参数，支持490*490分辨率的图像理解和多轮对话。</p>
+      <p><b>CogVLM-17B 17B在10个经典的跨模态基准测试中取得了最先进的性能</b>包括NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA 和 TDIUC 基准测试。</p>
     </td>
     <td>
       <h2> CogAgent </h2>
       <p> 📖  Paper: <a href="https://arxiv.org/abs/2312.08914">CogAgent: A Visual Language Model for GUI Agents </a></p>
-      <p><b>CogAgent</b> 是一个基于CogVLM改进的开源视觉语言模型。CogAgent-18B拥有110亿的视觉参数和70亿的语言参数, <b>支持1120*1120分辨率的图像理解。</b>. <b>在CogVLM的能力之上，它进一步拥有了GUI图像Agent的能力。</b>.</p>
+      <p><b>CogAgent</b> 是一个基于CogVLM改进的开源视觉语言模型。CogAgent-18B拥有110亿的视觉参数和70亿的语言参数, <b>支持1120*1120分辨率的图像理解。在CogVLM的能力之上，它进一步拥有了GUI图像Agent的能力。</b></p>
       <p> <b>CogAgent-18B 在9个经典的跨模态基准测试中实现了最先进的通用性能，</b>包括 VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, 和 POPE 测试基准。它在包括AITW和Mind2Web在内的GUI操作数据集上显著超越了现有的模型。</p>
     </td>
   </tr>
@@ -69,15 +69,15 @@ Agent、Grounding等多种能力。
   Agent、Grounding等多种能力。
 
 - **News**: ```2023/12/8```:
-  我们已将cogvlm-grounding-generalist的检查点更新为cogvlm-grounding-generalist-v1.1，训练过程中增加了图像增强，因此更加稳健。查看[详情](#introduction-to-cogvlm).
+  我们已将cogvlm-grounding-generalist的检查点更新为cogvlm-grounding-generalist-v1.1，训练过程中增加了图像增强，因此更加稳健。查看[详情](#introduction-to-cogvlm)。
 
-- **News**: ```2023/12/7``` CogVLM现在支持**4-bit**量化！您只需要11GB的GPU内存就可以进行推理！查看[详情](#CLI).
+- **News**: ```2023/12/7``` CogVLM现在支持**4-bit**量化！您只需要11GB的GPU内存就可以进行推理！查看[详情](#CLI)。
 
-- **News**: ```2023/11/20```我们已将cogvlm-chat的检查点更新为cogvlm-chat-v1.1，统一了聊天和VQA的版本，并刷新了各种数据集上的SOTA。查看[详情](#introduction-to-cogvlm)
+- **News**: ```2023/11/20```我们已将cogvlm-chat的检查点更新为cogvlm-chat-v1.1，统一了聊天和VQA的版本，并刷新了各种数据集上的SOTA，查看[详情](#introduction-to-cogvlm)。
 
-- **News**: ```2023/11/20``` 我们在🤗Huggingface上发布了 **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**. 使用transformers 快速 [推理](#situation-22-cli-huggingface-version)
+- **News**: ```2023/11/20``` 我们在🤗Huggingface上发布了 **[cogvlm-chat](https://huggingface.co/THUDM/cogvlm-chat-hf)**, **[cogvlm-grounding-generalist](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)/[base](https://huggingface.co/THUDM/cogvlm-grounding-base-hf)**, **[cogvlm-base-490](https://huggingface.co/THUDM/cogvlm-base-490-hf)/[224](https://huggingface.co/THUDM/cogvlm-base-224-hf)**，使用transformers 快速 [推理](#situation-22-cli-huggingface-version)。
 
-- ```2023/10/27``` CogVLM双语版本已经在线上可用！欢迎[试用](https://chatglm.cn/)
+- ```2023/10/27``` CogVLM双语版本已经在线上可用！欢迎[试用](https://chatglm.cn/)。
 
 - ```2023/10/5``` CogVLM-17B v1.0 发布。
 
@@ -87,7 +87,7 @@ Agent、Grounding等多种能力。
 
 * 点击此处进入 [CogVLM & CogAgent Web Demo](http://36.103.203.44:7861/)。
 
-如果您需要使用代理和接地功能，请参考[Cookbook - Task Prompts](#task-prompts)
+如果您需要使用代理和接地功能，请参考[Cookbook - Task Prompts](#task-prompts)。
 
 ### 选项2：自行部署CogVLM / CogAgent
 

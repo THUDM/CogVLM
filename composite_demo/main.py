@@ -29,6 +29,14 @@ Web Demo user operation logic is as follows:
 """
 
 import streamlit as st
+
+st.set_page_config(
+    page_title="CogVLM & CogAgent Demo",
+    page_icon=":robot:",
+    layout='centered',
+    initial_sidebar_state='expanded',
+)
+
 from enum import Enum
 from utils import encode_file_to_base64, templates_agent_cogagent, template_grounding_cogvlm
 import demo_chat_cogvlm, demo_agent_cogagent, demo_chat_cogagent
@@ -84,12 +92,9 @@ if tab != Mode.CogAgent_Chat.value:
         if tab == Mode.CogVLM_Chat.value and grounding:
             selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
 
-
 if tab == Mode.CogAgent_Agent.value:
     with st.sidebar:
         selected_template_agent_cogagent = st.selectbox("Template For Agent", templates_agent_cogagent)
-
-
 
 if clear_history or retry:
     prompt_text = ""
