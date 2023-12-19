@@ -1,7 +1,11 @@
 """
 This is a demo using the chat version about CogAgent and CogVLM in WebDEMO
-Make sure you have installed the vicuna-7b-v1.5 tokenizer model (https://huggingface.co/lmsys/vicuna-7b-v1.5), a full checkpoint of vicuna-7b-v1.5 LLM is not required.
-Mention that only one image can be processed in a conversation, which means you cannot replace or insert another image during the conversation.
+
+Make sure you have installed the vicuna-7b-v1.5 tokenizer model (https://huggingface.co/lmsys/vicuna-7b-v1.5),
+and a full checkpoint of vicuna-7b-v1.5 LLM is not required.
+
+Mention that only one image can be processed in a conversation, which means you cannot replace or insert another image
+during the conversation.
 
 
 The models_info parameter is explained as follows
@@ -11,13 +15,17 @@ The models_info parameter is explained as follows
    vlm_grounding: Use CogVLM-grounding-17B model to complete the Grounding task
 
 Web Demo user operation logic is as follows:
-    CogVLM -> grounding? - yes -> CogVLM-grounding-17B
-                         - no  -> CogVLM-chat-17B
+    CogVLM-Chat -> grounding? - yes -> Choose a template -> CogVLM-grounding-17B
+                              - no  -> CogVLM-chat-17B (without grounding)
 
-    CogAgent -> CogAgent-chat-18B
-             -> Choose a template -> grounding? - yes -> prompt + (with grounding)
-                                                - no  -> prompt
+    CogAgent-Chat  -> CogAgent-chat-18B (Only QA,without Grounding)
 
+    CogAgent-Agent -> CogAgent-chat-18B
+                   -> Choose a template -> grounding? - yes -> prompt + (with grounding)
+                                                      - no  -> prompt
+
+    CogAgent-vqa-hf are not included in this demo, but you can use it in the same way as CogAgent-chat-18B
+    and used it in CogAgent-Chat
 """
 
 import streamlit as st
@@ -68,7 +76,7 @@ tab = st.radio(
     label_visibility='hidden',
 )
 grounding = False
-selected_template_grounding_cogvlm = None
+selected_template_grounding_cogvlm = ""
 
 if tab != Mode.CogAgent_Chat.value:
     with st.sidebar:

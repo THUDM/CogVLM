@@ -1,17 +1,25 @@
+"""
+This script is a simple web demo of the CogVLM and CogAgent models, designed for easy and quick demonstrations.
+For a more sophisticated user interface, users are encouraged to refer to the 'composite_demo',
+which is built with a more aesthetically pleasing Streamlit framework.
+
+Usage:
+- Use the interface to upload images and enter text prompts to interact with the models.
+
+Requirements:
+- Gradio (only 3.x,4.x is not support) and other necessary Python dependencies must be installed.
+- Proper model checkpoints should be accessible as specified in the script.
+
+Note: This demo is ideal for a quick showcase of the CogVLM and CogAgent models. For a more comprehensive and interactive
+experience, refer to the 'composite_demo'.
+"""
 import gradio as gr
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from PIL import Image
-import base64
-import json
-import requests
-import base64
-import hashlib
 import torch
 import time
-import re
-import argparse
 from sat.model.mixins import CachedAutoregressiveMixin
 from sat.mpu import get_model_parallel_world_size
 from sat.model import AutoModel

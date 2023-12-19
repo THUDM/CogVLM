@@ -17,7 +17,6 @@ from transformers import AutoModelForCausalLM, LlamaTokenizer, PreTrainedModel, 
 from PIL import Image
 from io import BytesIO
 
-
 MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat-hf')
 TOKENIZER_PATH = os.environ.get("TOKENIZER_PATH", 'lmsys/vicuna-7b-v1.5')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -88,7 +87,7 @@ class ChatMessageInput(BaseModel):
     name: Optional[str] = None
 
 
-class ChatMessageResponse(BaseModel):  # 模型回复的字段
+class ChatMessageResponse(BaseModel):
     role: Literal["assistant"]
     content: str = None
     name: Optional[str] = None
@@ -140,7 +139,7 @@ async def list_models():
     An endpoint to list available models. It returns a list of model cards.
     This is useful for clients to query and understand what models are available for use.
     """
-    model_card = ModelCard(id="cogvlm-chat-17b") # can be replaced by your model id like cogagent-chat-18b
+    model_card = ModelCard(id="cogvlm-chat-17b")  # can be replaced by your model id like cogagent-chat-18b
     return ModelList(data=[model_card])
 
 
@@ -301,7 +300,6 @@ def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenize
 
     logger.debug(f"==== request ====\n{query}")
 
-    #  only can slove the latest picture
     input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history,
                                                         images=[image_list[-1]])
     inputs = {
@@ -314,7 +312,12 @@ def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenize
         inputs['cross_images'] = [[input_by_model['cross_images'][0].to(DEVICE).to(torch_type)]]
 
     input_echo_len = len(inputs["input_ids"][0])
-    streamer = TextIteratorStreamer(tokenizer=tokenizer, timeout=60.0, skip_prompt=True, skip_special_tokens=True)
+    streamer = TextIteratorStreamer(
+        tokenizer=tokenizer,
+        timeout=60.0,
+        skip_prompt=True,
+        skip_special_tokens=True
+)
     gen_kwargs = {
         "repetition_penalty": repetition_penalty,
         "max_new_tokens": max_new_tokens,
