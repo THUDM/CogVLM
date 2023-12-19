@@ -14,7 +14,7 @@ from transformers import AutoModelForCausalLM, LlamaTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--quant", choices=[4], type=int, default=None, help='quantization bits')
-parser.add_argument("--from_pretrained", choices=["THUDM/cogagent-chat-hf", "THUDM/cogvlm-chat-hf"], type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt')
+parser.add_argument("--from_pretrained", type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt')
 parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
@@ -53,17 +53,13 @@ text_only_template = "A chat between a curious user and an artificial intelligen
     The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {} ASSISTANT:"
 
 while True:
-    image_or_text = input("Chat with an image or text only? Please choose one from 'image' and 'text': ")
-
-    if image_or_text == 'image':
-        image_path = input("image path >>>>> ")
-        image = Image.open(image_path).convert('RGB')
-    elif image_or_text == 'text':
+    image_path = input("image path >>>>> ")
+    if image_path == '':
+        print('You did not enter image path, the following will be a plain text conversation.')
         image = None
-        first_query = True
+        first_query = True    
     else:
-        print("Please choose one from 'image' and 'text'!")
-        break
+        image = Image.open(image_path).convert('RGB')
     
     history = []
 
@@ -78,11 +74,7 @@ while True:
             else:
                 query = "USER: {} ASSISTANT:".format([query])
 
-        if image is None:
-            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history)
-        else:
-            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image])
-
+        input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image] if image is not None else None)
         inputs = {
             'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
             'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
