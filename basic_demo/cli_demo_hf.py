@@ -14,7 +14,7 @@ from transformers import AutoModelForCausalLM, LlamaTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--quant", choices=[4], type=int, default=None, help='quantization bits')
-parser.add_argument("--from_pretrained", type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt')
+parser.add_argument("--from_pretrained", choices=["THUDM/cogagent-chat-hf", "THUDM/cogvlm-chat-hf"], type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt')
 parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
@@ -49,31 +49,52 @@ else:
         trust_remote_code=True
     ).to(DEVICE).eval()
 
-while True:
-    image_path = input("image path >>>>> ")
-    if image_path == "stop":
-        break
+text_only_template = "A chat between a curious user and an artificial intelligence assistant. \
+    The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {} ASSISTANT:"
 
-    image = Image.open(image_path).convert('RGB')
+while True:
+    image_or_text = input("Chat with an image or text only? Please choose one from 'image' and 'text': ")
+
+    if image_or_text == 'image':
+        image_path = input("image path >>>>> ")
+        image = Image.open(image_path).convert('RGB')
+    elif image_or_text == 'text':
+        image = None
+        first_query = True
+    else:
+        print("Please choose one from 'image' and 'text'!")
+        break
+    
     history = []
+
     while True:
         query = input("Human:")
         if query == "clear":
             break
-        input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image])
+        if image is None:
+            if first_query:
+                query = text_only_template.format([query])
+                first_query = False
+            else:
+                query = "USER: {} ASSISTANT:".format([query])
+
+        if image is None:
+            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history)
+        else:
+            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image])
+
         inputs = {
             'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
             'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
             'attention_mask': input_by_model['attention_mask'].unsqueeze(0).to(DEVICE),
-            'images': [[input_by_model['images'][0].to(DEVICE).to(torch_type)]],
+            'images': [[input_by_model['images'][0].to(DEVICE).to(torch_type)]] if image is not None else None,
         }
         if 'cross_images' in input_by_model and input_by_model['cross_images']:
             inputs['cross_images'] = [[input_by_model['cross_images'][0].to(DEVICE).to(torch_type)]]
 
         # add any transformers params here.
         gen_kwargs = {"max_length": 2048,
-                      "temperature": 0.9,
-                      "do_sample": False}
+                      "do_sample": False} # "temperature": 0.9
         with torch.no_grad():
             outputs = model.generate(**inputs, **gen_kwargs)
             outputs = outputs[:, inputs['input_ids'].shape[1]:]
