@@ -20,9 +20,8 @@ def encode_file_to_base64(file):
     return base64.b64encode(buffer.getvalue()).decode()
 
 
-# The templates is for CogAgent
-
-templates = [
+# The templates is for CogAgent_Agent Template
+templates_agent_cogagent = [
     "Can you advise me on how to <TASK>?",
     "I'm looking for guidance on how to <TASK>.",
     "What steps do I need to take to <TASK>?",
