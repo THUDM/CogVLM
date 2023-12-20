@@ -49,8 +49,7 @@ else:
         trust_remote_code=True
     ).to(DEVICE).eval()
 
-text_only_template = "A chat between a curious user and an artificial intelligence assistant. \
-    The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {} ASSISTANT:"
+text_only_template = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {} ASSISTANT:"
 
 while True:
     image_path = input("image path >>>>> ")
@@ -67,14 +66,22 @@ while True:
         query = input("Human:")
         if query == "clear":
             break
+
         if image is None:
             if text_only_first_query:
-                query = text_only_template.format([query])
+                query = text_only_template.format(query)
                 text_only_first_query = False
             else:
-                query = "USER: {} ASSISTANT:".format([query])
+                old_prompt = ''
+                for _, (old_query, response) in enumerate(history):
+                    old_prompt += old_query + " " + response + "\n"
+                query = old_prompt + "USER: {} ASSISTANT:".format(query)
 
-        input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image] if image is not None else None)
+        if image is None:
+            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, template_version='base')
+        else:
+            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image])
+
         inputs = {
             'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),
             'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),
