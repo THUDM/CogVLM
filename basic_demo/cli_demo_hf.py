@@ -57,7 +57,7 @@ while True:
     if image_path == '':
         print('You did not enter image path, the following will be a plain text conversation.')
         image = None
-        first_query = True    
+        text_only_first_query = True    
     else:
         image = Image.open(image_path).convert('RGB')
     
@@ -68,9 +68,9 @@ while True:
         if query == "clear":
             break
         if image is None:
-            if first_query:
+            if text_only_first_query:
                 query = text_only_template.format([query])
-                first_query = False
+                text_only_first_query = False
             else:
                 query = "USER: {} ASSISTANT:".format([query])
 
