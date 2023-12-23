@@ -43,7 +43,7 @@ import demo_chat_cogvlm, demo_agent_cogagent, demo_chat_cogagent
 
 st.markdown("<h3>CogAgent & CogVLM Chat Demo</h3>", unsafe_allow_html=True)
 st.markdown(
-    "<sub>更多使用方法请参考文档: https://lslfd0slxc.feishu.cn/wiki/WvQbwIJ9tiPAxGk8ywDck6yfnof </sub> \n\n",
+    "<sub>更多使用方法请参考文档: https://lslfd0slxc.feishu.cn/wiki/WvQbwIJ9tiPAxGk8ywDck6yfnof \n\n 请根据文档的引导说明来尝试demo，以便理解demo的布局设计 </sub> \n",
     unsafe_allow_html=True)
 
 
@@ -83,14 +83,12 @@ tab = st.radio(
     horizontal=True,
     label_visibility='hidden',
 )
-grounding = False
-selected_template_grounding_cogvlm = ""
 
-if tab != Mode.CogAgent_Chat.value:
-    with st.sidebar:
-        grounding = st.checkbox("Grounding")
-        if tab == Mode.CogVLM_Chat.value and grounding:
-            selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
+selected_template_grounding_cogvlm = ""
+with st.sidebar:
+    grounding = st.checkbox("Grounding")
+    if tab == Mode.CogVLM_Chat.value or Mode.CogAgent_Chat and grounding:
+        selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
 
 if tab == Mode.CogAgent_Agent.value:
     with st.sidebar:
@@ -101,7 +99,7 @@ if clear_history or retry:
 
 match tab:
     case Mode.CogVLM_Chat:
-        st.info("This is a demo using the VQA and Chat type about CogVLM")
+        st.info("This option uses cogvlm-chat and cogvlm-grounding model.")
         if uploaded_file is not None:
             demo_chat_cogvlm.main(
                 retry=retry,
@@ -118,7 +116,7 @@ match tab:
             st.error(f'Please upload an image to start')
 
     case Mode.CogAgent_Chat:
-        st.info("This is a demo using the VQA and Chat type about CogAgent")
+        st.info("This option uses cogagent-chat model.")
         if uploaded_file is not None:
             demo_chat_cogagent.main(
                 retry=retry,
@@ -128,13 +126,14 @@ match tab:
                 prompt_text=prompt_text,
                 metadata=encode_file_to_base64(uploaded_file),
                 max_new_tokens=max_new_token,
-                grounding=False
+                grounding=grounding,
+                template=selected_template_grounding_cogvlm
             )
         else:
             st.error(f'Please upload an image to start')
 
     case Mode.CogAgent_Agent:
-        st.info("This is a demo using the Agent type about CogAgent")
+        st.info("This option uses cogagent-chat model with agent template.")
         if uploaded_file is not None:
             demo_agent_cogagent.main(
                 retry=retry,
