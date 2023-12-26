@@ -68,4 +68,4 @@ CogVLM-SFT-311K 是我们在训练 **CogVLM v1.0** 最初版本时使用的主�
 ## References
 This project utilizes data and concepts based on the following research papers:
 - Zhu, D., Chen, J., Shen, X., Li, X., & Elhoseiny, M. (2023). MiniGPT-4: Enhancing Vision-Language Understanding with Advanced Large Language Models. arXiv preprint arXiv:2304.10592.
-- Liu, H., Li, C., Wu, Q., & Lee, Y. J. (2023). Visual Instruction Tuning. arXiv:2304.08485. 
+- Liu, H., Li, C., Wu, Q., & Lee, Y. J. (2023). Visual Instruction Tuning. arXiv:2304.08485.
