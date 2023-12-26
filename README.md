@@ -1,15 +1,9 @@
 # CogVLM & CogAgent
 
 📗 [中文版README](./README_zh.md)
-🔥🔥🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
+🔥🔥🔥  🆕: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
 which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. 
 Welcome to follow and use.
-
-🔥🔥🔥 🆕 ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed based on
-CogVLM. It features **visual-based GUI Agent capabilities** and **has further enhancements in image understanding**. It
-supports image input with a **resolution of 1120*1120**, and possesses multiple abilities including **multi-turn
-dialogue with images, GUI Agent, Grounding**, and more.
-
 
 🌟 **Jump to detailed introduction: [Introduction to CogVLM](#introduction-to-cogvlm)，
 🆕 [Introduction to CogAgent](#introduction-to-cogagent)**
