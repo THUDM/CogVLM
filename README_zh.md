@@ -1,7 +1,7 @@
 # CogVLM & CogAgent
 
 📗 [中文版README](./README_zh.md)
-
+- 🔥🔥🔥 **News**: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，它包含了超过15万条我们用于训练 **CogVLM v1.0(仅该模型)** 的数据。欢迎关注和使用。
 🔥🔥🔥 🆕 ```2023/12/15```: CogAgent正式上线！CogAgent是基于CogVLM开发的图像理解模型。它具有基于视觉的GUI
 Agent功能，并在图像理解方面有进一步的增强。它支持1120*1120分辨率的图像输入，并具有包括与图像进行多轮对话、GUI
 Agent、Grounding等多种能力。
@@ -60,7 +60,7 @@ Agent、Grounding等多种能力。
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## 发布
-- 🔥🔥🔥 **News**: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，它包含了超过15万条我们用于训练的数据。欢迎关注和使用。
+- 🔥🔥🔥 **News**: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，它包含了超过15万条我们用于训练 **CogVLM v1.0(仅该模型)** 的数据。欢迎关注和使用。
 - 🔥🔥 **News**: ```2023/12/18```: **新的Streamlit用户界面**已经上线！我们已经基于Streamlit推出了新的网页用户界面，用户可以在我们的界面上轻松与CogVLM，CogAgent交谈。带来更好的用户体验。
 - 🔥 **News**: ```2023/12/15```: **CogAgent 正式发布！** CogAgent是基于CogVLM开发的图像理解模型。它具有基于视觉的GUI
   Agent功能，并在图像理解方面进行了进一步的增强。它支持分辨率为1120*1120的图像输入，并具有包括与图像进行多轮对话、GUI
