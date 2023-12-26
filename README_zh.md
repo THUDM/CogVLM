@@ -60,10 +60,8 @@ Agent、Grounding等多种能力。
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## 发布
-
-- 🔥 **News**: ```2023/12/18```: **新的Streamlit用户界面**
-  已经上线！我们已经基于Streamlit推出了新的网页用户界面，用户可以在我们的界面上轻松与CogVLM，CogAgent交谈。带来更好的用户体验。
-
+- 🔥🔥🔥 **News**: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，它包含了超过15万条我们用于训练的数据。欢迎关注和使用。
+- 🔥🔥 **News**: ```2023/12/18```: **新的Streamlit用户界面**已经上线！我们已经基于Streamlit推出了新的网页用户界面，用户可以在我们的界面上轻松与CogVLM，CogAgent交谈。带来更好的用户体验。
 - 🔥 **News**: ```2023/12/15```: **CogAgent 正式发布！** CogAgent是基于CogVLM开发的图像理解模型。它具有基于视觉的GUI
   Agent功能，并在图像理解方面进行了进一步的增强。它支持分辨率为1120*1120的图像输入，并具有包括与图像进行多轮对话、GUI
   Agent、Grounding等多种能力。
@@ -560,7 +558,7 @@ CogAgent-18B在9个经典的跨模态基准测试中实现了最先进的全能�
 |       cogvlm-base-224       |   base    |
 |       cogvlm-base-490       |   base    |
 
-### FAQ
+### 常见问题
 
 * 如果你在访问huggingface.co时遇到问题，你可以添加 `--local_tokenizer /path/to/vicuna-7b-v1.5` 来加载分词器。
 * 如果你在使用🔨 [SAT](https://github.com/THUDM/SwissArmyTransformer)自动下载模型时遇到问题 , 尝试从 🤖[modelscope](https://www.modelscope.cn/models/ZhipuAI/CogVLM/summary) 或
@@ -595,5 +593,3 @@ CogAgent-18B在9个经典的跨模态基准测试中实现了最先进的全能�
 
 ```
 
-在CogVLM的指令微调阶段，我们使用了来自 [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4), [LLAVA](https://github.com/haotian-liu/LLaVA), [LRV-Instruction](https://github.com/FuxiaoLiu/LRV-Instruction), [LLaVAR](https://github.com/SALT-NLP/LLaVAR)
-和[Shikra](https://github.com/shikras/shikra)项目的一些英文图像-文本数据，以及许多经典的跨模态工作数据集。我们衷心感谢他们的贡献。
