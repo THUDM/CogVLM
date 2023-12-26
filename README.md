@@ -14,7 +14,7 @@ dialogue with images, GUI Agent, Grounding**, and more.
 🌟 **Jump to detailed introduction: [Introduction to CogVLM](#introduction-to-cogvlm)，
 🆕 [Introduction to CogAgent](#introduction-to-cogagent)**
 
-📔 For more detailed usage information, please refer to: [CogVLM technical documentation(Only Chinese)](https://zhipu-ai.feishu.cn/wiki/LXQIwqo1OiIVTykMh9Lc3w1Fn7g) 
+📔 For more detailed usage information, please refer to: [CogVLM & CogAgent's technical documentation (in Chinese)](https://zhipu-ai.feishu.cn/wiki/LXQIwqo1OiIVTykMh9Lc3w1Fn7g) 
 
 <table>
   <tr>

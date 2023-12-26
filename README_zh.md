@@ -1,15 +1,13 @@
 # CogVLM & CogAgent
 
-📗 [中文版README](./README_zh.md)
-- 🔥🔥🔥 **News**: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，它包含了超过15万条我们用于训练 **CogVLM v1.0(仅该模型)** 的数据。欢迎关注和使用。
-🔥🔥🔥 🆕 ```2023/12/15```: CogAgent正式上线！CogAgent是基于CogVLM开发的图像理解模型。它具有基于视觉的GUI
-Agent功能，并在图像理解方面有进一步的增强。它支持1120*1120分辨率的图像输入，并具有包括与图像进行多轮对话、GUI
-Agent、Grounding等多种能力。
+📗 [README in English](./README.md)
+- 🔥🔥🔥 🆕: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，
+它包含了超过15万条我们用于训练 **CogVLM v1.0(仅该模型)** 的数据。欢迎关注和使用。
 
 🌟 **跳转到详细介绍: [CogVLM介绍](#introduction-to-cogvlm)，
 🆕 [CogAgent的介绍](#introduction-to-cogagent)**
 
-📔 如需获取更详细的使用信息，请参阅: [CogVLM技术文档](https://zhipu-ai.feishu.cn/wiki/LXQIwqo1OiIVTykMh9Lc3w1Fn7g)
+📔 如需获取更详细的使用信息，请参阅: [CogVLM&CogAgent技术文档](https://zhipu-ai.feishu.cn/wiki/LXQIwqo1OiIVTykMh9Lc3w1Fn7g)
 
 <table>
   <tr>
