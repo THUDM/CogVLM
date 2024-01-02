@@ -96,7 +96,6 @@ while True:
                       "do_sample": False} # "temperature": 0.9
         with torch.no_grad():
             outputs = model.generate(**inputs, **gen_kwargs)
-            breakpoint()
             outputs = outputs[:, inputs['input_ids'].shape[1]:]
             response = tokenizer.decode(outputs[0])
             response = response.split("</s>")[0]
