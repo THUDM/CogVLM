@@ -87,10 +87,11 @@ tab = st.radio(
 selected_template_grounding_cogvlm = ""
 with st.sidebar:
     grounding = st.checkbox("Grounding")
-    if tab == Mode.CogVLM_Chat.value or Mode.CogAgent_Chat and grounding:
-        selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
+    if tab == Mode.CogVLM_Chat or tab == Mode.CogAgent_Chat:
+        if grounding:
+            selected_template_grounding_cogvlm = st.selectbox("Template For Grounding", template_grounding_cogvlm)
 
-if tab == Mode.CogAgent_Agent.value:
+if tab == Mode.CogAgent_Agent:
     with st.sidebar:
         selected_template_agent_cogagent = st.selectbox("Template For Agent", templates_agent_cogagent)
 

@@ -14,8 +14,8 @@ from transformers import AutoModelForCausalLM, LlamaTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--quant", choices=[4], type=int, default=None, help='quantization bits')
-parser.add_argument("--from_pretrained", type=str, default="THUDM/cogagent-chat-hf", help='pretrained ckpt')
-parser.add_argument("--local_tokenizer", type=str, default="lmsys/vicuna-7b-v1.5", help='tokenizer path')
+parser.add_argument("--from_pretrained", type=str, default="/share/home/zyx/Models/cogagent-chat-hf", help='pretrained ckpt')
+parser.add_argument("--local_tokenizer", type=str, default="/share/official_pretrains/hf_home/vicuna-7b-v1.5", help='tokenizer path')
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
 
@@ -96,6 +96,7 @@ while True:
                       "do_sample": False} # "temperature": 0.9
         with torch.no_grad():
             outputs = model.generate(**inputs, **gen_kwargs)
+            breakpoint()
             outputs = outputs[:, inputs['input_ids'].shape[1]:]
             response = tokenizer.decode(outputs[0])
             response = response.split("</s>")[0]

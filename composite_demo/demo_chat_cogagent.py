@@ -74,7 +74,8 @@ def main(
         user_conversation = Conversation(
             role=Role.USER,
             translate=translate,
-            content_show=postprocess_text(template=template, text=prompt_text.strip()),
+            content_show=prompt_text.strip() if retry else postprocess_text(template=template,
+                                                                            text=prompt_text.strip()),
             image=image_input
         )
         append_conversation(user_conversation, history)
