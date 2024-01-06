@@ -20,7 +20,16 @@ from io import BytesIO
 MODEL_PATH = os.environ.get('MODEL_PATH', 'THUDM/cogvlm-chat-hf')
 TOKENIZER_PATH = os.environ.get("TOKENIZER_PATH", 'lmsys/vicuna-7b-v1.5')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-
+if os.environ.get('QUANT_ENABLED'):
+    QUANT_ENABLED = True
+else:
+    with torch.cuda.device(DEVICE):
+        __, total_bytes = torch.cuda.mem_get_info()
+        total_gb = total_bytes / (1 << 30)
+        if total_gb < 40:
+            QUANT_ENABLED = True
+        else:
+            QUANT_ENABLED = False
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -369,13 +378,23 @@ if __name__ == "__main__":
     print("========Use torch type as:{} with device:{}========\n\n".format(torch_type, DEVICE))
 
     if 'cuda' in DEVICE:
-        model = AutoModelForCausalLM.from_pretrained(
-            MODEL_PATH,
-            trust_remote_code=True,
-            torch_dtype=torch_type,
-            low_cpu_mem_usage=True
-        ).to(DEVICE).eval()
-
+        if QUANT_ENABLED:
+            model = AutoModelForCausalLM.from_pretrained(
+                MODEL_PATH,
+                load_in_4bit=True,
+                trust_remote_code=True,
+                torch_dtype=torch_type,
+                low_cpu_mem_usage=True
+            ).eval()
+        else:
+            model = AutoModelForCausalLM.from_pretrained(
+                MODEL_PATH,
+                load_in_4bit=False,
+                trust_remote_code=True,
+                torch_dtype=torch_type,
+                low_cpu_mem_usage=True
+            ).to(DEVICE).eval()
+            
     else:
         model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, trust_remote_code=True).float().to(DEVICE).eval()
     uvicorn.run(app, host='0.0.0.0', port=8000, workers=1)
