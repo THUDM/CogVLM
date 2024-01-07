@@ -322,7 +322,7 @@ def generate_stream_cogvlm(model: PreTrainedModel, tokenizer: PreTrainedTokenize
         "repetition_penalty": repetition_penalty,
         "max_new_tokens": max_new_tokens,
         "do_sample": True if temperature > 1e-5 else False,
-        "top_p": top_p,
+        "top_p": top_p if temperature > 1e-5 else 0,
         'streamer': streamer,
     }
     if temperature > 1e-5:
