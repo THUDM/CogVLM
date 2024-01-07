@@ -7,10 +7,7 @@ import argparse
 from sat.model.mixins import CachedAutoregressiveMixin
 from sat.quantization.kernels import quantize
 from sat.model import AutoModel
-
-
 from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor
-from utils.models import CogAgentModel, CogVLMModel
 
 def main():
     parser = argparse.ArgumentParser()

@@ -23,10 +23,8 @@ import time
 from sat.model.mixins import CachedAutoregressiveMixin
 from sat.mpu import get_model_parallel_world_size
 from sat.model import AutoModel
-
-
 from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response
-from utils.models import CogAgentModel, CogVLMModel
+
 
 
 
@@ -40,9 +38,6 @@ MAINTENANCE_NOTICE1 = 'Hint 1: If the app report "Something went wrong, connecti
 AGENT_NOTICE = 'Hint 1: To use <strong>Agent</strong> function, please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761">prompts for agents</a>.'
 
 GROUNDING_NOTICE = 'Hint 2: To use <strong>Grounding</strong> function, please use the <a href="https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344">prompts for grounding</a>.'
-
-
-
 
 default_chatbox = [("", "Hi, What do you want to know about this image?")]
 
