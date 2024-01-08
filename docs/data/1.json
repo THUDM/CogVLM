@@ -1,0 +1,546 @@
+{
+    "100": {
+        "file_id": 5,
+        "content": "\"\"\"\nThis script is a simple web demo of the CogVLM and CogAgent models, designed for easy and quick demonstrations.\nFor a more sophisticated user interface, users are encouraged to refer to the 'composite_demo',\nwhich is built with a more aesthetically pleasing Streamlit framework.\nUsage:\n- Use the interface to upload images and enter text prompts to interact with the models.\nRequirements:\n- Gradio (only 3.x,4.x is not support) and other necessary Python dependencies must be installed.\n- Proper model checkpoints should be accessible as specified in the script.\nNote: This demo is ideal for a quick showcase of the CogVLM and CogAgent models. For a more comprehensive and interactive\nexperience, refer to the 'composite_demo'.\n\"\"\"\nimport gradio as gr\nimport os, sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nfrom PIL import Image\nimport torch\nimport time\nfrom sat.model.mixins import CachedAutoregressiveMixin\nfrom sat.mpu import get_model_parallel_world_size\nfrom sat.model import AutoModel",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:1-25"
+    },
+    "101": {
+        "file_id": 5,
+        "content": "This code is a simple web demo of the CogVLM and CogAgent models. It requires Gradio (version 3.x or 4.x) and other necessary Python dependencies. The script includes functionality to upload images and enter text prompts for interaction with the models. It's suitable for quick showcases, but a more comprehensive experience can be found in 'composite_demo'.",
+        "type": "comment"
+    },
+    "102": {
+        "file_id": 5,
+        "content": "from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response\nfrom utils.models import CogAgentModel, CogVLMModel\nDESCRIPTION = '''<h1 style='text-align: center'> <a href=\"https://github.com/THUDM/CogVLM\">CogVLM / CogAgent</a> </h1>'''\nNOTES = '<h3> This app is adapted from <a href=\"https://github.com/THUDM/CogVLM\">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model, CogVLM & CogAgent. </h3>'\nMAINTENANCE_NOTICE1 = 'Hint 1: If the app report \"Something went wrong, connection error out\", please turn off your proxy and retry.<br>Hint 2: If you upload a large size of image like 10MB, it may take some time to upload and process. Please be patient and wait.'\nAGENT_NOTICE = 'Hint 1: To use <strong>Agent</strong> function, please use the <a href=\"https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761\">prompts for agents</a>.'\nGROUNDING_NOTICE = 'Hint 2: To ",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:28-42"
+    },
+    "103": {
+        "file_id": 5,
+        "content": "These lines import necessary modules, define variables for the app's description and maintenance notice, and specify hints for using the agent function and grounding features.",
+        "type": "comment"
+    },
+    "104": {
+        "file_id": 5,
+        "content": "use <strong>Grounding</strong> function, please use the <a href=\"https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344\">prompts for grounding</a>.'\ndefault_chatbox = [(\"\", \"Hi, What do you want to know about this image?\")]\nmodel = image_processor = text_processor_infer = None\nis_grounding = False\ndef process_image_without_resize(image_prompt):\n    image = Image.open(image_prompt)\n    # print(f\"height:{image.height}, width:{image.width}\")\n    timestamp = int(time.time())\n    file_ext = os.path.splitext(image_prompt)[1]\n    filename_grounding = f\"examples/{timestamp}_grounding{file_ext}\"\n    return image, filename_grounding\nfrom sat.quantization.kernels import quantize\ndef load_model(args): \n    model, model_args = AutoModel.from_pretrained(\n        args.from_pretrained,\n        args=argparse.Namespace(\n        deepspeed=None,\n        local_rank=0,\n        rank=0,\n        world_size=world_size,\n        model_parallel_size=world_size,\n        mode='inference',\n        fp16=args.fp16,\n        bf16=args.bf16,",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:42-75"
+    },
+    "105": {
+        "file_id": 5,
+        "content": "Code snippet initializes a function to process an image without resizing, loads the model with given arguments, and defines a helper function for quantization.",
+        "type": "comment"
+    },
+    "106": {
+        "file_id": 5,
+        "content": "        skip_init=True,\n        use_gpu_initialization=True if (torch.cuda.is_available() and args.quant is None) else False,\n        device='cpu' if args.quant else 'cuda'),\n        overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {}\n    )\n    model = model.eval()\n    assert world_size == get_model_parallel_world_size(), \"world size must equal to model parallel size for cli_demo!\"\n    language_processor_version = model_args.text_processor_version if 'text_processor_version' in model_args else args.version\n    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=language_processor_version)\n    image_processor = get_image_processor(model_args.eva_args[\"image_size\"][0])\n    cross_image_processor = get_image_processor(model_args.cross_image_pix) if \"cross_image_pix\" in model_args else None\n    if args.quant:\n        quantize(model, args.quant)\n        if torch.cuda.is_available():\n            model = model.cuda()\n    model.add_mixin('auto-regressive', CachedAutoregressiveMixin())",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:76-93"
+    },
+    "107": {
+        "file_id": 5,
+        "content": "Creating model with specified options and device. Ensuring world size matches model parallel size. Setting up tokenizer and image processors. Quantizing model if needed, moving to GPU if available. Adding autoregressive mixin.",
+        "type": "comment"
+    },
+    "108": {
+        "file_id": 5,
+        "content": "    text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length)\n    return model, image_processor, cross_image_processor, text_processor_infer\ndef post(\n        input_text,\n        temperature,\n        top_p,\n        top_k,\n        image_prompt,\n        result_previous,\n        hidden_image,\n        state\n        ):\n    result_text = [(ele[0], ele[1]) for ele in result_previous]\n    for i in range(len(result_text)-1, -1, -1):\n        if result_text[i][0] == \"\" or result_text[i][0] == None:\n            del result_text[i]\n    print(f\"history {result_text}\")\n    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding\n    try:\n        with torch.no_grad():\n            pil_img, image_path_grounding = process_image_without_resize(image_prompt)\n            response, _, cache_image = chat(\n                    image_path=\"\", \n                    model=model, \n                    text_processor=text_processor_infer,\n                    img_processor=image_processor,",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:95-125"
+    },
+    "109": {
+        "file_id": 5,
+        "content": "This code defines a function that takes input text, temperature, top_p, top_k, image prompt, previous result history, hidden image, and state as parameters. It cleans up the previous result history by removing any empty or null elements. Then, it processes an image based on the given image prompt and calls another function 'chat' to generate a response using the provided model, text processor, and image processor.",
+        "type": "comment"
+    },
+    "110": {
+        "file_id": 5,
+        "content": "                    query=input_text, \n                    history=result_text, \n                    cross_img_processor=cross_image_processor,\n                    image=pil_img, \n                    max_length=2048, \n                    top_p=top_p, \n                    temperature=temperature,\n                    top_k=top_k,\n                    invalid_slices=text_processor_infer.invalid_slices if hasattr(text_processor_infer, \"invalid_slices\") else [],\n                    no_prompt=False,\n                    args=state['args']\n            )\n    except Exception as e:\n        print(\"error message\", e)\n        result_text.append((input_text, 'Timeout! Please wait a few minutes and retry.'))\n        return \"\", result_text, hidden_image\n    answer = response\n    if is_grounding:\n        parse_response(pil_img, answer, image_path_grounding)\n        new_answer = answer.replace(input_text, \"\")\n        result_text.append((input_text, new_answer))\n        result_text.append((None, (image_path_grounding,)))\n    else:",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:126-149"
+    },
+    "111": {
+        "file_id": 5,
+        "content": "Function call to text generation model with input, history, processor, image, and additional parameters. Catch any exceptions and handle them by appending a timeout message to the result text. If grounding is enabled, parse the response and append it to the result text with the corresponding image path.",
+        "type": "comment"
+    },
+    "112": {
+        "file_id": 5,
+        "content": "        result_text.append((input_text, answer))\n    print(result_text)\n    print('finished')\n    return \"\", result_text, hidden_image\ndef clear_fn(value):\n    return \"\", default_chatbox, None\ndef clear_fn2(value):\n    return default_chatbox\ndef main(args):\n    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding\n    model, image_processor, cross_image_processor, text_processor_infer = load_model(args)\n    is_grounding = 'grounding' in args.from_pretrained\n    gr.close_all()\n    with gr.Blocks(css='style.css') as demo:\n        state = gr.State({'args': args})\n        gr.Markdown(DESCRIPTION)\n        gr.Markdown(NOTES)\n        with gr.Row():\n            with gr.Column(scale=5):\n                with gr.Group():\n                    gr.Markdown(AGENT_NOTICE)\n                    gr.Markdown(GROUNDING_NOTICE)\n                    input_text = gr.Textbox(label='Input Text', placeholder='Please enter text prompt below and press ENTER.')\n                    with gr.Row():\n                        run_button = gr.Button('Generate')",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:150-185"
+    },
+    "113": {
+        "file_id": 5,
+        "content": "This code defines a function named `main`, which loads a model and related processors, initializes the UI components, and handles user input to generate responses based on the text prompt. The UI includes textboxes for input, buttons to trigger generation, and displays the generated results. There are also two helper functions defined (`clear_fn` and `clear_fn2`) that appear to clear the chatbox and other UI elements.",
+        "type": "comment"
+    },
+    "114": {
+        "file_id": 5,
+        "content": "                        clear_button = gr.Button('Clear')\n                    image_prompt = gr.Image(type=\"filepath\", label=\"Image Prompt\", value=None)\n                with gr.Row():\n                    temperature = gr.Slider(maximum=1, value=0.8, minimum=0, label='Temperature')\n                    top_p = gr.Slider(maximum=1, value=0.4, minimum=0, label='Top P')\n                    top_k = gr.Slider(maximum=100, value=10, minimum=1, step=1, label='Top K')\n            with gr.Column(scale=5):\n                result_text = gr.components.Chatbot(label='Multi-round conversation History', value=[(\"\", \"Hi, What do you want to know about this image?\")], height=600)\n                hidden_image_hash = gr.Textbox(visible=False)\n        gr.Markdown(MAINTENANCE_NOTICE1)\n        print(gr.__version__)\n        run_button.click(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash, state],\n                         outputs=[input_text, result_text, hidden_image_hash])",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:186-204"
+    },
+    "115": {
+        "file_id": 5,
+        "content": "This code is setting up a chatbot interface where the user can input an image prompt and interact with the AI through a conversation. The parameters (temperature, top_p, top_k) control the AI's output generation. The input text, result text, and hidden image hash are stored in separate variables for further use. This code is using the \"gr\" library with a maintenance notice printed on the page.",
+        "type": "comment"
+    },
+    "116": {
+        "file_id": 5,
+        "content": "        input_text.submit(fn=post,inputs=[input_text, temperature, top_p, top_k, image_prompt, result_text, hidden_image_hash, state],\n                         outputs=[input_text, result_text, hidden_image_hash])\n        clear_button.click(fn=clear_fn, inputs=clear_button, outputs=[input_text, result_text, image_prompt])\n        image_prompt.upload(fn=clear_fn2, inputs=clear_button, outputs=[result_text])\n        image_prompt.clear(fn=clear_fn2, inputs=clear_button, outputs=[result_text])\n    # demo.queue(concurrency_count=10)\n    demo.launch()\nif __name__ == '__main__':\n    import argparse\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--max_length\", type=int, default=2048, help='max length of the total sequence')\n    parser.add_argument(\"--top_p\", type=float, default=0.4, help='top p for nucleus sampling')\n    parser.add_argument(\"--top_k\", type=int, default=1, help='top k for top k sampling')\n    parser.add_argument(\"--temperature\", type=float, default=.8, help='temperature for sampling')",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:205-222"
+    },
+    "117": {
+        "file_id": 5,
+        "content": "This code snippet appears to be part of a user interface for an AI text generation application. The UI elements, such as input_text, clear_button, and image_prompt, are being configured with specific functions to handle their respective actions (submitting text, clearing content, uploading/clearing images). Additionally, the code includes argument parsing for --max_length, --top_p, --top_k, and --temperature, which seem to be parameters for the AI model. Lastly, there is a comment about potentially launching the demo with concurrency count.",
+        "type": "comment"
+    },
+    "118": {
+        "file_id": 5,
+        "content": "    parser.add_argument(\"--version\", type=str, default=\"chat\", choices=['chat', 'vqa', 'chat_old', 'base'], help='version of language process. if there is \\\"text_processor_version\\\" in model_config.json, this option will be overwritten')\n    parser.add_argument(\"--quant\", choices=[8, 4], type=int, default=None, help='quantization bits')\n    parser.add_argument(\"--from_pretrained\", type=str, default=\"cogagent-chat\", help='pretrained ckpt')\n    parser.add_argument(\"--local_tokenizer\", type=str, default=\"lmsys/vicuna-7b-v1.5\", help='tokenizer path')\n    parser.add_argument(\"--fp16\", action=\"store_true\")\n    parser.add_argument(\"--bf16\", action=\"store_true\")\n    parser.add_argument(\"--stream_chat\", action=\"store_true\")\n    args = parser.parse_args()\n    rank = int(os.environ.get('RANK', 0))\n    world_size = int(os.environ.get('WORLD_SIZE', 1))\n    args = parser.parse_args()   \n    main(args)",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:223-234"
+    },
+    "119": {
+        "file_id": 5,
+        "content": "This code defines command line arguments for a program using the ArgumentParser module. It sets default values and provides help messages for each argument. The arguments include the language process version, quantization bits, pretrained checkpoint, tokenizer path, whether to use FP16 or BF16, and whether to stream chat. The code then parses these arguments to create an `args` object which is used in the main function of the program.",
+        "type": "comment"
+    },
+    "120": {
+        "file_id": 6,
+        "content": "/composite_demo/client.py",
+        "type": "filepath"
+    },
+    "121": {
+        "file_id": 6,
+        "content": "The code sets up libraries, configurations, and manages interaction with large language models. It includes functions for efficient user input handling, threading for generation, streaming generation setup, and starts a thread to generate tokens using the model, yielding the generated token stream.",
+        "type": "summary"
+    },
+    "122": {
+        "file_id": 6,
+        "content": "from __future__ import annotations\nfrom threading import Thread\nimport streamlit as st\nimport torch\nimport warnings\nimport os\nfrom typing import Any, Protocol\nfrom collections.abc import Iterable\nfrom huggingface_hub.inference._text_generation import TextGenerationStreamResponse, Token\nfrom transformers import AutoTokenizer, TextIteratorStreamer, AutoModelForCausalLM\nfrom conversation import Conversation\n# Check if GPU supports bfloat16\nif torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8:\n    torch_type = torch.bfloat16\nelse:\n    torch_type = torch.float16\n    warnings.warn(\"Your GPU does not support bfloat16 type, use fp16 instead\")\n# if you use all of Our model, include cogagent-chat cogvlm-chat cogvlm-grounding and put it in different devices, you can do like this.\nmodels_info = {\n    'tokenizer': {\n        'path': os.environ.get('TOKENIZER_PATH', 'lmsys/vicuna-7b-v1.5'),\n    },\n    'agent_chat': {\n        'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THDUM/cogagent-chat-hf'),\n        'device': ['cuda:0']",
+        "type": "code",
+        "location": "/composite_demo/client.py:1-30"
+    },
+    "123": {
+        "file_id": 6,
+        "content": "The code is importing necessary libraries and setting up configurations for the chatbot system. It checks if the GPU supports bfloat16, and if not, it warns and uses fp16 instead. The models' info includes paths and devices for tokenizer, agent_chat model.",
+        "type": "comment"
+    },
+    "124": {
+        "file_id": 6,
+        "content": "    },\n    'vlm_chat': {\n        'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THDUM/cogvlm-chat-hf'),\n        'device': ['cuda:3']\n    },\n    'vlm_grounding': {\n        'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','THDUM/cogvlm-grounding-generalist-hf'),\n        'device': ['cuda:6']\n    }\n}\n# if you just use one model, use like this\n# models_info = {\n#     'tokenizer': {\n#         'path': os.environ.get('TOKENIZER_PATH', 'lmsys/vicuna-7b-v1.5'),\n#     },\n#     'agent_chat': {\n#         'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THUDM/cogagent-chat-hf'),\n#         'device': ['cuda:0']\n#     },\n@st.cache_resource\ndef get_client() -> Client:\n    client = HFClient(models_info)\n    return client\ndef process_history(history: list[Conversation]):\n    \"\"\"\n        Process the input history to extract the query and the history pairs.\n        Args:\n            History(list[Conversation]): A list of Conversation objects representing all conversations.\n        Returns:\n            query(str): The current user input string.",
+        "type": "code",
+        "location": "/composite_demo/client.py:31-67"
+    },
+    "125": {
+        "file_id": 6,
+        "content": "The code defines a dictionary `models_info` containing information about various language models, such as their path and the device on which they should be run. It also provides a function `get_client()` to create an HFClient object with the specified model information, and another function `process_history()` to process conversation history by extracting the query and history pairs.",
+        "type": "comment"
+    },
+    "126": {
+        "file_id": 6,
+        "content": "            history_pairs(list[(str,str)]): A list of (user, assistant) pairs.\n            last_user_image(Image): The last user image. Only the latest image.\n    \"\"\"\n    history_pairs = []\n    query = \"\"\n    last_user_image = None\n    user_text = None\n    for i, conversation in enumerate(history):\n        if conversation.role == conversation.role.USER:\n            user_text = conversation.content\n            if conversation.image:\n                last_user_image = conversation.image\n            if i == len(history) - 1:\n                query = conversation.content\n        else:\n            if user_text is not None:\n                history_pairs.append((user_text, conversation.content))\n                user_text = None\n    return query, history_pairs, last_user_image\nclass Client(Protocol):\n    def generate_stream(self,\n                        history: list[Conversation],\n                        grounding: bool = False,\n                        model_use: str = 'agent_chat',\n                        **parameters: Any",
+        "type": "code",
+        "location": "/composite_demo/client.py:68-98"
+    },
+    "127": {
+        "file_id": 6,
+        "content": "This code defines a function and a class. The function, `generate_stream`, iterates through the history of conversations, extracting user text and assistant responses into a list called `history_pairs`. It also saves the last user image and the most recent query in separate variables. Finally, it returns these values.\n\nThe class, `Client`, is defined as a Protocol and does not contain any methods or attributes.",
+        "type": "comment"
+    },
+    "128": {
+        "file_id": 6,
+        "content": "                        ) -> Iterable[TextGenerationStreamResponse]:\n        ...\nclass HFClient(Client):\n    \"\"\"\n        The HFClient class manages the interaction with various large language models\n        for text generation tasks. It supports handling multiple models, each designated\n        for a specific task like chatting or grounding.\n        Args:\n            models_info (dict): A dictionary containing the configuration for each model.\n                The dictionary format is:\n                    - 'tokenizer': Path and settings for the tokenizer.\n                    - 'agent_chat': Path and settings for the CogAgent-chat-18B model.\n                    - 'vlm_chat': Path and settings for the CogVLM-chat-17B model.\n                    - 'vlm_grounding': Path and settings for the CogVLM-grounding-17B model.\n        The class loads each model based on the provided information and assigns it to the\n        specified CUDA device. It also handles the tokenizer used across all models.\n        \"\"\"\n    def __init__(self, models_info):",
+        "type": "code",
+        "location": "/composite_demo/client.py:99-120"
+    },
+    "129": {
+        "file_id": 6,
+        "content": "HFClient manages interaction with various large language models for text generation tasks, supports multiple models and specified tasks (chatting or grounding), loads each model based on provided information, assigns to CUDA device, handles tokenizer used across all models.",
+        "type": "comment"
+    },
+    "130": {
+        "file_id": 6,
+        "content": "        self.models = {}\n        self.tokenizer = AutoTokenizer.from_pretrained(models_info['tokenizer']['path'], trust_remote_code=True)\n        for model_name, model_info in models_info.items():\n            if model_name != 'tokenizer':\n                self.models[model_name] = []\n                for device in model_info['device']:\n                    model = AutoModelForCausalLM.from_pretrained(\n                        model_info['path'],\n                        torch_dtype=torch_type,\n                        low_cpu_mem_usage=True,\n                        trust_remote_code=True,\n                    ).to(device).eval()\n                    self.models[model_name].append(model)\n    def select_best_gpu(self, model_name):\n        min_memory_used = None\n        selected_model = None\n        for model in self.models[model_name]:\n            device = next(model.parameters()).device\n            mem_used = torch.cuda.memory_allocated(device=device)\n            if min_memory_used is None or mem_used < min_memory_used:",
+        "type": "code",
+        "location": "/composite_demo/client.py:121-143"
+    },
+    "131": {
+        "file_id": 6,
+        "content": "Creates a dictionary of models and initializes the tokenizer. Iterates over each model, appends to dictionary for specified model name based on device and selects the best GPU for a specific model name.",
+        "type": "comment"
+    },
+    "132": {
+        "file_id": 6,
+        "content": "                min_memory_used = mem_used\n                selected_model = model\n        return selected_model\n    def generate_stream(self,\n                        history: list,\n                        grounding: bool = False,\n                        model_use: str = 'agent_chat',\n                        **parameters: Any\n                        ) -> Iterable[TextGenerationStreamResponse]:\n        \"\"\"\n        Generates a stream of text responses based on the input history and selected model.\n        This method facilitates a chat-like interaction with the models. Depending on the\n        model selected and whether grounding is enabled, it alters the behavior of the text\n        generation process.\n        Args:\n            history (list[Conversation]): A list of Conversation objects representing the\n                dialogue history.\n            grounding (bool, optional): A flag to indicate whether grounding should be used\n                in the generation process. Defaults to False.\n            model_use (str, optional): The key name of the model to be used for the generation.",
+        "type": "code",
+        "location": "/composite_demo/client.py:144-167"
+    },
+    "133": {
+        "file_id": 6,
+        "content": "This function generates a stream of text responses based on input history and selected model. It can enable grounding if specified, and the behavior changes depending on selected model.",
+        "type": "comment"
+    },
+    "134": {
+        "file_id": 6,
+        "content": "                Defaults to 'agent_chat'.\n            **parameters (Any): Additional parameters that may be required for the generation\n                process.\n        Yields:\n            Iterable[TextGenerationStreamResponse]: A stream of text generation responses, each\n            encapsulating a generated piece of text.\n        The method selects the appropriate model based on `model_use`, processes the input\n        history, and feeds it into the model to generate text. It uses threading to handle\n        the generation process efficiently.\n        \"\"\"\n        query, history, image = process_history(history)\n        if grounding:\n            query += \"(with grounding)\"\n        model = self.select_best_gpu(model_use)\n        device = next(model.parameters()).device\n        # Print user input info\n        print(\"\\n== Input ==\\n\", query)\n        print(\"\\n==History==\\n\", history)\n        print(\"\\n== Model ==\\n\\n\", model.config.name_or_path)\n        print(\"\\n== Device ==\\n\\n\", device)\n        input_by_model = model.build_conversation_input_ids(",
+        "type": "code",
+        "location": "/composite_demo/client.py:168-194"
+    },
+    "135": {
+        "file_id": 6,
+        "content": "This code selects the appropriate model based on the input parameter `model_use`, processes the input history, and feeds it into the model to generate text. It uses threading for efficient generation process handling. The user input information is printed including query, history, model details, and device details.",
+        "type": "comment"
+    },
+    "136": {
+        "file_id": 6,
+        "content": "            self.tokenizer,\n            query=query,\n            history=history,\n            images=[image]\n        )\n        inputs = {\n            'input_ids': input_by_model['input_ids'].unsqueeze(0).to(device),\n            'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(device),\n            'attention_mask': input_by_model['attention_mask'].unsqueeze(0).to(device),\n            'images': [[input_by_model['images'][0].to(device).to(torch_type)]],\n        }\n        # CogVLM model do not have param 'cross_images', Only CogAgent have.\n        if 'cross_images' in input_by_model and input_by_model['cross_images']:\n            inputs['cross_images'] = [[input_by_model['cross_images'][0].to(device).to(torch_type)]]\n        # Use TextIteratorStreamer for streaming generation like huggingface.\n        streamer = TextIteratorStreamer(self.tokenizer, timeout=20.0, skip_prompt=True, skip_special_tokens=True)\n        parameters['streamer'] = streamer\n        gen_kwargs = {**parameters, **inputs}",
+        "type": "code",
+        "location": "/composite_demo/client.py:195-216"
+    },
+    "137": {
+        "file_id": 6,
+        "content": "Code is creating a dictionary of inputs for model inference, handling cross_images if present and setting up the TextIteratorStreamer for streaming generation.",
+        "type": "comment"
+    },
+    "138": {
+        "file_id": 6,
+        "content": "        with torch.no_grad():\n            thread = Thread(target=model.generate, kwargs=gen_kwargs)\n            thread.start()\n            for next_text in streamer:\n                yield TextGenerationStreamResponse(\n                    token=Token(\n                        id=0,\n                        logprob=0,\n                        text=next_text,\n                        special=False,\n                    )\n                )",
+        "type": "code",
+        "location": "/composite_demo/client.py:217-228"
+    },
+    "139": {
+        "file_id": 6,
+        "content": "Starts a thread to generate tokens using the model and yields the generated token stream.",
+        "type": "comment"
+    },
+    "140": {
+        "file_id": 7,
+        "content": "/composite_demo/conversation.py",
+        "type": "filepath"
+    },
+    "141": {
+        "file_id": 7,
+        "content": "The Conversation class includes attributes for role, content, image, and translation, supports Chinese translations, handles assistant roles, and displays conversation turns. It also provides two functions for prompt generation, post-processing, and text processing using Baidu API for drawing shapes or points on images. The final translated text is returned by combining all translations.",
+        "type": "summary"
+    },
+    "142": {
+        "file_id": 7,
+        "content": "import requests\nimport re\nimport streamlit as st\nfrom dataclasses import dataclass\nfrom enum import auto, Enum\nfrom PIL.Image import Image\nfrom PIL import ImageDraw\nfrom streamlit.delta_generator import DeltaGenerator\nclass Role(Enum):\n    \"\"\"\n    CogVLM | CogAgent Only have 2 roles: USER, ASSISTANT\n    Represents the roles in a conversation, specifically for CogVLM and CogAgent applications.\n    There are two roles available:\n    - USER: The user of the system, typically the one asking questions or initiating conversation.\n    - ASSISTANT: The system or AI assistant responding to the user's queries.\n    Methods:\n        get_message(self):\n            Retrieves a Streamlit chat message component based on the role. For the USER role, it\n            returns a chat message with the name \"user\" and user avatar. For the ASSISTANT role,\n            it returns a chat message with the name \"assistant\" and assistant avatar.\n    \"\"\"\n    USER = auto()\n    ASSISTANT = auto()\n    def get_message(self):\n        match self.value:",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:1-34"
+    },
+    "143": {
+        "file_id": 7,
+        "content": "```python\nimport requests\nimport re\nimport streamlit as st\nfrom dataclasses import dataclass\nfrom enum import auto, Enum\nfrom PIL.Image import Image\nfrom PIL import ImageDraw\nfrom streamlit.delta_generator import DeltaGenerator\nclass Role(Enum):  # This class represents the roles in a conversation for CogVLM and CogAgent applications.\n    \"\"\"\n    There are two roles: USER and ASSISTANT. The USER role is for the user of the system, while the ASSISTANT role is for the AI assistant responding to queries.\n    \"\"\"\n    USER = auto()  # Represents the user role in the conversation.\n    ASSISTANT = auto()  # Represents the assistant role in the conversation.\n    \n    def get_message(self):  # Returns a Streamlit chat message component based on the role.\n        match self.value:\n```",
+        "type": "comment"
+    },
+    "144": {
+        "file_id": 7,
+        "content": "            case Role.USER.value:\n                return st.chat_message(name=\"user\", avatar=\"user\")\n            case Role.ASSISTANT.value:\n                return st.chat_message(name=\"assistant\", avatar=\"assistant\")\n            case _:\n                st.error(f'Unexpected role: {self}')\n@dataclass\nclass Conversation:\n    \"\"\"\n    Represents a single conversation turn within a dialogue.\n    Attributes:\n        role (Role): The role of the speaker in the conversation (USER or ASSISTANT).\n        content (str): The textual content of the conversation turn.\n        image (Image, optional): An optional image associated with the conversation turn.\n        content_show (str, optional): The content to be displayed in the WebUI. This may differ\n            from `content` if translation or other processing is applied.\n        translate （bool, optional): Whether to translate the content of the conversation turn.\n    Methods:\n        __str__(self) -> str:\n            Returns a string representation of the conversation turn, including the role and content.",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:35-57"
+    },
+    "145": {
+        "file_id": 7,
+        "content": "This code is defining a class called Conversation that represents a single turn in a conversation. The class has attributes for role, content, image, content_show, and translate. It also includes a method (__str__) to return a string representation of the conversation turn with role and content included.",
+        "type": "comment"
+    },
+    "146": {
+        "file_id": 7,
+        "content": "        show(self, placeholder: DeltaGenerator | None = None) -> str:\n            Displays the conversation turn in the WebUI. If `placeholder` is provided, the content\n            is shown in the specified Streamlit container. Otherwise, it uses the message style\n            determined by the role.\n    \"\"\"\n    role: Role = Role.USER\n    content: str = \"\"\n    image: Image | None = None\n    content_show: str | None = None\n    translate: bool = False\n    def __str__(self) -> str:\n        print(self.role, self.content)\n        match self.role:\n            case Role.USER | Role.ASSISTANT:\n                return f'{self.role}\\n{self.content}'\n    def show(self, placeholder: DeltaGenerator | None = None) -> str:\n        \"\"\"\n        show in markdown formate\n        \"\"\"\n        if placeholder:\n            message = placeholder\n        else:\n            message = self.role.get_message()\n        # for Chinese WebUI show\n        if self.role == Role.USER:\n            if self.translate:\n                self.content = translate_baidu(self.content_show, source_lan=\"zh\", target_lan=\"en\")",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:59-89"
+    },
+    "147": {
+        "file_id": 7,
+        "content": "The code defines a class with `__str__` and `show` methods to display conversation turns in the WebUI. It determines the message style based on role and optionally displays content in a specified Streamlit container. The `show` method also supports translation for Chinese WebUIs if enabled.",
+        "type": "comment"
+    },
+    "148": {
+        "file_id": 7,
+        "content": "                if self.content == \"error\":\n                    self.content_show = \"Please Enter your Baidu Translation API Key in function translate_baidu()\"\n            else:\n                self.content = self.content_show\n        if self.role == Role.ASSISTANT:\n            if self.translate:\n                self.content_show = translate_baidu(self.content, source_lan=\"en\", target_lan=\"zh\")\n            else:\n                self.content_show = self.content\n            self.content_show = self.content_show.replace('\\n', '  \\n')\n        message.markdown(self.content_show)\n        if self.image:\n            message.image(self.image)\ndef preprocess_text(history: list[Conversation], ) -> str:\n    \"\"\"\n    Prepares the conversation history for processing by concatenating the content of each turn.\n     Args:\n        history (list[Conversation]): The conversation history, a list of Conversation objects.\n    Returns:\n        str: A single string that concatenates the content of each conversation turn, followed by",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:90-114"
+    },
+    "149": {
+        "file_id": 7,
+        "content": "The code snippet checks if the content is \"error\" and displays an error message. If not, it updates the content accordingly. It then handles the assistant role and translation before setting the formatted content in the message and adding an image if available. The preprocess_text function concatenates conversation turns for further processing.",
+        "type": "comment"
+    },
+    "150": {
+        "file_id": 7,
+        "content": "        the ASSISTANT role indicator. This string is suitable for use as input to a text generation model.\n    \"\"\"\n    prompt = \"\"\n    for conversation in history:\n        prompt += f'{conversation}'\n    prompt += f'{Role.ASSISTANT}\\n'\n    return prompt\ndef postprocess_text(template: str, text: str) -> str:\n    \"\"\"\n    Post-processes the generated text by incorporating it into a given template.\n    Args:\n        template (str): A template string containing a placeholder for the generated text.\n        text (str): The generated text to be incorporated into the template.\n    Returns:\n        str: The template with the generated text replacing the placeholder.\n    \"\"\"\n    quoted_text = f'\"{text.strip()}\"'\n    return template.replace(\"<TASK>\", quoted_text).strip() if template != \"\" else text.strip()\ndef postprocess_image(text: str, img: Image) -> (str, Image):\n    \"\"\"\n    Processes the given text to identify and draw bounding boxes on the provided image.\n    This function searches for patterns in the text that represent coordinates for bounding",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:115-142"
+    },
+    "151": {
+        "file_id": 7,
+        "content": "This code defines three functions:\n1. \"get_prompt\" generates a prompt string by concatenating previous conversation history and the role indicator, suitable for input to a text generation model.\n2. \"postprocess_text\" post-processes generated text by incorporating it into a given template, replacing \"<TASK>\" placeholder with the text.\n3. \"postprocess_image\" processes text to identify coordinates for bounding boxes and draws them on the provided image.",
+        "type": "comment"
+    },
+    "152": {
+        "file_id": 7,
+        "content": "    boxes and draws rectangles on the image at these coordinates. Each box is drawn in a\n    different color for distinction.\n    Args:\n        text (str): The text containing bounding box coordinates in a specific pattern.\n        img (Image): The image on which to draw the bounding boxes.\n    Returns:\n        tuple[str, Image]: The processed text with additional annotations for each bounding\n        box, and the image with the drawn bounding boxes.\n    \"\"\"\n    colors = [\"red\", \"green\", \"blue\", \"yellow\", \"purple\", \"orange\"]\n    # Updated pattern to match single or multiple coordinate groups\n    pattern = r\"\\[\\[([\\d,]+(?:;[\\d,]+)*)\\]\\]\"\n    matches = re.findall(pattern, text)\n    draw = ImageDraw.Draw(img)\n    if not matches:\n        return text, None\n    for i, match in enumerate(matches):\n        # Splitting the matched string into individual coordinate groups\n        coords_groups = match.split(';')\n        # Determining the color for the current match\n        color = colors[i % len(colors)]\n        for coords_str in coords_groups:",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:143-169"
+    },
+    "153": {
+        "file_id": 7,
+        "content": "This function receives a text containing bounding box coordinates and an image, draws rectangles on the image at those coordinates with different colors for distinction, returns processed text with annotations for each bounding box and the image with drawn boxes.",
+        "type": "comment"
+    },
+    "154": {
+        "file_id": 7,
+        "content": "            coords = coords_str.split(',')\n            if len(coords) == 4:  # Rectangle\n                scaled_coords = (\n                    int(float(coords[0]) * 0.001 * img.width),\n                    int(float(coords[1]) * 0.001 * img.height),\n                    int(float(coords[2]) * 0.001 * img.width),\n                    int(float(coords[3]) * 0.001 * img.height)\n                )\n                draw.rectangle(scaled_coords, outline=color, width=3)\n            elif len(coords) == 2:  # Point\n                scaled_coords = (\n                    int(float(coords[0]) * 0.001 * img.width),\n                    int(float(coords[1]) * 0.001 * img.height)\n                )\n                radius = 5\n                draw.ellipse([scaled_coords[0] - radius, scaled_coords[1] - radius,\n                              scaled_coords[0] + radius, scaled_coords[1] + radius],\n                             fill=color)\n    return text, img\ndef translate_baidu(translate_text, source_lan, target_lan):\n    \"\"\"\n        Translates text using Baidu's translation service. (if you are not use English)",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:170-194"
+    },
+    "155": {
+        "file_id": 7,
+        "content": "This code is responsible for drawing a shape or point on an image based on the input coordinates. If there are 4 coordinates, it draws a rectangle; if there are 2 coordinates, it draws a point. The coordinates are scaled to fit the image dimensions, and the function returns the text and image after drawing. The translate_baidu function translates text using Baidu's translation service for non-English languages.",
+        "type": "comment"
+    },
+    "156": {
+        "file_id": 7,
+        "content": "        This function sends a request to the Baidu translation API to translate the provided text\n        from the source language to the target language.\n        Args:\n            translate_text (str): The text to be translated.\n            source_lan (str): The source language code (e.g., \"en\" for English).\n            target_lan (str): The target language code (e.g., \"zh\" for Chinese).\n        Returns:\n            str: The translated text. Returns \"error\" in case of an exception.\n        \"\"\"\n    url = \"https://aip.baidubce.com/rpc/2.0/mt/texttrans/v1?access_token=\"\n    headers = {'Content-Type': 'application/json'}\n    payload = {\n        'q': translate_text,\n        'from': source_lan,\n        'to': target_lan\n    }\n    try:\n        r = requests.post(url, json=payload, headers=headers)\n        result = r.json()\n        final_translation = ''\n        for item in result['result']['trans_result']:\n            final_translation += item['dst'] + '\\n'\n    except Exception as e:\n        print(e)\n        return \"error\"",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:196-223"
+    },
+    "157": {
+        "file_id": 7,
+        "content": "This function sends a request to the Baidu translation API to translate text from source language to target language. It takes the text, source language code, and target language code as arguments. Returns translated text or \"error\" in case of exception.",
+        "type": "comment"
+    },
+    "158": {
+        "file_id": 7,
+        "content": "    return final_translation",
+        "type": "code",
+        "location": "/composite_demo/conversation.py:224-224"
+    },
+    "159": {
+        "file_id": 7,
+        "content": "This line returns the final translated text after combining all translations.",
+        "type": "comment"
+    },
+    "160": {
+        "file_id": 8,
+        "content": "/composite_demo/demo_agent_cogagent.py",
+        "type": "filepath"
+    },
+    "161": {
+        "file_id": 8,
+        "content": "The code consists of two functions, 'append_conversation' and 'main', responsible for appending and displaying conversations, handling chat inputs, updating and resetting history if needed. It is part of a conversation agent system for the CogVLM platform that utilizes models like 'agent_chat'.",
+        "type": "summary"
+    },
+    "162": {
+        "file_id": 8,
+        "content": "from io import BytesIO\nimport base64\nimport streamlit as st\nimport re\nfrom streamlit.delta_generator import DeltaGenerator\nfrom client import get_client\nfrom conversation import postprocess_text, Conversation, Role, postprocess_image\nfrom PIL import Image\nfrom utils import images_are_same\nclient = get_client()\ndef append_conversation(\n        conversation: Conversation,\n        history: list[Conversation],\n        placeholder: DeltaGenerator | None = None,\n) -> None:\n    history.append(conversation)\n    conversation.show(placeholder)\ndef main(\n        top_p: float = 0.8,\n        temperature: float = 0.95,\n        prompt_text: str = \"\",\n        metadata: str = \"\",\n        top_k: int = 2,\n        max_new_tokens: int = 2048,\n        grounding: bool = False,\n        retry: bool = False,\n        template: str = \"\"\n):\n    if 'chat_history' not in st.session_state:\n        st.session_state.chat_history = []\n    if prompt_text == \"\" and retry == False:\n        print(\"\\n== Clean ==\\n\")\n        st.session_state.chat_history = []",
+        "type": "code",
+        "location": "/composite_demo/demo_agent_cogagent.py:1-40"
+    },
+    "163": {
+        "file_id": 8,
+        "content": "This code imports necessary libraries and defines two functions. The 'append_conversation' function appends a conversation to a history list and displays it, while the 'main' function handles user inputs for chat and resets the chat history if prompt_text is empty.",
+        "type": "comment"
+    },
+    "164": {
+        "file_id": 8,
+        "content": "        return\n    history: list[Conversation] = st.session_state.chat_history\n    for conversation in history:\n        conversation.show()\n    if retry:\n        print(\"\\n== Retry ==\\n\")\n        last_user_conversation_idx = None\n        for idx, conversation in enumerate(history):\n            if conversation.role == Role.USER:\n                last_user_conversation_idx = idx\n        if last_user_conversation_idx is not None:\n            prompt_text = history[last_user_conversation_idx].content_show\n            del history[last_user_conversation_idx:]\n    if prompt_text:\n        image = Image.open(BytesIO(base64.b64decode(metadata))).convert('RGB') if metadata else None\n        image.thumbnail((1120, 1120))\n        image_input = image\n        if history and image:\n            last_user_image = next(\n                (conv.image for conv in reversed(history) if conv.role == Role.USER and conv.image), None)\n            if last_user_image and images_are_same(image, last_user_image):\n                image_input = None",
+        "type": "code",
+        "location": "/composite_demo/demo_agent_cogagent.py:41-65"
+    },
+    "165": {
+        "file_id": 8,
+        "content": "The code retrieves a list of conversations from session state, displays each conversation, checks for a previous user conversation to retrieve its content, removes conversations after the last user one if retry is True, and if there's still prompt text available, it opens an image, resizes it, assigns it as image_input, and finally checks whether this new image or the last user's image in the history are the same (if any), and if they are, the image_input is set to None.",
+        "type": "comment"
+    },
+    "166": {
+        "file_id": 8,
+        "content": "            # Not necessary to clear history\n            # else:\n            #     # new picture means new conversation\n            #     st.session_state.chat_history = []\n            #     history = []\n        # Set conversation\n        if re.search('[\\u4e00-\\u9fff]', prompt_text):\n            translate = True\n        else:\n            translate = False\n        user_conversation = Conversation(\n            role=Role.USER,\n            translate=translate,\n            content_show=prompt_text.strip() if retry else postprocess_text(template=template,\n                                                                            text=prompt_text.strip()),\n            image=image_input\n        )\n        append_conversation(user_conversation, history)\n        placeholder = st.empty()\n        assistant_conversation = placeholder.chat_message(name=\"assistant\", avatar=\"assistant\")\n        assistant_conversation = assistant_conversation.empty()\n        # steam Answer\n        output_text = ''\n        for response in client.generate_stream(",
+        "type": "code",
+        "location": "/composite_demo/demo_agent_cogagent.py:67-93"
+    },
+    "167": {
+        "file_id": 8,
+        "content": "The code is creating a user conversation object, setting translation parameters if the prompt text contains Chinese characters, and appending it to the conversation history. It also initializes an empty placeholder for the assistant's response.",
+        "type": "comment"
+    },
+    "168": {
+        "file_id": 8,
+        "content": "                model_use='agent_chat',\n                grounding=grounding,\n                history=history,\n                do_sample=True,\n                max_new_tokens=max_new_tokens,\n                temperature=temperature,\n                top_p=top_p,\n                top_k=top_k,\n        ):\n            output_text += response.token.text\n            assistant_conversation.markdown(output_text.strip() + '▌')\n        ## Final Answer with image.\n        print(\"\\n==Output:==\\n\", output_text)\n        content_output, image_output = postprocess_image(output_text, image)\n        assistant_conversation = Conversation(\n            role=Role.ASSISTANT,\n            content=content_output,\n            image=image_output,\n            translate=translate,\n        )\n        append_conversation(\n            conversation=assistant_conversation,\n            history=history,\n            placeholder=placeholder.chat_message(name=\"assistant\", avatar=\"assistant\"),\n        )",
+        "type": "code",
+        "location": "/composite_demo/demo_agent_cogagent.py:94-119"
+    },
+    "169": {
+        "file_id": 8,
+        "content": "This code appears to be part of a conversation agent system, specifically designed for the CogVLM platform. It takes user input, generates a response using a model such as 'agent_chat', and returns output text and potentially an image using postprocess_image() function. The conversation is then updated with the new content, and appended to a history log.",
+        "type": "comment"
+    },
+    "170": {
+        "file_id": 9,
+        "content": "/composite_demo/demo_chat_cogagent.py",
+        "type": "filepath"
+    },
+    "171": {
+        "file_id": 9,
+        "content": "The code establishes the main function, manages user input in a chat application, and handles displaying conversation history and image processing. It also initializes a Chinese-based chat model stream and generates responses.",
+        "type": "summary"
+    },
+    "172": {
+        "file_id": 9,
+        "content": "import streamlit as st\nimport base64\nimport re\nfrom PIL import Image\nfrom io import BytesIO\nfrom streamlit.delta_generator import DeltaGenerator\nfrom client import get_client\nfrom utils import images_are_same\nfrom conversation import Conversation, Role, postprocess_image, postprocess_text\nclient = get_client()\ndef append_conversation(\n        conversation: Conversation,\n        history: list[Conversation],\n        placeholder: DeltaGenerator | None = None,\n) -> None:\n    history.append(conversation)\n    conversation.show(placeholder)\ndef main(\n        top_p: float = 0.8,\n        temperature: float = 0.95,\n        prompt_text: str = \"\",\n        metadata: str = \"\",\n        top_k: int = 2,\n        max_new_tokens: int = 2048,\n        grounding: bool = False,\n        retry: bool = False,\n        template: str = \"\",\n):\n    if 'chat_history' not in st.session_state:\n        st.session_state.chat_history = []\n    if prompt_text == \"\" and retry == False:\n        print(\"\\n== Clean ==\\n\")\n        st.session_state.chat_history = []",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogagent.py:1-40"
+    },
+    "173": {
+        "file_id": 9,
+        "content": "Initialize variables and set up the main function.",
+        "type": "comment"
+    },
+    "174": {
+        "file_id": 9,
+        "content": "        return\n    history: list[Conversation] = st.session_state.chat_history\n    for conversation in history:\n        conversation.show()\n    if retry:\n        last_user_conversation_idx = None\n        for idx, conversation in enumerate(history):\n            if conversation.role == Role.USER:\n                last_user_conversation_idx = idx\n        if last_user_conversation_idx is not None:\n            prompt_text = history[last_user_conversation_idx].content_show\n            del history[last_user_conversation_idx:]\n    if prompt_text:\n        image = Image.open(BytesIO(base64.b64decode(metadata))).convert('RGB') if metadata else None\n        image.thumbnail((1120, 1120))\n        image_input = image\n        if history and image:\n            last_user_image = next(\n                (conv.image for conv in reversed(history) if conv.role == Role.USER and conv.image), None)\n            if last_user_image and images_are_same(image, last_user_image):\n                image_input = None\n            else:\n                st.session_state.chat_history = []",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogagent.py:41-65"
+    },
+    "175": {
+        "file_id": 9,
+        "content": "This code is responsible for displaying the conversation history and handling user input in a chat application. It also checks if there's an existing image input from the user, compares it with the previous one, and decides whether to add a new image or not.",
+        "type": "comment"
+    },
+    "176": {
+        "file_id": 9,
+        "content": "                history = []\n        # Set conversation\n        if re.search('[\\u4e00-\\u9fff]', prompt_text):\n            translate = True\n        else:\n            translate = False\n        user_conversation = Conversation(\n            role=Role.USER,\n            translate=translate,\n            content_show=prompt_text.strip() if retry else postprocess_text(template=template,\n                                                                            text=prompt_text.strip()),\n            image=image_input\n        )\n        append_conversation(user_conversation, history)\n        placeholder = st.empty()\n        assistant_conversation = placeholder.chat_message(name=\"assistant\", avatar=\"assistant\")\n        assistant_conversation = assistant_conversation.empty()\n        # steam Answer\n        output_text = ''\n        for response in client.generate_stream(\n                model_use='agent_chat',\n                grounding=grounding,\n                history=history,\n                do_sample=True,\n                max_new_tokens=max_new_tokens,",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogagent.py:66-93"
+    },
+    "177": {
+        "file_id": 9,
+        "content": "This code initializes a conversation object based on whether the input text contains Chinese characters. It then adds it to the conversation history and sets up a stream for generating a response using a chat model.",
+        "type": "comment"
+    },
+    "178": {
+        "file_id": 9,
+        "content": "                temperature=temperature,\n                top_p=top_p,\n                top_k=top_k,\n        ):\n            output_text += response.token.text\n            assistant_conversation.markdown(output_text.strip() + '▌')\n        print(\"\\n==Output:==\\n\", output_text)\n        content_output, image_output = postprocess_image(output_text, image)\n        assistant_conversation = Conversation(\n            role=Role.ASSISTANT,\n            content=content_output,\n            image=image_output,\n            translate=translate\n        )\n        append_conversation(\n            conversation=assistant_conversation,\n            history=history,\n            placeholder=placeholder.chat_message(name=\"assistant\", avatar=\"assistant\")\n        )",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogagent.py:94-113"
+    },
+    "179": {
+        "file_id": 9,
+        "content": "The code takes the generated response and appends it to the conversation history. It then updates the assistant conversation with the content output, image output, and translate flag if necessary. The function postprocess_image is called to process the output text and image. Finally, the updated assistant conversation is added to the conversation history using append_conversation function.",
+        "type": "comment"
+    },
+    "180": {
+        "file_id": 10,
+        "content": "/composite_demo/demo_chat_cogvlm.py",
+        "type": "filepath"
+    },
+    "181": {
+        "file_id": 10,
+        "content": "This code initializes libraries and functions for a chat demo application, manages chat history, handles user input, adjusts image changes, initializes a Conversation object, checks for Chinese characters in prompt_text, appends conversation to history, generates assistant's response based on user input, and processes images.",
+        "type": "summary"
+    },
+    "182": {
+        "file_id": 10,
+        "content": "import streamlit as st\nimport base64\nimport re\nfrom PIL import Image\nfrom io import BytesIO\nfrom streamlit.delta_generator import DeltaGenerator\nfrom client import get_client\nfrom utils import images_are_same\nfrom conversation import Conversation, Role, postprocess_image, postprocess_text\nclient = get_client()\ndef append_conversation(\n        conversation: Conversation,\n        history: list[Conversation],\n        placeholder: DeltaGenerator | None = None,\n) -> None:\n    history.append(conversation)\n    conversation.show(placeholder)\ndef main(\n        top_p: float = 0.8,\n        temperature: float = 0.95,\n        prompt_text: str = \"\",\n        metadata: str = \"\",\n        top_k: int = 2,\n        max_new_tokens: int = 2048,\n        grounding: bool = False,\n        retry: bool = False,\n        template: str = \"\",\n):\n    if 'chat_history' not in st.session_state:\n        st.session_state.chat_history = []\n    if prompt_text == \"\" and retry == False:\n        print(\"\\n== Clean ==\\n\")\n        st.session_state.chat_history = []",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogvlm.py:1-40"
+    },
+    "183": {
+        "file_id": 10,
+        "content": "Initialize necessary libraries and functions for chat demo application.\nDefine function to append conversation history and display it.\nMain function initializes chat history, handles user input, and manages chat session state.",
+        "type": "comment"
+    },
+    "184": {
+        "file_id": 10,
+        "content": "        return\n    history: list[Conversation] = st.session_state.chat_history\n    for conversation in history:\n        conversation.show()\n    if retry:\n        last_user_conversation_idx = None\n        for idx, conversation in enumerate(history):\n            if conversation.role == Role.USER:\n                last_user_conversation_idx = idx\n        if last_user_conversation_idx is not None:\n            prompt_text = history[last_user_conversation_idx].content_show\n            del history[last_user_conversation_idx:]\n    if prompt_text:\n        image = Image.open(BytesIO(base64.b64decode(metadata))).convert('RGB') if metadata else None\n        image.thumbnail((1120, 1120))\n        image_input = image\n        if history and image:\n            last_user_image = next(\n                (conv.image for conv in reversed(history) if conv.role == Role.USER and conv.image), None)\n            if last_user_image and images_are_same(image, last_user_image):\n                image_input = None\n            else:\n                st.session_state.chat_history = []",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogvlm.py:41-65"
+    },
+    "185": {
+        "file_id": 10,
+        "content": "This code retrieves and displays the chat history, then checks if there's a need to reload the prompt from the last user conversation. If so, it removes that conversation from the history list. Then it checks if the image has changed since the last user input and adjusts the image accordingly.",
+        "type": "comment"
+    },
+    "186": {
+        "file_id": 10,
+        "content": "                history = []\n        # Set conversation\n        if re.search('[\\u4e00-\\u9fff]', prompt_text):\n            translate = True\n        else:\n            translate = False\n        user_conversation = Conversation(\n            role=Role.USER,\n            translate=translate,\n            content_show=prompt_text.strip() if retry else postprocess_text(template=template,\n                                                                            text=prompt_text.strip()),\n            image=image_input\n        )\n        append_conversation(user_conversation, history)\n        placeholder = st.empty()\n        assistant_conversation = placeholder.chat_message(name=\"assistant\", avatar=\"assistant\")\n        assistant_conversation = assistant_conversation.empty()\n        # steam Answer\n        output_text = ''\n        for response in client.generate_stream(\n                model_use='vlm_grounding' if grounding else 'vlm_chat',\n                grounding=False,\n                history=history,\n                do_sample=True,",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogvlm.py:66-92"
+    },
+    "187": {
+        "file_id": 10,
+        "content": "This code is initializing a Conversation object for the User and setting up the prompt_text or template as content to be used in the conversation. It also checks if the prompt_text contains any Chinese characters (if it does, translate will be set to True). The Conversation object is then appended to the history list and a placeholder is created for the Assistant's response.",
+        "type": "comment"
+    },
+    "188": {
+        "file_id": 10,
+        "content": "                max_new_tokens=max_new_tokens,\n                temperature=temperature,\n                top_p=top_p,\n                top_k=top_k,\n        ):\n            output_text += response.token.text\n            assistant_conversation.markdown(output_text.strip() + '▌')\n        print(\"\\n==Output:==\\n\", output_text)\n        content_output, image_output = postprocess_image(output_text, image)\n        assistant_conversation = Conversation(\n            role=Role.ASSISTANT,\n            content=content_output,\n            image=image_output,\n            translate=translate\n        )\n        append_conversation(\n            conversation=assistant_conversation,\n            history=history,\n            placeholder=placeholder.chat_message(name=\"assistant\", avatar=\"assistant\")\n        )",
+        "type": "code",
+        "location": "/composite_demo/demo_chat_cogvlm.py:93-113"
+    },
+    "189": {
+        "file_id": 10,
+        "content": "This code generates a response based on user input and appends the conversation to the chat history. It also outputs the generated text, processes any images, and creates a new assistant conversation object with the processed content.",
+        "type": "comment"
+    },
+    "190": {
+        "file_id": 11,
+        "content": "/composite_demo/main.py",
+        "type": "filepath"
+    },
+    "191": {
+        "file_id": 11,
+        "content": "The code is for a chat application using CogAgent and CogVLM models, allowing users to upload images and adjust prompts. It offers different modes of operation, checks for valid file uploads, and displays error messages if necessary.",
+        "type": "summary"
+    },
+    "192": {
+        "file_id": 11,
+        "content": "\"\"\"\nThis is a demo using the chat version about CogAgent and CogVLM in WebDEMO\nMake sure you have installed the vicuna-7b-v1.5 tokenizer model (https://huggingface.co/lmsys/vicuna-7b-v1.5),\nand a full checkpoint of vicuna-7b-v1.5 LLM is not required.\nMention that only one image can be processed in a conversation, which means you cannot replace or insert another image\nduring the conversation.\nThe models_info parameter is explained as follows\n   tokenizer: tokenizer model using vicuna-7b-v1.5 model\n   agent_chat: Use the CogAgent-chat-18B model to complete the conversation task\n   vlm_chat: Use the CogVLM-chat-17B model to complete the conversation task\n   vlm_grounding: Use CogVLM-grounding-17B model to complete the Grounding task\nWeb Demo user operation logic is as follows:\n    CogVLM-Chat -> grounding? - yes -> Choose a template -> CogVLM-grounding-17B\n                              - no  -> CogVLM-chat-17B (without grounding)\n    CogAgent-Chat  -> CogAgent-chat-18B (Only QA,without Grounding)\n    CogAgent-Agent -> CogAgent-chat-18B",
+        "type": "code",
+        "location": "/composite_demo/main.py:1-23"
+    },
+    "193": {
+        "file_id": 11,
+        "content": "This code demonstrates the usage of CogAgent and CogVLM in WebDEMO, utilizing vicuna-7b-v1.5 tokenizer model. It explains that only one image can be processed per conversation and provides user operation logic for Chat and Agent tasks.",
+        "type": "comment"
+    },
+    "194": {
+        "file_id": 11,
+        "content": "                   -> Choose a template -> grounding? - yes -> prompt + (with grounding)\n                                                      - no  -> prompt\n    CogAgent-vqa-hf are not included in this demo, but you can use it in the same way as CogAgent-chat-18B\n    and used it in CogAgent-Chat\n\"\"\"\nimport streamlit as st\nst.set_page_config(\n    page_title=\"CogVLM & CogAgent Demo\",\n    page_icon=\":robot:\",\n    layout='centered',\n    initial_sidebar_state='expanded',\n)\nfrom enum import Enum\nfrom utils import encode_file_to_base64, templates_agent_cogagent, template_grounding_cogvlm\nimport demo_chat_cogvlm, demo_agent_cogagent, demo_chat_cogagent\nst.markdown(\"<h3>CogAgent & CogVLM Chat Demo</h3>\", unsafe_allow_html=True)\nst.markdown(\n    \"<sub>更多使用方法请参考文档: https://lslfd0slxc.feishu.cn/wiki/WvQbwIJ9tiPAxGk8ywDck6yfnof \\n\\n 请根据文档的引导说明来尝试demo，以便理解demo的布局设计 </sub> \\n\",\n    unsafe_allow_html=True)\nclass Mode(str, Enum):\n    CogVLM_Chat, CogAgent_Chat, CogAgent_Agent = '💬CogVLM-Chat', '🧑‍💻 CogAgent-Chat', '💡 CogAgent-Agent'",
+        "type": "code",
+        "location": "/composite_demo/main.py:24-51"
+    },
+    "195": {
+        "file_id": 11,
+        "content": "This code sets up the page configuration and provides options for different chat demo modes using CogVLM and CogAgent models.",
+        "type": "comment"
+    },
+    "196": {
+        "file_id": 11,
+        "content": "with st.sidebar:\n    top_p = st.slider(\n        'top_p', 0.0, 1.0, 0.8, step=0.01\n    )\n    temperature = st.slider(\n        'temperature', 0.01, 1.0, 0.90, step=0.01\n    )\n    top_k = st.slider(\n        'top_k', 1, 20, 5, step=1\n    )\n    max_new_token = st.slider(\n        'Output length', 1, 2048, 2048, step=1\n    )\n    uploaded_file = st.file_uploader(\"Choose an image...\", type=['.jpg', '.png', '.jpeg'], accept_multiple_files=False)\n    cols = st.columns(2)\n    export_btn = cols[0]\n    clear_history = cols[1].button(\"Clear History\", use_container_width=True)\n    retry = export_btn.button(\"Retry\", use_container_width=True)\nprompt_text = st.chat_input(\n    'Chat with CogAgent | CogVLM',\n    key='chat_input',\n)\ntab = st.radio(\n    'Mode',\n    [mode.value for mode in Mode],\n    horizontal=True,\n    label_visibility='hidden',\n)\nselected_template_grounding_cogvlm = \"\"\nwith st.sidebar:\n    grounding = st.checkbox(\"Grounding\")\n    if tab == Mode.CogVLM_Chat or tab == Mode.CogAgent_Chat:\n        if grounding:\n            se",
+        "type": "code",
+        "location": "/composite_demo/main.py:54-92"
+    },
+    "197": {
+        "file_id": 11,
+        "content": "This code is for a chat application that interacts with the CogAgent or CogVLM model. It allows users to upload an image, adjust prompt parameters like top_p, temperature, and output length, and interact with a chat interface. The code also includes features to clear history, retry exporting, and select between different modes of operation (CogVLM_Chat, CogAgent_Chat).",
+        "type": "comment"
+    },
+    "198": {
+        "file_id": 11,
+        "content": "lected_template_grounding_cogvlm = st.selectbox(\"Template For Grounding\", template_grounding_cogvlm)\nif tab == Mode.CogAgent_Agent:\n    with st.sidebar:\n        selected_template_agent_cogagent = st.selectbox(\"Template For Agent\", templates_agent_cogagent)\nif clear_history or retry:\n    prompt_text = \"\"\nmatch tab:\n    case Mode.CogVLM_Chat:\n        st.info(\"This option uses cogvlm-chat and cogvlm-grounding model.\")\n        if uploaded_file is not None:\n            demo_chat_cogvlm.main(\n                retry=retry,\n                top_p=top_p,\n                top_k=top_k,\n                temperature=temperature,\n                prompt_text=prompt_text,\n                metadata=encode_file_to_base64(uploaded_file),\n                max_new_tokens=max_new_token,\n                grounding=grounding,\n                template=selected_template_grounding_cogvlm\n            )\n        else:\n            st.error(f'Please upload an image to start')\n    case Mode.CogAgent_Chat:\n        st.info(\"This option uses cogagent-chat model.\")",
+        "type": "code",
+        "location": "/composite_demo/main.py:92-120"
+    },
+    "199": {
+        "file_id": 11,
+        "content": "Code snippet is a part of an interactive application where the user can choose between different models (CogVLM_Chat and CogAgent_Chat) and provide an image to generate chat responses. The selected template for grounding and agent are also chosen by the user in a sidebar menu. If no file is uploaded, it displays an error message asking the user to upload an image.",
+        "type": "comment"
+    }
+}

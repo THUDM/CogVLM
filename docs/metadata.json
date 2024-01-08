@@ -1,0 +1,200 @@
+{
+    "url": {
+        "full": "https://github.com/THUDM/CogVLM",
+        "partial": "THUDM/CogVLM"
+    },
+    "file_mapping": {
+        "0": {
+            "filepath": "/README.md",
+            "entry_id": 0,
+            "language_id": "plain-text"
+        },
+        "1": {
+            "filepath": "/dataset.md",
+            "entry_id": 56,
+            "language_id": "markdown"
+        },
+        "2": {
+            "filepath": "/requirements.txt",
+            "entry_id": 66,
+            "language_id": "plain-text"
+        },
+        "3": {
+            "filepath": "/basic_demo/cli_demo_hf.py",
+            "entry_id": 70,
+            "language_id": "python"
+        },
+        "4": {
+            "filepath": "/basic_demo/cli_demo_sat.py",
+            "entry_id": 82,
+            "language_id": "python"
+        },
+        "5": {
+            "filepath": "/basic_demo/web_demo.py",
+            "entry_id": 98,
+            "language_id": "python"
+        },
+        "6": {
+            "filepath": "/composite_demo/client.py",
+            "entry_id": 120,
+            "language_id": "python"
+        },
+        "7": {
+            "filepath": "/composite_demo/conversation.py",
+            "entry_id": 140,
+            "language_id": "python"
+        },
+        "8": {
+            "filepath": "/composite_demo/demo_agent_cogagent.py",
+            "entry_id": 160,
+            "language_id": "python"
+        },
+        "9": {
+            "filepath": "/composite_demo/demo_chat_cogagent.py",
+            "entry_id": 170,
+            "language_id": "python"
+        },
+        "10": {
+            "filepath": "/composite_demo/demo_chat_cogvlm.py",
+            "entry_id": 180,
+            "language_id": "python"
+        },
+        "11": {
+            "filepath": "/composite_demo/main.py",
+            "entry_id": 190,
+            "language_id": "python"
+        },
+        "12": {
+            "filepath": "/composite_demo/utils.py",
+            "entry_id": 204,
+            "language_id": "python"
+        },
+        "13": {
+            "filepath": "/finetune_demo/evaluate_cogagent.sh",
+            "entry_id": 246,
+            "language_id": "shell"
+        },
+        "14": {
+            "filepath": "/finetune_demo/evaluate_cogagent_demo.py",
+            "entry_id": 252,
+            "language_id": "python"
+        },
+        "15": {
+            "filepath": "/finetune_demo/evaluate_cogvlm.sh",
+            "entry_id": 274,
+            "language_id": "shell"
+        },
+        "16": {
+            "filepath": "/finetune_demo/evaluate_cogvlm_demo.py",
+            "entry_id": 280,
+            "language_id": "python"
+        },
+        "17": {
+            "filepath": "/finetune_demo/finetune_cogagent_demo.py",
+            "entry_id": 300,
+            "language_id": "python"
+        },
+        "18": {
+            "filepath": "/finetune_demo/finetune_cogagent_lora.sh",
+            "entry_id": 326,
+            "language_id": "shell"
+        },
+        "19": {
+            "filepath": "/finetune_demo/finetune_cogvlm_demo.py",
+            "entry_id": 332,
+            "language_id": "python"
+        },
+        "20": {
+            "filepath": "/finetune_demo/finetune_cogvlm_lora.sh",
+            "entry_id": 356,
+            "language_id": "shell"
+        },
+        "21": {
+            "filepath": "/finetune_demo/test_config_bf16.json",
+            "entry_id": 362,
+            "language_id": "json"
+        },
+        "22": {
+            "filepath": "/openai_demo/openai_api.py",
+            "entry_id": 366,
+            "language_id": "python"
+        },
+        "23": {
+            "filepath": "/openai_demo/openai_api_request.py",
+            "entry_id": 394,
+            "language_id": "python"
+        },
+        "24": {
+            "filepath": "/utils/merge_model.py",
+            "entry_id": 406,
+            "language_id": "python"
+        },
+        "25": {
+            "filepath": "/utils/split_dataset.py",
+            "entry_id": 412,
+            "language_id": "python"
+        },
+        "26": {
+            "filepath": "/utils/models/__init__.py",
+            "entry_id": 418,
+            "language_id": "python"
+        },
+        "27": {
+            "filepath": "/utils/models/cogagent_model.py",
+            "entry_id": 422,
+            "language_id": "python"
+        },
+        "28": {
+            "filepath": "/utils/models/cogvlm_model.py",
+            "entry_id": 446,
+            "language_id": "python"
+        },
+        "29": {
+            "filepath": "/utils/models/eva_clip_L_hf.py",
+            "entry_id": 464,
+            "language_id": "python"
+        },
+        "30": {
+            "filepath": "/utils/models/eva_clip_model.py",
+            "entry_id": 528,
+            "language_id": "python"
+        },
+        "31": {
+            "filepath": "/utils/models/mixin.py",
+            "entry_id": 542,
+            "language_id": "python"
+        },
+        "32": {
+            "filepath": "/utils/utils/__init__.py",
+            "entry_id": 568,
+            "language_id": "python"
+        },
+        "33": {
+            "filepath": "/utils/utils/chat.py",
+            "entry_id": 572,
+            "language_id": "python"
+        },
+        "34": {
+            "filepath": "/utils/utils/dataset.py",
+            "entry_id": 588,
+            "language_id": "python"
+        },
+        "35": {
+            "filepath": "/utils/utils/grounding_parser.py",
+            "entry_id": 596,
+            "language_id": "python"
+        },
+        "36": {
+            "filepath": "/utils/utils/language.py",
+            "entry_id": 606,
+            "language_id": "python"
+        },
+        "37": {
+            "filepath": "/utils/utils/vision.py",
+            "entry_id": 628,
+            "language_id": "python"
+        }
+    },
+    "project_name": "CogVLM",
+    "split_count": 7
+}

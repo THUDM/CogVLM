@@ -1,0 +1,10 @@
+{
+    "summary": "The code configures a training model with micro batch size, gradient accumulation steps, and BF16 enabled. It also includes gradient clipping, zero optimization settings, offload optimizer on the CPU with pin memory, activation checkpointing options, and disables wall clock breakdown tracking.",
+    "details": [
+        {
+            "comment": "The code configures a training model with micro batch size, gradient accumulation steps, and BF16 enabled. It also includes gradient clipping, zero optimization settings, offload optimizer on the CPU with pin memory, activation checkpointing options, and disables wall clock breakdown tracking.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/finetune_demo/test_config_bf16.json\":0-39",
+            "content": "{\n    \"train_micro_batch_size_per_gpu\": 4,\n    \"gradient_accumulation_steps\": 1,\n    \"gradient_clipping\": 0.1,\n    \"zero_optimization\": {\n      \"stage\": 2,\n      \"contiguous_gradients\": false,\n      \"overlap_comm\": true,\n      \"reduce_scatter\": true,\n      \"reduce_bucket_size\": 4e7,\n      \"allgather_bucket_size\": 1e8,\n      \"load_from_fp32_weights\": false\n    },\n    \"offload_optimizer\": {\n      \"device\": \"cpu\",\n      \"pin_memory\": true\n    },\n    \"zero_allow_untested_optimizer\": true,\n    \"bf16\": {\n      \"enabled\": true\n    },\n    \"optimizer\": {\n      \"type\": \"Adam\",\n      \"params\": {\n        \"lr\": 0.00001,\n        \"betas\": [\n          0.9,\n          0.95\n        ],\n        \"eps\": 1e-8,\n        \"weight_decay\": 5e-2\n      }\n    },\n    \"activation_checkpointing\": {\n      \"partition_activations\": false,\n      \"contiguous_memory_optimization\": false,\n      \"cpu_checkpointing\": false\n    },\n    \"wall_clock_breakdown\": false\n  }"
+        }
+    ]
+}

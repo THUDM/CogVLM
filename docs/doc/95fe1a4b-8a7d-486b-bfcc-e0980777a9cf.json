@@ -1,0 +1,20 @@
+{
+    "summary": "The custom PyTorch dataset class, ItemDataset, loads .jpg images from a specified path, converts them to RGB format, extracts text from file names, and returns the processed image and text data along with a unique \"question_id\", ending with the return of the dataset.",
+    "details": [
+        {
+            "comment": "- Finds all .jpg files in the specified path and returns their paths\n- ItemDataset class is a custom dataset for image and text processing using PyTorch's Dataset class",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/utils/dataset.py\":0-28",
+            "content": "import os\nimport logging\nimport random\nimport logging\nimport jsonlines\nfrom io import BytesIO\nfrom PIL import Image\nfrom torch.utils.data import Dataset\nfrom sat.helpers import print_rank0\ndef find_all_files(path, suffix=\".jpg\"):\n    target_files = []\n    for cur_dir, _, files in os.walk(path, followlinks=True):\n        for f in files:\n            if f.endswith(suffix):\n                target_files.append(os.path.join(cur_dir, f))\n    print_rank0(f'find {len(target_files)} files...')\n    return target_files\nclass ItemDataset(Dataset):\n    def __init__(self, image_processor, text_processor, args, data_dirs, cross_image_processor=None, **kwargs):\n        super().__init__()\n        self.data = self.load_data(data_dirs)\n        self.image_processor, self.text_processor, self.cross_image_processor = image_processor, text_processor, cross_image_processor\n    def process_img(self, img):\n        img_dict = {'vision': self.image_processor(img)}\n        if self.cross_image_processor:\n            img_dict.update({'cross': self.cross_image_processor(img)})"
+        },
+        {
+            "comment": "Line 29: Loads all files with .jpg suffix from the data directory and returns them.\nLine 34: Returns length of dataset.\nLine 38-40: Opens image file, converts it to RGB and returns it.\nLine 43: Handles exceptions while opening image files.\nLine 47-52: Extracts text from the file name and processes it.\nLine 55-57: Combines the processed image and text dictionaries, and adds \"question_id\" to the return dictionary.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/utils/dataset.py\":29-59",
+            "content": "        return img_dict\n    def process_text(self, answer, prompt):\n        return self.text_processor(answer, prompt)\n    def load_data(self, data_dir):\n        all_files = find_all_files(data_dir, suffix=\".jpg\")\n        print_rank0(f\"find {len(all_files)} samples in all...\")\n        return all_files\n    def __len__(self):\n        return len(self.data)\n    def __getitem__(self, index):\n        data = self.data[index]\n        # img\n        try:\n            img = Image.open(data).convert('RGB')\n        except Exception as e:\n            print_rank0(e, level=logging.WARNING)\n            return {}\n        img_dict = self.process_img(img)\n        # text\n        label = data.split('/')[-1].split('.')[0]\n        uni_key = label\n        text_dict = self.process_text(label, \"CAPTCHA:\")\n        if text_dict is None:\n            print_rank0(f\"Process text failed. Please check the max_target_length & max_source_length.\\n The data is {data}\", level=logging.WARNING)\n            return {}\n        # other attr\n        ret = {**img_dict, **text_dict, \"question_id\": uni_key}"
+        },
+        {
+            "comment": "End of function, returns dataset.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/utils/dataset.py\":60-60",
+            "content": "        return ret"
+        }
+    ]
+}

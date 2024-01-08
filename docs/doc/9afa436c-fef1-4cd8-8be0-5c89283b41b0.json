@@ -1,0 +1,15 @@
+{
+    "summary": "This script sets up environment and options for fine-tuning a CogVLM language model using LORA and model parallelism, training for 800 iterations on provided datasets. The DeepSpeed command is used to save checkpoints, perform evaluations, and use a master port of 16666 for communication.",
+    "details": [
+        {
+            "comment": "This script is for finetuning a CogVLM language model using LORA and model parallelism. It sets up the necessary environment variables, arguments, and options for training and data loading. The model will be trained for 800 iterations on provided train and validation datasets.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/finetune_demo/finetune_cogvlm_lora.sh\":0-35",
+            "content": "#! /bin/bash\n# export PATH=/usr/local/cuda/bin:$PATH\n# export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH\nNUM_GPUS_PER_WORKER=8\nMP_SIZE=1\nscript_path=$(realpath $0)\nscript_dir=$(dirname $script_path)\nmain_dir=$(dirname $script_dir)\nMODEL_TYPE=\"cogvlm-base-490\"\nVERSION=\"base\"\nMODEL_ARGS=\"--from_pretrained $MODEL_TYPE \\\n    --max_length 1288 \\\n    --lora_rank 10 \\\n    --use_lora \\\n    --local_tokenizer lmsys/vicuna-7b-v1.5 \\\n    --version $VERSION\"\n# Tips: If training models of resolution 244, you can set --max_length smaller \nOPTIONS_SAT=\"SAT_HOME=~/.sat_models\"\nOPTIONS_NCCL=\"NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$NUM_GPUS_PER_WORKER\"\nHOST_FILE_PATH=\"hostfile\"\ntrain_data=\"./archive_split/train\"\nvalid_data=\"./archive_split/valid\"\ngpt_options=\" \\\n       --experiment-name finetune-$MODEL_TYPE \\\n       --model-parallel-size ${MP_SIZE} \\\n       --mode finetune \\\n       --train-iters 800 \\\n       --resume-dataloader \\\n       $MODEL_ARGS \\\n       --train-data ${train_data} \\\n       --valid-data ${valid_data} \\"
+        },
+        {
+            "comment": "The code is setting various options and running a DeepSpeed command to fine-tune the CogVLM model using specified options. It saves checkpoints at regular intervals, performs evaluations every 200 iterations, and uses a master port of 16666 for communication.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/finetune_demo/finetune_cogvlm_lora.sh\":36-58",
+            "content": "       --distributed-backend nccl \\\n       --lr-decay-style cosine \\\n       --warmup .02 \\\n       --checkpoint-activations \\\n       --vit_checkpoint_activations \\\n       --save-interval 200 \\\n       --eval-interval 200 \\\n       --save \"./checkpoints\" \\\n       --eval-iters 10 \\\n       --eval-batch-size 1 \\\n       --split 1. \\\n       --deepspeed_config test_config_bf16.json \\\n       --skip-init \\\n       --seed 2023\n\"\nrun_cmd=\"${OPTIONS_NCCL} ${OPTIONS_SAT} deepspeed --master_port 16666 --hostfile ${HOST_FILE_PATH} finetune_cogvlm_demo.py ${gpt_options}\"\necho ${run_cmd}\neval ${run_cmd}\nset +x"
+        }
+    ]
+}

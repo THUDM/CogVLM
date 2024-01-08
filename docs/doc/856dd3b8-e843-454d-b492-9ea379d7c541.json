@@ -1,0 +1,10 @@
+{
+    "summary": "Imports necessary models and functions for CogAgent and CogVLM from respective modules.",
+    "details": [
+        {
+            "comment": "Imports necessary models and functions for CogAgent and CogVLM from respective modules.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/models/__init__.py\":0-1",
+            "content": "from .cogagent_model import CogAgentModel, FineTuneTrainCogAgentModel, FineTuneTestCogAgentModel\nfrom .cogvlm_model import CogVLMModel, FineTuneTrainCogVLMModel, FineTuneTestCogVLMModel"
+        }
+    ]
+}
