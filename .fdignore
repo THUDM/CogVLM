@@ -1,0 +1,7 @@
+.*
+*_zh.md
+assets
+*.{jpg,png,gif}
+LICENSE
+MODEL_LICENSE
+docs

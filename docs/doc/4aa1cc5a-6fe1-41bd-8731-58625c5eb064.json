@@ -1,0 +1,15 @@
+{
+    "summary": "The BlipImageEvalProcessor class performs image preprocessing using Torchvision transforms, including normalization, resizing, and tensor conversion. The __call__ method applies the transformation on an item, and a function blip2_image_processor_func_with_inputs creates an image processor based on the given image size.",
+    "details": [
+        {
+            "comment": "This code defines a BlipImageEvalProcessor class that performs image preprocessing using Torchvision transforms. It normalizes the images using specified mean and std values, resizes them to a given size, and converts them to tensors. The __call__ method is used for applying the transformation on an item. Additionally, there's a function called blip2_image_processor_func_with_inputs that takes an image and applies the preprocessing using the BlipImageEvalProcessor instance.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/utils/vision.py\":0-30",
+            "content": "from torchvision import transforms\nfrom torchvision.transforms.functional import InterpolationMode\nimport torch\nclass BlipImageEvalProcessor:\n    def __init__(self, image_size=384, mean=None, std=None):\n        super().__init__()\n        if mean is None:\n            mean = (0.48145466, 0.4578275, 0.40821073)\n        if std is None:\n            std = (0.26862954, 0.26130258, 0.27577711)\n        self.normalize = transforms.Normalize(mean, std)\n        self.transform = transforms.Compose(\n            [\n                transforms.Resize(\n                    (image_size, image_size), interpolation=InterpolationMode.BICUBIC\n                ),\n                transforms.ToTensor(),\n                self.normalize,\n            ]\n        )\n    def __call__(self, item):\n        return self.transform(item)\nfrom functools import partial\ndef blip2_image_processor_func_with_inputs(image_processor, image):\n    return {'image': image_processor(image).unsqueeze(0), 'input_ids': torch.zeros(1, 1, dtype=torch.long), 'position_ids': None, 'attention_mask': torch.ones(1, 1, dtype=torch.long)}"
+        },
+        {
+            "comment": "This function creates an image processor based on the given image size.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/utils/vision.py\":32-33",
+            "content": "def get_image_processor(image_size):\n    return partial(blip2_image_processor_func_with_inputs, BlipImageEvalProcessor(image_size))"
+        }
+    ]
+}

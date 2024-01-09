@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="github-markdown.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .directory:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        :target {
+            background-color: yellow !important;
+        }
+
+        .folded::before {
+            content: '\25B6';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+
+        .expanded::before {
+            content: '\25BC';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+    </style>
+    <script>
+        function toggleVisibility(element) {
+            let mclass = element.getAttribute("class");
+            if (mclass == "expanded") {
+                element.setAttribute('class', 'folded');
+            } else {
+                element.setAttribute('class', 'expanded');
+            }
+            const siblings = element.parentNode.children;
+            for (const sibling of siblings) {
+                if (sibling !== element) {
+                    sibling.style.display = (sibling.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+
+            .partial-repository-url {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <article class="markdown-body">
+        <h2>Project Structure<span hierarchy="0" class="partial-repository-url"> of: THUDM/CogVLM</span><div style="float: right;"><a href="index.html"><i class="bi bi-search"></i></a></div></h2>
+<ul>
+<li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>CogVLM</code></strong> <em>Interactive AI demos, datasets, and utilities for NLP</em></span><ul>
+<li><a href="index.html?q=/README.md" id="/README.md"><code>README.md</code></a> <em>Improved AI models with HuggingFace support and templates.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/basic_demo/"><code>basic_demo</code></strong> <em>CLI demos, web demo with CogAgent, chat app for text generation</em></span><ul>
+<li><a href="index.html?q=/basic_demo/cli_demo_hf.py" id="/basic_demo/cli_demo_hf.py"><code>cli_demo_hf.py</code></a> <em>CLI demo with CogAgent, Vicuna tokenizer, argparse, GPU support</em></li>
+<li><a href="index.html?q=/basic_demo/cli_demo_sat.py" id="/basic_demo/cli_demo_sat.py"><code>cli_demo_sat.py</code></a> <em>CLI for text generation, distributed chat app with language support.</em></li>
+<li><a href="index.html?q=/basic_demo/web_demo.py" id="/basic_demo/web_demo.py"><code>web_demo.py</code></a> <em>Create web demo using Gradio, CogVLM, CogAgent.</em></li>
+</ul>
+</li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/composite_demo/"><code>composite_demo</code></strong> <em>Interactive chat and image-based composite language model demo.</em></span><ul>
+<li><a href="index.html?q=/composite_demo/client.py" id="/composite_demo/client.py"><code>client.py</code></a> <em>Python client for composite language model interaction</em></li>
+<li><a href="index.html?q=/composite_demo/conversation.py" id="/composite_demo/conversation.py"><code>conversation.py</code></a> <em>Conversation class with role, content, image, translation support.</em></li>
+<li><a href="index.html?q=/composite_demo/demo_agent_cogagent.py" id="/composite_demo/demo_agent_cogagent.py"><code>demo_agent_cogagent.py</code></a> <em>CogVLM conversation agent demo</em></li>
+<li><a href="index.html?q=/composite_demo/demo_chat_cogagent.py" id="/composite_demo/demo_chat_cogagent.py"><code>demo_chat_cogagent.py</code></a> <em>Chatbot with image processing and Chinese model integration</em></li>
+<li><a href="index.html?q=/composite_demo/demo_chat_cogvlm.py" id="/composite_demo/demo_chat_cogvlm.py"><code>demo_chat_cogvlm.py</code></a> <em>Chat demo with image processing and Conversation object initialization.</em></li>
+<li><a href="index.html?q=/composite_demo/main.py" id="/composite_demo/main.py"><code>main.py</code></a> <em>Chat application using CogAgent and CogVLM models with image uploads and prompts.</em></li>
+<li><a href="index.html?q=/composite_demo/utils.py" id="/composite_demo/utils.py"><code>utils.py</code></a> <em>Dynamic indexing AI image analysis tool</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/dataset.md" id="/dataset.md"><code>dataset.md</code></a> <em>Bilingual visual instruction dataset for CogVLM v1.0 training</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/finetune_demo/"><code>finetune_demo</code></strong> <em>Fine-tunes models, evaluates performance in demonstrations</em></span><ul>
+<li><a href="index.html?q=/finetune_demo/evaluate_cogagent.sh" id="/finetune_demo/evaluate_cogagent.sh"><code>evaluate_cogagent.sh</code></a> <em>Trains CogAgent chat model with DeepSpeed, evaluation enabled.</em></li>
+<li><a href="index.html?q=/finetune_demo/evaluate_cogagent_demo.py" id="/finetune_demo/evaluate_cogagent_demo.py"><code>evaluate_cogagent_demo.py</code></a> <em>Evaluate COGAgent demo: Fine-tune transformer model for text generation</em></li>
+<li><a href="index.html?q=/finetune_demo/evaluate_cogvlm.sh" id="/finetune_demo/evaluate_cogvlm.sh"><code>evaluate_cogvlm.sh</code></a> <em>Fine-tunes CogVLM model with 8 GPUs, saves checkpoints every 200 iterations.</em></li>
+<li><a href="index.html?q=/finetune_demo/evaluate_cogvlm_demo.py" id="/finetune_demo/evaluate_cogvlm_demo.py"><code>evaluate_cogvlm_demo.py</code></a> <em>Evaluate CogVLM model performance.</em></li>
+<li><a href="index.html?q=/finetune_demo/finetune_cogagent_demo.py" id="/finetune_demo/finetune_cogagent_demo.py"><code>finetune_cogagent_demo.py</code></a> <em>Fine-tunes model, applies decoding strategies, calculates accuracy.</em></li>
+<li><a href="index.html?q=/finetune_demo/finetune_cogagent_lora.sh" id="/finetune_demo/finetune_cogagent_lora.sh"><code>finetune_cogagent_lora.sh</code></a> <em>Finetune CogAgent model using Deepspeed, NCCL, and CUDA.</em></li>
+<li><a href="index.html?q=/finetune_demo/finetune_cogvlm_demo.py" id="/finetune_demo/finetune_cogvlm_demo.py"><code>finetune_cogvlm_demo.py</code></a> <em>Trains CogVLM models, generates chat responses, evaluates.</em></li>
+<li><a href="index.html?q=/finetune_demo/finetune_cogvlm_lora.sh" id="/finetune_demo/finetune_cogvlm_lora.sh"><code>finetune_cogvlm_lora.sh</code></a> <em>Fine-tune CogVLM with LORA and parallelism.</em></li>
+<li><a href="index.html?q=/finetune_demo/test_config_bf16.json" id="/finetune_demo/test_config_bf16.json"><code>test_config_bf16.json</code></a> <em>BF16-enabled Batch Config for Model Training</em></li>
+</ul>
+</li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/openai_demo/"><code>openai_demo</code></strong> <em>OpenAI Chatbot Demo: FastAPI, CogVLM, CogAgent, GPU Memory</em></span><ul>
+<li><a href="index.html?q=/openai_demo/openai_api.py" id="/openai_demo/openai_api.py"><code>openai_api.py</code></a> <em>FastAPI app: Chat functionality, endpoints, GPU memory, CORS, device check</em></li>
+<li><a href="index.html?q=/openai_demo/openai_api_request.py" id="/openai_demo/openai_api_request.py"><code>openai_api_request.py</code></a> <em>OpenAI API chatbot simulator for CogVLM and CogAgent.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/requirements.txt" id="/requirements.txt"><code>requirements.txt</code></a> <em>Python project requirements: NLP, deep learning, data visualization, web dev.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/utils/"><code>utils</code></strong> <em>Utility scripts and functions for various processes.</em></span><ul>
+<li><a href="index.html?q=/utils/merge_model.py" id="/utils/merge_model.py"><code>merge_model.py</code></a> <em>Trains a pre-existing model with fine-tuning parameters.</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/utils/models/"><code>models</code></strong> <em>Efficient CLIP models and mixin for parallelism</em></span><ul>
+<li><a href="index.html?q=/utils/models/__init__.py" id="/utils/models/__init__.py"><code><strong>init</strong>.py</code></a> <em>Imports CogAgent and CogVLM models.</em></li>
+<li><a href="index.html?q=/utils/models/cogagent_model.py" id="/utils/models/cogagent_model.py"><code>cogagent_model.py</code></a> <em>Initialize GLU CogAgent model with VIT and ExternalVisionMixin, fine-tuning capabilities.</em></li>
+<li><a href="index.html?q=/utils/models/cogvlm_model.py" id="/utils/models/cogvlm_model.py"><code>cogvlm_model.py</code></a> <em>CogVLM model initialization and fine-tuning.</em></li>
+<li><a href="index.html?q=/utils/models/eva_clip_L_hf.py" id="/utils/models/eva_clip_L_hf.py"><code>eva_clip_L_hf.py</code></a> <em>CLIP Vision model init &amp; layer config, Eva2LargeEncoder for EVAVisionTransformer.</em></li>
+<li><a href="index.html?q=/utils/models/eva_clip_model.py" id="/utils/models/eva_clip_model.py"><code>eva_clip_model.py</code></a> <em>Efficient Transformer Model for CLIP</em></li>
+<li><a href="index.html?q=/utils/models/mixin.py" id="/utils/models/mixin.py"><code>mixin.py</code></a> <em>Transformer mixin for model parallelism</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/utils/split_dataset.py" id="/utils/split_dataset.py"><code>split_dataset.py</code></a> <em>Splits, shuffles, and ensures reproducibility for specified files.</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/utils/utils/"><code>utils</code></strong> <em>Utility scripts and functions for various processes.</em></span><ul>
+<li><a href="index.html?q=/utils/utils/__init__.py" id="/utils/utils/__init__.py"><code><strong>init</strong>.py</code></a> <em>Imports functions from CogVLM libraries for various processes.</em></li>
+<li><a href="index.html?q=/utils/utils/chat.py" id="/utils/utils/chat.py"><code>chat.py</code></a> <em>Process images, apply optional processors, chat mode.</em></li>
+<li><a href="index.html?q=/utils/utils/dataset.py" id="/utils/utils/dataset.py"><code>dataset.py</code></a> <em>Loads .jpg images, converts to RGB, extracts text from names, returns data and ids.</em></li>
+<li><a href="index.html?q=/utils/utils/grounding_parser.py" id="/utils/utils/grounding_parser.py"><code>grounding_parser.py</code></a> <em>Overlay images with text and boxes using grounding parser.</em></li>
+<li><a href="index.html?q=/utils/utils/language.py" id="/utils/utils/language.py"><code>language.py</code></a> <em>PyTorch language model utilities with tokenization and preprocessing.</em></li>
+<li><a href="index.html?q=/utils/utils/vision.py" id="/utils/utils/vision.py"><code>vision.py</code></a> <em>Vision.py: Image preprocessor using Torchvision transforms</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </article>
+    <script type="text/javascript">
+        function getQueryParams() {
+            var search = window.location.search.substring(1); // Remove leading '?'
+            var queryParams = {};
+            search.split('&').forEach(function (pair) {
+                var parts = pair.split('=');
+                var key = decodeURIComponent(parts[0]);
+                var value = decodeURIComponent(parts[1]);
+                queryParams[key] = value;
+            });
+            return queryParams;
+        }
+
+        const queryParams = getQueryParams(window.location.search);
+        const show_full = queryParams.full == "true";
+        if (!show_full) {
+            const spans = document.querySelectorAll('span');
+            for (let span of spans) {
+                if (span.getAttribute("hierarchy") == '0') { continue }
+
+                toggleVisibility(span);
+            }
+        }
+    </script>
+</body>
+
+</html>

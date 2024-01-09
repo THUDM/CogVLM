@@ -1,0 +1,21 @@
+SwissArmyTransformer>=0.4.9
+transformers>=4.36.1
+xformers>=0.0.22
+torch>=2.1.0
+torchvision>=0.16.2
+spacy>=3.6.0
+pillow>=10.0.1
+deepspeed>=0.11.0
+seaborn>=0.13.0
+loguru~=0.7.2
+streamlit>=1.29.0
+timm>=0.9.12
+accelerate>=0.25.0
+pydantic>=2.5.2
+
+# for openai demo
+openai>=1.4.0
+sse-starlette>=1.8.2
+fastapi>=0.105.0
+httpx>=0.25.2
+uvicorn~=0.24.0

@@ -1,0 +1,187 @@
+{
+    "600": {
+        "file_id": 35,
+        "content": "            num_lines = len(splited_text)\n            text_width, text_height = font.getbbox(splited_text[0])[-2:]\n            y_start = b[3] - text_height * num_lines - box_width\n            if b[2] - b[0] < 100 or b[3] - b[1] < 100:\n                y_start = b[3]\n            for i, line in enumerate(splited_text):\n                text_width, text_height = font.getbbox(line)[-2:]\n                x = b[0] + box_width\n                y = y_start + text_height * i\n                draw.rectangle([x, y, x+text_width, y+text_height], fill=(128, 128, 128, 160))\n                draw.text((x, y), line, font=font, fill=(255, 255, 255))\n    img_with_overlay = Image.alpha_composite(image.convert('RGBA'), overlay).convert('RGB')\n    img_with_overlay.save(output_fn)\ndef boxstr_to_boxes(box_str):\n    boxes = [[int(y)/1000 for y in x.split(',')] for x in box_str.split(';') if x.replace(',', '').isdigit()]\n    return boxes\ndef text_to_dict(text):\n    doc = nlp(text)\n    box_matches = list(re.finditer(r'\\[\\[([^\\]]+)\\]\\]', text))",
+        "type": "code",
+        "location": "/utils/utils/grounding_parser.py:28-49"
+    },
+    "601": {
+        "file_id": 35,
+        "content": "This code seems to be part of a larger function that takes an image, overlays it with text, and saves the result. It first defines functions `boxstr_to_boxes` and `text_to_dict`, which may be used elsewhere in the codebase. The main logic involves splitting the text into lines, calculating the position for each line of text based on the bounding box coordinates and font size, drawing a rectangle around each line of text, and then overlaying the image with text and saving the result.",
+        "type": "comment"
+    },
+    "602": {
+        "file_id": 35,
+        "content": "    box_positions = [match.start() for match in box_matches]\n    noun_phrases = []\n    boxes = []\n    for match, box_position in zip(box_matches, box_positions):\n        nearest_np_start = max([0] + [chunk.start_char for chunk in doc.noun_chunks if chunk.end_char <= box_position])\n        noun_phrase = text[nearest_np_start:box_position].strip()\n        if noun_phrase and noun_phrase[-1] == '?':\n            noun_phrase = text[:box_position].strip()\n        box_string = match.group(1)\n        noun_phrases.append(noun_phrase)\n        boxes.append(boxstr_to_boxes(box_string))\n    pairs = []\n    for noun_phrase, box_string in zip(noun_phrases, boxes):\n        pairs.append((noun_phrase.lower(), box_string))\n    return dict(pairs)\ndef parse_response(img, response, output_fn='output.png'):\n    img = img.convert('RGB')\n    width, height = img.size\n    ratio = min(1920 / width, 1080 / height)\n    new_width = int(width * ratio)\n    new_height = int(height * ratio)\n    new_img = img.resize((new_width, new_height), Image.LANCZOS)",
+        "type": "code",
+        "location": "/utils/utils/grounding_parser.py:50-76"
+    },
+    "603": {
+        "file_id": 35,
+        "content": "This code extracts noun phrases from text and their corresponding bounding box positions. It then creates a dictionary mapping each phrase to its associated box coordinates. The parse_response function resizes an image while maintaining aspect ratio.",
+        "type": "comment"
+    },
+    "604": {
+        "file_id": 35,
+        "content": "    pattern = r\"\\[\\[(.*?)\\]\\]\"\n    positions = re.findall(pattern, response)\n    boxes = [[[int(y) for y in x.split(',')] for x in pos.split(';') if x.replace(',', '').isdigit()] for pos in positions]\n    dic = text_to_dict(response)\n    if not dic:\n        texts = []\n        boxes = []\n    else:\n        texts, boxes = zip(*dic.items())\n    draw_boxes(new_img, boxes, texts, output_fn=output_fn)",
+        "type": "code",
+        "location": "/utils/utils/grounding_parser.py:77-86"
+    },
+    "605": {
+        "file_id": 35,
+        "content": "Extracts box positions and corresponding texts from the response, converts them into a format for drawing boxes on an image.",
+        "type": "comment"
+    },
+    "606": {
+        "file_id": 36,
+        "content": "/utils/utils/language.py",
+        "type": "filepath"
+    },
+    "607": {
+        "file_id": 36,
+        "content": "The code prepares input data for language models by tokenizing, preprocessing, and adhering to length constraints, creating masks, and converting inputs to PyTorch tensors. It also defines several functions for handling image captions and other tasks.",
+        "type": "summary"
+    },
+    "608": {
+        "file_id": 36,
+        "content": "from sat.model.official.llama_model import LLaMAModel, rotate_half\nfrom sat.transformer_defaults import attention_fn_default, split_tensor_along_last_dim\nimport torch.nn.functional as F\ndef base_history_to_prompt(self, query, history):\n    prompt = '<EOI>' + query\n    return prompt\ndef chat_history_to_prompt(self, query, history):\n    prompt = \"<EOI> [INST] \"\n    for i, (old_query, response) in enumerate(history):\n        prompt += old_query + \" [/INST] \" + response + \" [INST] \"\n    prompt += query + \" [/INST] \"\n    return prompt\ndef vqa_history_to_prompt(self, query, history):\n    # Only support single round chat in vqa mode\n    prompt = \"<EOI>Question: \"\n    # for i, (old_query, response) in enumerate(history):\n    #     prompt += old_query + \" Short answer: \" + response + \" Question: \"\n    prompt += query + \" Short answer:\"\n    return prompt\ndef chat_old_history_to_prompt(self, query, history):\n    prompt = \"<EOI>Question: \"\n    for i, (old_query, response) in enumerate(history):\n        prompt += old_query + \" Answer: \" + response + \"\\nQuestion: \"",
+        "type": "code",
+        "location": "/utils/utils/language.py:1-28"
+    },
+    "609": {
+        "file_id": 36,
+        "content": "This code defines several functions that convert chat and VQA histories into prompts for the language model. The prompt format includes old queries, responses, and new queries, depending on the history type.",
+        "type": "comment"
+    },
+    "610": {
+        "file_id": 36,
+        "content": "    prompt += query + \" Answer:\"\n    return prompt\n_history_to_prompt = {\n    \"base\": base_history_to_prompt,\n    \"chat\": chat_history_to_prompt,\n    \"vqa\": vqa_history_to_prompt,\n    \"chat_old\": chat_old_history_to_prompt, # for cogvlm-v1.1\n}\nfrom transformers import LlamaTokenizer\ndef llama2_tokenizer(tokenizer_path, signal_type=\"base\"):\n    tokenizer = LlamaTokenizer.from_pretrained(tokenizer_path)\n    if tokenizer.pad_token_id is None:\n        tokenizer.pad_token_id = 32000\n    tokenizer.boi = \"[IMG]\"\n    tokenizer.eoi = \"[/IMG]\"\n    assert signal_type in [\"base\", \"chat\", \"vqa\", \"chat_old\"]\n    tokenizer.signal_type = signal_type\n    return tokenizer\nimport re\nimport numpy as np\nimport torch\nclass llama2_text_processor:\n    def __init__(self, tokenizer, max_target_length=2048, image_length=257, model=None):\n        self.tokenizer = tokenizer\n        self.max_target_length = max_target_length\n        self.image_length = image_length\n    def __call__(self, caption, prompt=\"\"):\n        if '<EOI>' not in prompt:\n            prompt = self.replace_tags_with_empty(prompt)",
+        "type": "code",
+        "location": "/utils/utils/language.py:29-63"
+    },
+    "611": {
+        "file_id": 36,
+        "content": "The code defines a function `llama2_tokenizer` that takes a tokenizer path and a signal type as input and returns a LlamaTokenizer object. It also defines a class `llama2_text_processor` that takes a tokenizer, maximum target length, and image length as input and processes text inputs (caption and prompt). The `llama2_text_processor` class has a `__call__` method that can be called with a caption and optional prompt to process the text.",
+        "type": "comment"
+    },
+    "612": {
+        "file_id": 36,
+        "content": "            # caption = self.replace_tags_with_empty(caption)\n            history = []\n            prompt = self.history_to_prompt(prompt, history)\n        input_ids = [self.tokenizer.bos_token_id]\n        prompt_splits = prompt.split('<EOI>')\n        caption_splits = caption.split('<EOI>')\n        if len(prompt_splits) > 0:\n            input_ids.extend(self.tokenizer.encode(prompt_splits[0], add_special_tokens=False))\n        for tokens in prompt_splits[1:]:\n            tokens_with_img = [-100] + self.tokenizer.encode(tokens, add_special_tokens=False)\n            input_ids.extend(tokens_with_img)\n        context_length = len(input_ids) + (len(prompt_splits)-1) * (self.image_length + 1)\n        if context_length > self.max_target_length - 10:\n            return None\n        if len(caption_splits) > 0:\n            input_ids.extend(self.tokenizer.encode(caption_splits[0], add_special_tokens=False))\n        for tokens in caption_splits[1:]:\n            tokens_with_img = [-100] + self.tokenizer.encode(tokens, add_special_tokens=False)",
+        "type": "code",
+        "location": "/utils/utils/language.py:64-83"
+    },
+    "613": {
+        "file_id": 36,
+        "content": "The code is preparing input for the language model by splitting prompts and captions, encoding them, and building the input_ids list to be passed to the model. It also checks if the total length of the context exceeds the maximum target length, returning None if it does.",
+        "type": "comment"
+    },
+    "614": {
+        "file_id": 36,
+        "content": "            input_ids.extend(tokens_with_img)\n        if len(input_ids) > self.max_target_length - self.image_length - 5:\n            input_ids = input_ids[:self.max_target_length - self.image_length - 5]\n        input_ids += [self.tokenizer.eos_token_id]\n        while -100 in input_ids:\n            img_idx = input_ids.index(-100)\n            input_ids = input_ids[:img_idx] + [0] * (self.image_length + 1) + [-1] + input_ids[img_idx+1:]\n        image_position = []\n        while -1 in input_ids:\n            img_idx = input_ids.index(-1)\n            input_ids[img_idx] = 0\n            image_position.append(img_idx)\n        image_embed_mask = [0] * len(input_ids)\n        vision_expert_mask = [0] * len(input_ids)\n        image_rope_mask = [0] * len(input_ids)\n        for idx in image_position:\n            image_embed_mask[idx-self.image_length-1: idx+1] = [1] * (self.image_length + 2)\n            vision_expert_mask[idx-self.image_length-1: idx] = [1] * (self.image_length + 1)\n            image_rope_mask[idx - self.image_length: idx] = [1] * self.image_length",
+        "type": "code",
+        "location": "/utils/utils/language.py:84-107"
+    },
+    "615": {
+        "file_id": 36,
+        "content": "The code preprocesses an input sequence, extends it with image tokens and ensures that the maximum length constraint is not violated. It also sets masks for embedding, vision expert, and image region of interest.",
+        "type": "comment"
+    },
+    "616": {
+        "file_id": 36,
+        "content": "        attention_mask = [1] * len(input_ids)\n        labels = [-100] * context_length + input_ids[context_length:]\n        pad_len = self.max_target_length - len(input_ids)\n        input_ids = input_ids + [self.tokenizer.pad_token_id] * pad_len\n        attention_mask = attention_mask + [1] * pad_len\n        vision_expert_mask = vision_expert_mask + [0] * pad_len\n        image_embed_mask = image_embed_mask + [0] * pad_len\n        image_rope_mask = image_rope_mask + [0] * pad_len\n        np_mask = np.tril(np.expand_dims(np.array(attention_mask), 0).repeat(len(attention_mask), 0))\n        labels = labels + [-100] * pad_len\n        for idx in image_position:\n            labels[idx-self.image_length-1: idx+1] = [-100] * (self.image_length + 2)\n        position_ids = []\n        pid = -1\n        for i in range(len(input_ids)):\n            if image_rope_mask[i] == 0 or (i > 0 and image_rope_mask[i] != image_rope_mask[i - 1]):\n                pid += 1\n            position_ids.append(pid)\n        input_ids = torch.tensor(input_ids).unsqueeze(0)",
+        "type": "code",
+        "location": "/utils/utils/language.py:108-130"
+    },
+    "617": {
+        "file_id": 36,
+        "content": "This code is prepping input data for a model. It pads the input list, creates attention and mask arrays, and labels. It also handles image positioning and creates position_ids for further processing.",
+        "type": "comment"
+    },
+    "618": {
+        "file_id": 36,
+        "content": "        labels = torch.tensor(labels).unsqueeze(0)\n        attention_mask = torch.from_numpy(np_mask).unsqueeze(0).unsqueeze(0)\n        image_embed_mask = torch.tensor(image_embed_mask).unsqueeze(0)\n        vision_expert_mask = torch.tensor(vision_expert_mask).unsqueeze(0)\n        image_rope_mask = torch.tensor(image_rope_mask).unsqueeze(0)\n        position_ids = torch.tensor(position_ids).unsqueeze(0)\n        context_length = torch.tensor(context_length).unsqueeze(0).long()\n        return {'input_ids': input_ids, 'labels': labels, 'position_ids': position_ids, 'attention_mask': attention_mask, 'image_embed_mask': image_embed_mask,\n                'context_length': context_length, 'image_position': image_position, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask\n                }\n    def history_to_prompt(self, query, history):\n        return _history_to_prompt[self.tokenizer.signal_type](self, query, history)\n    def replace_tags_with_empty(self, text):\n        return re.sub('<pad>|<s>|</s>|<EOI>', '', text)",
+        "type": "code",
+        "location": "/utils/utils/language.py:131-146"
+    },
+    "619": {
+        "file_id": 36,
+        "content": "This code is defining functions for creating and converting data structures related to text processing. It involves tensors, masks, and positioning of text elements in a model's input. The code also includes functions to convert history into prompts and replace certain tags with empty values in the text.",
+        "type": "comment"
+    },
+    "620": {
+        "file_id": 36,
+        "content": "from functools import partial\ndef get_masks_and_position_ids(seq, image_logits_mask):\n    tokens = seq.unsqueeze(0)\n    attention_mask = torch.ones((1, len(seq), len(seq)), device=tokens.device)\n    attention_mask.tril_()\n    attention_mask.unsqueeze_(1)\n    position_ids = []\n    pid = -1\n    for i in range(len(image_logits_mask[0])):\n        if image_logits_mask[0][i] == 0 or (i > 0 and image_logits_mask[0][i] != image_logits_mask[0][i - 1]):\n            pid += 1\n        position_ids.append(pid)\n    for i in range(tokens.shape[1]-image_logits_mask.shape[1]):\n        pid += 1\n        position_ids.append(pid)\n    position_ids = torch.tensor(position_ids, dtype=torch.long, device=tokens.device)\n    position_ids = position_ids.unsqueeze(0)\n    return tokens, attention_mask, position_ids\nclass llama2_text_processor_inference:\n    def __init__(self, tokenizer, max_target_length=1024, image_length=257, model=None, no_prompt=False, english=True):\n        self.tokenizer = tokenizer\n        self.max_target_length = max_target_length",
+        "type": "code",
+        "location": "/utils/utils/language.py:148-173"
+    },
+    "621": {
+        "file_id": 36,
+        "content": "This function creates masks and position IDs for a given sequence and image logits mask. It returns the tokens, attention mask, and position IDs as output.",
+        "type": "comment"
+    },
+    "622": {
+        "file_id": 36,
+        "content": "        self.image_length = image_length\n        if self.tokenizer.signal_type == \"chat\":\n            self.sep = \"[/INST]\"\n        elif self.tokenizer.signal_type == \"vqa\":\n            self.sep = \" Short answer:\"\n        elif self.tokenizer.signal_type == \"chat_old\":\n            self.sep = \" Answer:\"\n        else:\n            self.sep = \"<unk>\"\n        self.invalid_slices = []\n        self.no_eoi = True\n    def __call__(self, prompt=\"\"):\n        if '<EOI>' not in prompt:\n            prompt = self.replace_tags_with_empty(prompt)\n            # caption = self.replace_tags_with_empty(caption)\n            history = []\n            prompt = self.history_to_prompt(prompt, history)\n        input_ids = [self.tokenizer.bos_token_id]\n        prompt_splits = prompt.split('<EOI>')\n        if len(prompt_splits) > 0:\n            input_ids.extend(self.tokenizer.encode(prompt_splits[0], add_special_tokens=False))\n        for tokens in prompt_splits[1:]:\n            tokens_with_img = [-100] + self.tokenizer.encode(tokens, add_special_tokens=False)",
+        "type": "code",
+        "location": "/utils/utils/language.py:174-200"
+    },
+    "623": {
+        "file_id": 36,
+        "content": "This function is setting up an object that will tokenize text input with image captions. It determines the separator based on the signal type, and initializes some attributes for handling images and end-of-input (<EOI>) tokens. If <EOI> is not found in the prompt, it replaces tags with empty strings, adds history to the prompt, encodes the prompt into input_ids, and handles each token split after <EOI>.",
+        "type": "comment"
+    },
+    "624": {
+        "file_id": 36,
+        "content": "            input_ids.extend(tokens_with_img)\n        while -100 in input_ids:\n            img_idx = input_ids.index(-100)\n            input_ids = input_ids[:img_idx] + [0] * (self.image_length + 1) + [-1] + input_ids[img_idx + 1:]\n        image_position = []\n        while -1 in input_ids:\n            img_idx = input_ids.index(-1)\n            input_ids[img_idx] = 0\n            image_position.append(img_idx)\n        image_embed_mask = [0] * len(input_ids)\n        vision_expert_mask = [0] * len(input_ids)\n        image_rope_mask = [0] * len(input_ids)\n        for idx in image_position:\n            image_embed_mask[idx - self.image_length - 1: idx + 1] = [1] * (self.image_length + 2)\n            vision_expert_mask[idx - self.image_length - 1: idx] = [1] * (self.image_length + 1)\n            image_rope_mask[idx - self.image_length: idx] = [1] * self.image_length\n        input_ids = torch.tensor(input_ids).unsqueeze(0)\n        image_embed_mask = torch.tensor(image_embed_mask).unsqueeze(0)\n        vision_expert_mask = torch.tensor(vision_expert_mask).unsqueeze(0)",
+        "type": "code",
+        "location": "/utils/utils/language.py:201-223"
+    },
+    "625": {
+        "file_id": 36,
+        "content": "This code is preparing the input for a language model. It replaces image tokens (-100) with padding (-1), creates masks for image embeddings, and converts them into PyTorch tensors.",
+        "type": "comment"
+    },
+    "626": {
+        "file_id": 36,
+        "content": "        image_rope_mask = torch.tensor(image_rope_mask).unsqueeze(0)\n        return {'input_ids': input_ids, 'image_embed_mask': image_embed_mask, 'vision_expert_mask': vision_expert_mask, 'image_rope_mask': image_rope_mask}\n    def history_to_prompt(self, query, history):\n        return _history_to_prompt[self.tokenizer.signal_type](self, query, history)\n    def replace_tags_with_empty(self, text):\n        return re.sub('<pad>|<s>|</s>|<EOI>', '', text)\n    def process_response(self, response):\n        return response.replace('</s>', '')\n    def get_func(self, inputs, **kwargs):\n        get_func = partial(get_masks_and_position_ids, image_logits_mask=kwargs['image_rope_mask'])\n        return get_func",
+        "type": "code",
+        "location": "/utils/utils/language.py:224-238"
+    },
+    "627": {
+        "file_id": 36,
+        "content": "The code defines several functions. 'image_rope_mask' function creates a tensor from image_rope_mask and returns a dictionary containing input_ids, image_embed_mask, vision_expert_mask, and image_rope_mask. The 'history_to_prompt' function takes query and history as inputs and returns the appropriate type based on tokenizer.signal_type. 'replace_tags_with_empty' replaces specific tags with an empty string in the text. 'process_response' removes the tag Industriously from response. 'get_func' defines a partial function get_masks_and_position_ids, using image_rope_mask as an argument.",
+        "type": "comment"
+    },
+    "628": {
+        "file_id": 37,
+        "content": "/utils/utils/vision.py",
+        "type": "filepath"
+    },
+    "629": {
+        "file_id": 37,
+        "content": "The BlipImageEvalProcessor class performs image preprocessing using Torchvision transforms, including normalization, resizing, and tensor conversion. The __call__ method applies the transformation on an item, and a function blip2_image_processor_func_with_inputs creates an image processor based on the given image size.",
+        "type": "summary"
+    },
+    "630": {
+        "file_id": 37,
+        "content": "from torchvision import transforms\nfrom torchvision.transforms.functional import InterpolationMode\nimport torch\nclass BlipImageEvalProcessor:\n    def __init__(self, image_size=384, mean=None, std=None):\n        super().__init__()\n        if mean is None:\n            mean = (0.48145466, 0.4578275, 0.40821073)\n        if std is None:\n            std = (0.26862954, 0.26130258, 0.27577711)\n        self.normalize = transforms.Normalize(mean, std)\n        self.transform = transforms.Compose(\n            [\n                transforms.Resize(\n                    (image_size, image_size), interpolation=InterpolationMode.BICUBIC\n                ),\n                transforms.ToTensor(),\n                self.normalize,\n            ]\n        )\n    def __call__(self, item):\n        return self.transform(item)\nfrom functools import partial\ndef blip2_image_processor_func_with_inputs(image_processor, image):\n    return {'image': image_processor(image).unsqueeze(0), 'input_ids': torch.zeros(1, 1, dtype=torch.long), 'position_ids': None, 'attention_mask': torch.ones(1, 1, dtype=torch.long)}",
+        "type": "code",
+        "location": "/utils/utils/vision.py:1-31"
+    },
+    "631": {
+        "file_id": 37,
+        "content": "This code defines a BlipImageEvalProcessor class that performs image preprocessing using Torchvision transforms. It normalizes the images using specified mean and std values, resizes them to a given size, and converts them to tensors. The __call__ method is used for applying the transformation on an item. Additionally, there's a function called blip2_image_processor_func_with_inputs that takes an image and applies the preprocessing using the BlipImageEvalProcessor instance.",
+        "type": "comment"
+    },
+    "632": {
+        "file_id": 37,
+        "content": "def get_image_processor(image_size):\n    return partial(blip2_image_processor_func_with_inputs, BlipImageEvalProcessor(image_size))",
+        "type": "code",
+        "location": "/utils/utils/vision.py:33-34"
+    },
+    "633": {
+        "file_id": 37,
+        "content": "This function creates an image processor based on the given image size.",
+        "type": "comment"
+    }
+}

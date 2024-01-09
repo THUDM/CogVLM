@@ -1,0 +1,15 @@
+{
+    "summary": "This code imports libraries, defines argument parsers, loads a pre-trained model, specifies fine-tuning arguments, and creates a distributed training model, saving the checkpoint.",
+    "details": [
+        {
+            "comment": "This code is importing necessary libraries and modules, defining command line argument parsers, loading a pre-trained model, and specifying arguments for fine-tuning the model.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/merge_model.py\":0-26",
+            "content": "# -*- encoding: utf-8 -*-\nimport os, sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nimport torch\nimport argparse\nfrom models.cogvlm_model import FineTuneTestCogVLMModel\nfrom sat.training.model_io import save_checkpoint\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--version\", type=str, default=\"base\", help='version to interact with')\n    parser.add_argument(\"--from_pretrained\", type=str, default=\"checkpoints/merged_lora\", help='pretrained ckpt')\n    parser.add_argument(\"--fp16\", action=\"store_true\")\n    parser.add_argument(\"--bf16\", action=\"store_true\")\n    args = parser.parse_args()\n    rank = int(os.environ.get('RANK', 0))\n    world_size = int(os.environ.get('WORLD_SIZE', 1))\n    parser = FineTuneTestCogVLMModel.add_model_specific_args(parser)\n    args = parser.parse_args()\n    # load model\n    model, model_args = FineTuneTestCogVLMModel.from_pretrained(\n        args.from_pretrained,\n        args=argparse.Namespace(\n        deepspeed=None,\n        local_rank=rank,"
+        },
+        {
+            "comment": "This code creates a model for distributed training with specific arguments and saves the checkpoint.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/utils/merge_model.py\":27-41",
+            "content": "        rank=rank,\n        world_size=world_size,\n        model_parallel_size=world_size,\n        mode='inference',\n        skip_init=True,\n        use_gpu_initialization=True if torch.cuda.is_available() else False,\n        device='cuda',\n        **vars(args)\n    ), url='local', overwrite_args={'model_parallel_size': 1})\n    model = model.eval()\n    model_args.save = './checkpoints/merged_model_{}'.format(model_args.eva_args[\"image_size\"][0])\n    save_checkpoint(1, model, None, None, model_args)\nif __name__ == \"__main__\":\n    main()"
+        }
+    ]
+}

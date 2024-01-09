@@ -1,0 +1,10 @@
+{
+    "summary": "This code specifies the required packages and their versions for a Python project, including natural language processing, deep learning, data visualization, and web application development.",
+    "details": [
+        {
+            "comment": "This code specifies the required packages and their versions for a Python project, including natural language processing, deep learning, data visualization, and web application development.",
+            "location": "\"/media/root/Toshiba XG3/works/CogVLM/docs/src/requirements.txt\":0-20",
+            "content": "SwissArmyTransformer>=0.4.9\ntransformers>=4.36.1\nxformers>=0.0.22\ntorch>=2.1.0\ntorchvision>=0.16.2\nspacy>=3.6.0\npillow>=10.0.1\ndeepspeed>=0.11.0\nseaborn>=0.13.0\nloguru~=0.7.2\nstreamlit>=1.29.0\ntimm>=0.9.12\naccelerate>=0.25.0\npydantic>=2.5.2\n# for openai demo\nopenai>=1.4.0\nsse-starlette>=1.8.2\nfastapi>=0.105.0\nhttpx>=0.25.2\nuvicorn~=0.24.0"
+        }
+    ]
+}
