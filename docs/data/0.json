@@ -28,7 +28,7 @@
     },
     "5": {
         "file_id": 0,
-        "content": "\"CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC.\"\n\n\"CogAgent is an open-source visual language model improved based on CogVLM. CogAgent-18B has 11 billion visual parameters and 7 billion language parameters, supporting image understanding at a resolution of 1120*1120. On top of the capabilities of CogVLM, it further possesses GUI image Agent capabilities.\"\n\n\"CogAgent-18B achieves state-of-the-art generalist performance on 9 classic cross-modal benchmarks, including VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. It significantly surpasses existing models on GUI operation datasets including AITW and Mind2Web.\"",
+        "content": "CogVLM-17B achieves state-of-the-art performance on 10 classic cross-modal benchmarks, including NoCaps, Flicker30k captioning, RefCOCO, RefCOCO+, RefCOCOg, Visual7W, GQA, ScienceQA, VizWiz VQA and TDIUC.\"\n\n\"CogAgent is an open-source visual language model improved based on CogVLM. CogAgent-18B has 11 billion visual parameters and 7 billion language parameters, supporting image understanding at a resolution of 1120*1120. On top of the capabilities of CogVLM, it further possesses GUI image Agent capabilities.\"\n\n\"CogAgent-18B achieves state-of-the-art generalist performance on 9 classic cross-modal benchmarks, including VQAv2, OK-VQ, TextVQA, ST-VQA, ChartQA, infoVQA, DocVQA, MM-Vet, and POPE. It significantly surpasses existing models on GUI operation datasets including AITW and Mind2Web.",
         "type": "comment"
     },
     "6": {
