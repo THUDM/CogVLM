@@ -1,547 +1,546 @@
 {
     "200": {
-        "file_id": 11,
-        "content": "        if uploaded_file is not None:\n            demo_chat_cogagent.main(\n                retry=retry,\n                top_p=top_p,\n                top_k=top_k,\n                temperature=temperature,\n                prompt_text=prompt_text,\n                metadata=encode_file_to_base64(uploaded_file),\n                max_new_tokens=max_new_token,\n                grounding=grounding,\n                template=selected_template_grounding_cogvlm\n            )\n        else:\n            st.error(f'Please upload an image to start')\n    case Mode.CogAgent_Agent:\n        st.info(\"This option uses cogagent-chat model with agent template.\")\n        if uploaded_file is not None:\n            demo_agent_cogagent.main(\n                retry=retry,\n                top_p=top_p,\n                top_k=top_k,\n                temperature=temperature,\n                prompt_text=prompt_text,\n                metadata=encode_file_to_base64(uploaded_file),\n                max_new_tokens=max_new_token,\n                grounding=grounding,",
-        "type": "code",
-        "location": "/composite_demo/main.py:121-147"
-    },
-    "201": {
-        "file_id": 11,
-        "content": "This code checks if an uploaded file is provided. If it is, it calls the main function of either the composite_demo or cogagent_agent module based on the Mode. If not, it displays an error message to prompt the user to upload a file. The main function takes various parameters including the encoded metadata of the uploaded file.",
-        "type": "comment"
-    },
-    "202": {
-        "file_id": 11,
-        "content": "                template=selected_template_agent_cogagent\n            )\n        else:\n            st.error(f'Please upload an image to start')\n    case _:\n        st.error(f'Unexpected tab: {tab}')",
-        "type": "code",
-        "location": "/composite_demo/main.py:148-153"
-    },
-    "203": {
-        "file_id": 11,
-        "content": "This code checks if an image has been uploaded. If not, it displays an error message. If a tab other than \"tab0\" or \"tab1\" is selected, it also displays an error message.",
-        "type": "comment"
-    },
-    "204": {
-        "file_id": 12,
-        "content": "/composite_demo/utils.py",
-        "type": "filepath"
-    },
-    "205": {
-        "file_id": 12,
-        "content": "Both comments focus on AI tasks that analyze images using prompts or code instructions, employing bounding boxes and coordinates to identify and describe specific regions within the image. The code incorporates dynamic indexing via the <TASK> placeholder for context and description requests.",
-        "type": "summary"
-    },
-    "206": {
-        "file_id": 12,
-        "content": "import base64\nfrom io import BytesIO\nfrom PIL import Image\ndef images_are_same(img1: Image, img2: Image) -> bool:\n    \"\"\"\n        Compare two PIL images.\n    \"\"\"\n    if img1.size != img2.size or img1.mode != img2.mode:\n        return False\n    return list(img1.getdata()) == list(img2.getdata())\ndef encode_file_to_base64(file):\n    \"\"\"\n       Convert a file to base64.\n    \"\"\"\n    buffer = BytesIO()\n    buffer.write(file.read())\n    return base64.b64encode(buffer.getvalue()).decode()\n# The templates is for CogAgent_Agent Template\ntemplates_agent_cogagent = [\n    \"Can you advise me on how to <TASK>?\",\n    \"I'm looking for guidance on how to <TASK>.\",\n    \"What steps do I need to take to <TASK>?\",\n    \"Could you provide instructions for <TASK>?\",\n    \"I'm wondering what the process is for <TASK>.\",\n    \"How can I go about <TASK>?\",\n    \"I need assistance with planning to <TASK>.\",\n    \"Do you have any recommendations for <TASK>?\",\n    \"Please share some tips for <TASK>.\",\n    \"I'd like to know the best way to <TASK>.\",",
-        "type": "code",
-        "location": "/composite_demo/utils.py:1-35"
-    },
-    "207": {
-        "file_id": 12,
-        "content": "This code imports necessary modules for image and file manipulation, defines a function to compare two PIL images and another one to encode a file to base64. There is also a list of templates for CogAgent_Agent.",
-        "type": "comment"
-    },
-    "208": {
-        "file_id": 12,
-        "content": "    \"What's the most effective way to <TASK>?\",\n    \"I'm seeking advice on accomplishing <TASK>.\",\n    \"Could you guide me through the steps to <TASK>?\",\n    \"I'm unsure how to start with <TASK>.\",\n    \"Is there a strategy for successfully <TASK>?\",\n    \"What's the proper procedure for <TASK>?\",\n    \"How should I prepare for <TASK>?\",\n    \"I'm not sure where to begin with <TASK>.\",\n    \"I need some insights on <TASK>.\",\n    \"Can you explain how to tackle <TASK>?\",\n    \"I'm interested in the process of <TASK>.\",\n    \"Could you enlighten me on <TASK>?\",\n    \"What are the recommended steps for <TASK>?\",\n    \"Is there a preferred method for <TASK>?\",\n    \"I'd appreciate your advice on <TASK>.\",\n    \"Can you shed light on <TASK>?\",\n    \"What would be the best approach to <TASK>?\",\n    \"How do I get started with <TASK>?\",\n    \"I'm inquiring about the procedure for <TASK>.\",\n    \"Could you share your expertise on <TASK>?\",\n    \"I'd like some guidance on <TASK>.\",\n    \"What's your recommendation for <TASK>?\",\n    \"I'm seeking your input on how to <TASK>.\",",
-        "type": "code",
-        "location": "/composite_demo/utils.py:36-58"
-    },
-    "209": {
-        "file_id": 12,
-        "content": "This code contains a list of various ways to ask for assistance in accomplishing a task. It provides a diverse range of phrases that can be used when seeking advice, guidance, or instruction on how to perform a specific task.",
-        "type": "comment"
-    },
-    "210": {
-        "file_id": 12,
-        "content": "    \"Can you provide some insights into <TASK>?\",\n    \"How can I successfully accomplish <TASK>?\",\n    \"What steps are involved in <TASK>?\",\n    \"I'm curious about the best way to <TASK>.\",\n    \"Could you show me the ropes for <TASK>?\",\n    \"I need to know how to go about <TASK>.\",\n    \"What are the essential steps for <TASK>?\",\n    \"Is there a specific method for <TASK>?\",\n    \"I'd like to get some advice on <TASK>.\",\n    \"Can you explain the process of <TASK>?\",\n    \"I'm looking for guidance on how to approach <TASK>.\",\n    \"What's the proper way to handle <TASK>?\",\n    \"How should I proceed with <TASK>?\",\n    \"I'm interested in your expertise on <TASK>.\",\n    \"Could you walk me through the steps for <TASK>?\",\n    \"I'm not sure where to begin when it comes to <TASK>.\",\n    \"What should I prioritize when doing <TASK>?\",\n    \"How can I ensure success with <TASK>?\",\n    \"I'd appreciate some tips on <TASK>.\",\n    \"Can you provide a roadmap for <TASK>?\",\n    \"What's the recommended course of action for <TASK>?\",",
-        "type": "code",
-        "location": "/composite_demo/utils.py:59-79"
-    },
-    "211": {
-        "file_id": 12,
-        "content": "These are various ways people might ask for guidance or information about a specific task.",
-        "type": "comment"
-    },
-    "212": {
-        "file_id": 12,
-        "content": "    \"I'm seeking your guidance on <TASK>.\",\n    \"Could you offer some suggestions for <TASK>?\",\n    \"I'd like to know the steps to take for <TASK>.\",\n    \"What's the most effective way to achieve <TASK>?\",\n    \"How can I make the most of <TASK>?\",\n    \"I'm wondering about the best approach to <TASK>.\",\n    \"Can you share your insights on <TASK>?\",\n    \"What steps should I follow to complete <TASK>?\",\n    \"I'm looking for advice on <TASK>.\",\n    \"What's the strategy for successfully completing <TASK>?\",\n    \"How should I prepare myself for <TASK>?\",\n    \"I'm not sure where to start with <TASK>.\",\n    \"What's the procedure for <TASK>?\",\n    \"Could you provide some guidance on <TASK>?\",\n    \"I'd like to get some tips on how to <TASK>.\",\n    \"Can you explain how to tackle <TASK> step by step?\",\n    \"I'm interested in understanding the process of <TASK>.\",\n    \"What are the key steps to <TASK>?\",\n    \"Is there a specific method that works for <TASK>?\",\n    \"I'd appreciate your advice on successfully completing <TASK>.\",",
-        "type": "code",
-        "location": "/composite_demo/utils.py:80-99"
-    },
-    "213": {
-        "file_id": 12,
-        "content": "These are various prompts requesting guidance, suggestions, or advice on completing a specific task.",
-        "type": "comment"
-    },
-    "214": {
-        "file_id": 12,
+        "file_id": 10,
         "content": "    \"Can you shed light on the best way to <TASK>?\",\n    \"What would you recommend as the first step to <TASK>?\",\n    \"How do I initiate <TASK>?\",\n    \"I'm inquiring about the recommended steps for <TASK>.\",\n    \"Could you share some insights into <TASK>?\",\n    \"I'm seeking your expertise on <TASK>.\",\n    \"What's your recommended approach for <TASK>?\",\n    \"I'd like some guidance on where to start with <TASK>.\",\n    \"Can you provide recommendations for <TASK>?\",\n    \"What's your advice for someone looking to <TASK>?\",\n    \"I'm seeking your input on the process of <TASK>.\",\n    \"How can I achieve success with <TASK>?\",\n    \"What's the best way to navigate <TASK>?\",\n    \"I'm curious about the steps required for <TASK>.\",\n    \"Could you show me the proper way to <TASK>?\",\n    \"I need to know the necessary steps for <TASK>.\",\n    \"What's the most efficient method for <TASK>?\",\n    \"I'd appreciate your guidance on <TASK>.\",\n    \"Can you explain the steps involved in <TASK>?\",\n    \"I'm looking for recommendations on how to approach <TASK>.\",",
         "type": "code",
         "location": "/composite_demo/utils.py:100-119"
     },
-    "215": {
-        "file_id": 12,
+    "201": {
+        "file_id": 10,
         "content": "These lines of code contain various questions people might ask when seeking guidance on a task. The questions cover different aspects, such as initiating the task, getting recommendations, learning proper methods, and understanding necessary steps for efficiency.",
         "type": "comment"
     },
-    "216": {
-        "file_id": 12,
+    "202": {
+        "file_id": 10,
         "content": "    \"What's the right way to handle <TASK>?\",\n    \"How should I manage <TASK>?\",\n    \"I'm interested in your insights on <TASK>.\",\n    \"Could you provide a step-by-step guide for <TASK>?\",\n    \"I'm not sure how to start when it comes to <TASK>.\",\n    \"What are the key factors to consider for <TASK>?\",\n    \"How can I ensure a successful outcome with <TASK>?\",\n    \"I'd like some tips and tricks for <TASK>.\",\n    \"Can you offer a roadmap for accomplishing <TASK>?\",\n    \"What's the preferred course of action for <TASK>?\",\n    \"I'm seeking your expert advice on <TASK>.\",\n    \"Could you suggest some best practices for <TASK>?\",\n    \"I'd like to understand the necessary steps to complete <TASK>.\",\n    \"What's the most effective strategy for <TASK>?\",\n]\ntemplate_grounding_cogvlm = [\n    \"Where is <TASK>?\",\n    \"Where is <TASK> in the image?\",\n    \"Where is <TASK>? answer in [[x0,y0,x1,y1]] format.\",\n    \"Can you point out <TASK> in the image and provide the bounding boxes of its location?\",\n    \"Help me to locate <TASK> in and give me its bounding boxes, please.\",",
         "type": "code",
         "location": "/composite_demo/utils.py:120-141"
     },
-    "217": {
-        "file_id": 12,
+    "203": {
+        "file_id": 10,
         "content": "This code contains a list of prompts for different tasks and another list of prompts specifically related to grounding the location of something in an image. The prompts are placeholder text with \"<TASK>\" which will be replaced by the actual task or object being referenced.",
         "type": "comment"
     },
-    "218": {
-        "file_id": 12,
+    "204": {
+        "file_id": 10,
         "content": "    \"In the given, could you find and tell me the bounding boxes of <TASK>?\",\n    \"Guide me to the location of <TASK> within the image by providing its bounding boxes.\",\n    \"I'd like to know the exact bounding boxes of <TASK> in the photo.\",\n    \"Would you kindly provide the bounding boxes of <TASK> located in the picture?\",\n    \"Can you find <TASK> in and give me the bounding boxes of where it is located?\",\n    \"I'm trying to locate <TASK> in. Can you determine its bounding boxes for me?\",\n    \"What are the bounding boxes of <TASK> in the image?\",\n    \"Can you disclose the position of <TASK> in the photograph by stating its bounding boxes?\",\n    \"In, could you let me know the location of <TASK> in the form of bounding boxes?\",\n    \"I need the bounding boxes of <TASK> in, can you please assist me with that?\",\n    \"Where in is <TASK> located? Provide me with its bounding boxes, please.\",\n    \"May I have the bounding boxes of <TASK>?\",\n    \"In the photograph, could you pinpoint the location of <TASK> and tell me its bounding boxes?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:142-154"
     },
-    "219": {
-        "file_id": 12,
+    "205": {
+        "file_id": 10,
         "content": "This code is a list of sentences asking to find the bounding boxes of an object or task in an image.",
         "type": "comment"
     },
-    "220": {
-        "file_id": 12,
+    "206": {
+        "file_id": 10,
         "content": "    \"Can you please search and find <TASK> in, then let me know its bounding boxes?\",\n    \"Please, point out the position of <TASK> in the image by giving its bounding boxes.\",\n    \"What are the exact bounding boxes of <TASK> in the provided picture?\",\n    \"Detect the location of <TASK> in and share the bounding boxes with me, please.\",\n    \"In the picture, I'd like you to locate <TASK> and provide its coordinates.\",\n    \"Please indicate the location of <TASK> in the photo by giving bounding boxes.\",\n    \"Find <TASK> in and share its coordinates with me.\",\n    \"Could you please help me find the bounding boxes of <TASK> in the image?\",\n    \"I am looking for the position of <TASK> in. Can you provide its bounding boxes?\",\n    \"In the image, can you locate <TASK> and let me know its coordinates?\",\n    \"I'd appreciate if you could find and tell me the bounding boxes of <TASK>.\",\n    \"In, I need the bounding box bounding boxes of <TASK>.\",\n    \"Point me to the location of <TASK> in the picture by providing its bounding boxes.\",",
         "type": "code",
         "location": "/composite_demo/utils.py:155-167"
     },
-    "221": {
-        "file_id": 12,
+    "207": {
+        "file_id": 10,
         "content": "These lines of code contain various ways to ask for the location of a task or object by requesting its bounding boxes in an image.",
         "type": "comment"
     },
-    "222": {
-        "file_id": 12,
+    "208": {
+        "file_id": 10,
         "content": "    \"Could you trace <TASK> in and tell me its bounding boxes?\",\n    \"Can you assist me in locating <TASK> in, and then provide its bounding boxes?\",\n    \"I'm curious, what are the bounding boxes of <TASK> in the photo?\",\n    \"Kindly share the bounding boxes of <TASK> located in the image.\",\n    \"I would like to find <TASK> in. Can you give me its bounding boxes?\",\n    \"Can you spot <TASK> in and disclose its bounding boxes to me?\",\n    \"Please, reveal the location of <TASK> in the provided photograph as coordinates.\",\n    \"Help me locate and determine the bounding boxes of <TASK>.\",\n    \"I request the bounding boxes of <TASK> in the image.\",\n    \"In the given, can you find <TASK> and tell me its bounding boxes?\",\n    \"I need to know the position of <TASK> in as bounding boxes.\",\n    \"Locate <TASK> in and provide its bounding boxes, please.\",\n    \"Assist me in finding <TASK> in the photo and provide the bounding box bounding boxes.\",\n    \"In, can you guide me to the location of <TASK> by providing bounding boxes?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:168-181"
     },
-    "223": {
-        "file_id": 12,
+    "209": {
+        "file_id": 10,
         "content": "The code contains different phrases or questions asking for the bounding boxes of a task or object in an image.",
         "type": "comment"
     },
-    "224": {
-        "file_id": 12,
+    "210": {
+        "file_id": 10,
         "content": "    \"I'd like the bounding boxes of <TASK> as it appears in the image.\",\n    \"What location does <TASK> hold in the picture? Inform me of its bounding boxes.\",\n    \"Identify the position of <TASK> in and share its bounding boxes.\",\n    \"I'd like to request the bounding boxes of <TASK> within the photo.\",\n    \"How can I locate <TASK> in the image? Please provide the bounding boxes.\",\n    \"I am interested in knowing the bounding boxes of <TASK> in the picture.\",\n    \"Assist me in locating the position of <TASK> in the photograph and its bounding box bounding boxes.\",\n    \"In the image, I need to find <TASK> and know its bounding boxes. Can you please help?\"\n    \"Can you give me a description of the region <TASK> in image?\",\n    \"In the provided image, would you mind describing the selected area <TASK>?\",\n    \"I need details about the area <TASK> located within image.\",\n    \"Could you please share some information on the region <TASK> in this photograph?\",\n    \"Describe what's happening within the coordinates <TASK> of the given image.\",",
         "type": "code",
         "location": "/composite_demo/utils.py:182-194"
     },
-    "225": {
-        "file_id": 12,
+    "211": {
+        "file_id": 10,
         "content": "This code appears to be a list of prompts asking for the bounding boxes of a specified object within an image.",
         "type": "comment"
     },
-    "226": {
-        "file_id": 12,
+    "212": {
+        "file_id": 10,
         "content": "    \"What can you tell me about the selected region <TASK> in the photo?\",\n    \"Please, can you help me understand what's inside the region <TASK> in image?\",\n    \"Give me a comprehensive description of the specified area <TASK> in the picture.\",\n    \"I'm curious about the area <TASK> in the following image. Can you describe it?\",\n    \"Please elaborate on the area with the coordinates <TASK> in the visual.\",\n    \"In the displayed image, help me understand the region defined by <TASK>.\",\n    \"Regarding the image, what's going on in the section <TASK>?\",\n    \"In the given photograph, can you explain the area with coordinates <TASK>?\",\n    \"Kindly describe what I should be seeing in the area <TASK> of image.\",\n    \"Within the input image, what can be found in the region defined by <TASK>?\",\n    \"Tell me what you see within the designated area <TASK> in the picture.\",\n    \"Please detail the contents of the chosen region <TASK> in the visual input.\",\n    \"What's inside the area <TASK> of the provided graphic?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:195-207"
     },
-    "227": {
-        "file_id": 12,
+    "213": {
+        "file_id": 10,
         "content": "These are a series of prompts used in image description tasks, asking for detailed explanations of specified areas or regions within an image.",
         "type": "comment"
     },
-    "228": {
-        "file_id": 12,
+    "214": {
+        "file_id": 10,
         "content": "    \"I'd like some information about the specific region <TASK> in the image.\",\n    \"Help me understand the details within the area <TASK> in photograph.\",\n    \"Can you break down the region <TASK> in the image for me?\",\n    \"What is taking place within the specified area <TASK> in this capture?\",\n    \"Care to elaborate on the targeted area <TASK> in the visual illustration?\",\n    \"What insights can you provide about the area <TASK> in the selected picture?\",\n    \"What does the area <TASK> within the given visual contain?\",\n    \"Analyze and describe the region <TASK> in the included photo.\",\n    \"Please provide details for the area marked as <TASK> in this photographic.\",\n    \"For the image, can you assess and describe what's happening at <TASK>?\",\n    \"Fill me in about the selected portion <TASK> within the presented image.\",\n    \"In the image, elaborate on the details found within the section <TASK>.\",\n    \"Please interpret and describe the area <TASK> inside the given picture.\",\n    \"What information can you give me about the coordinates <TASK> in image?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:208-221"
     },
-    "229": {
-        "file_id": 12,
+    "215": {
+        "file_id": 10,
         "content": "This code contains a list of 14 different sentences, each asking for information about a specific region in an image.",
         "type": "comment"
     },
-    "230": {
-        "file_id": 12,
+    "216": {
+        "file_id": 10,
         "content": "    \"Regarding the coordinates <TASK> in image, can you provide a description?\",\n    \"In the photo, can you delve into the details of the region <TASK>?\",\n    \"Please provide insights on the specified area <TASK> within the graphic.\",\n    \"Detail the chosen region <TASK> in the depicted scene.\",\n    \"Can you discuss the entities within the region <TASK> of image?\",\n    \"I'd appreciate a breakdown of the area <TASK> in the displayed image.\",\n    \"What's the story in the section <TASK> of the included visual?\",\n    \"Please enlighten me about the region <TASK> in the given photo.\",\n    \"Offer a thorough description of the area <TASK> within the illustration.\",\n    \"What can you share about the area <TASK> in the presented image?\",\n    \"Help me grasp the context of the region <TASK> within image.\",\n    \"Kindly give an overview of the section <TASK> in photo.\",\n    \"What details can you provide about the region <TASK> in the snapshot?\",\n    \"Can you divulge the contents of the area <TASK> within the given image?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:222-235"
     },
-    "231": {
-        "file_id": 12,
+    "217": {
+        "file_id": 10,
         "content": "These are prompts for a task where AI is asked to describe specific regions within images.",
         "type": "comment"
     },
-    "232": {
-        "file_id": 12,
+    "218": {
+        "file_id": 10,
         "content": "    \"In the submitted image, please give a synopsis of the area <TASK>.\",\n    \"In the image, please describe the bounding box <TASK>.\",\n    \"Please describe the region <TASK> in the picture.\",\n    \"Describe the bbox <TASK> in the provided photo.\",\n    \"What can you tell me about the area <TASK> within the image?\",\n    \"Could you give me a description of the rectangular region <TASK> found in?\",\n    \"In, what elements can be found within the coordinates <TASK>?\",\n    \"Please provide details for the area within the bounding box <TASK> in.\",\n    \"Can you generate a description for the selected region <TASK> in the image?\",\n    \"Kindly describe the objects or scenery in the bounding box <TASK> within.\",\n    \"What details can you provide for the rectangle defined by the coordinates <TASK> in?\",\n    \"In relation to the picture, please describe the content of the area marked by <TASK>.\",\n    \"I'd like to know more about the area <TASK> in the given image. Can you describe it?\",\n    \"Can you help me by describing the part of that lies within the bounding box <TASK>?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:236-249"
     },
-    "233": {
-        "file_id": 12,
+    "219": {
+        "file_id": 10,
         "content": "These lines of code are providing various instructions to describe specific areas or bounding boxes within an image.",
         "type": "comment"
     },
-    "234": {
-        "file_id": 12,
+    "220": {
+        "file_id": 10,
         "content": "    \"What's happening in the section of the photo enclosed by the coordinates <TASK>?\",\n    \"Describe the image content present in the specified rectangular area <TASK> of.\",\n    \"Please provide information about the area within the bounding box <TASK> in the picture.\",\n    \"Could you offer a description of the contents in the selected area <TASK> of the image?\",\n    \"I'm curious about the area <TASK> in. Can you provide a description of it?\",\n    \"What can be observed in the rectangular region <TASK> in the photograph?\",\n    \"Please explain what is contained in the portion of defined by the box <TASK>.\",\n    \"In the photograph, can you describe the objects or scenery enclosed by <TASK>?\",\n    \"Can you give a brief explanation of the specified area <TASK> in the image?\",\n    \"What does the area <TASK> look like in the context of the image?\",\n    \"Could you please describe the contents of the bounding box <TASK> in the given image?\",\n    \"I would like to know more about the rectangular region <TASK> within the picture. Can you describe it?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:250-261"
     },
-    "235": {
-        "file_id": 12,
+    "221": {
+        "file_id": 10,
         "content": "These are various sentence prompts asking for a description of the image content within specified rectangular areas or bounding boxes.",
         "type": "comment"
     },
-    "236": {
-        "file_id": 12,
+    "222": {
+        "file_id": 10,
         "content": "    \"Please tell me about the area <TASK> in the image. What does it contain?\",\n    \"Help me understand what's happening in the selected bounding box <TASK> within.\",\n    \"Can you provide a description of the area <TASK> in the image?\",\n    \"What sort of things can be seen in the region <TASK> of the photo?\",\n    \"Describe what can be found within the bounds of <TASK> in the image.\",\n    \"In, can you paint a picture of the area enclosed by coordinates <TASK>?\",\n    \"Please provide a detailed account of the area covered by the bounding box <TASK> in.\",\n    \"Give me a vivid description of what's happening in the area <TASK> within the snapshot.\",\n    \"In the image, what do you observe within the rectangular box defined by the coordinates <TASK>?\",\n    \"Could you give me a breakdown of the content in the specified area <TASK> of the picture?\",\n    \"Please elucidate the area<TASK> of the image.\",\n    \"I'd appreciate it if you could describe the portion of that lies within the rectangle <TASK>.\",\n    \"Can you share some insights about the rectangular region <TASK> in the image?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:262-274"
     },
-    "237": {
-        "file_id": 12,
+    "223": {
+        "file_id": 10,
         "content": "The code contains various prompts for a task involving image analysis. Each prompt requests a description or explanation of a specific area in an image, referred to by coordinates or bounding box.",
         "type": "comment"
     },
-    "238": {
-        "file_id": 12,
+    "224": {
+        "file_id": 10,
         "content": "    \"Help me visualize the section of the photo enclosed by the bounding box <TASK>.\",\n    \"Would you kindly provide a description for the content within the rectangular area <TASK> of?\",\n    \"In, can you tell me more about the area specified by the bounding box <TASK>?\",\n    \"Please describe what can be seen in the rectangular region <TASK> of the image.\",\n    \"Can you analyze the content of the area <TASK> within the photograph?\",\n    \"In the provided image, please explain the content within the region <TASK>.\",\n    \"I'm interested in the selected rectangle <TASK> in. Can you tell me more about it?\",\n    \"Explain what can be found in the bounding box <TASK> in the context of the image.\",\n    \"Kindly share your observations about the rectangular region <TASK> within.\",\n    \"I'd like a thorough description of the area <TASK> in the image.\",\n    \"Could you please provide a description of the rectangular area <TASK> in?\",\n    \"Please describe the section of the picture defined by the bbox <TASK>.\",\n    \"Tell me more about the scenery or objects within the rectangular region <TASK> in.\",",
         "type": "code",
         "location": "/composite_demo/utils.py:275-287"
     },
-    "239": {
-        "file_id": 12,
+    "225": {
+        "file_id": 10,
         "content": "This code contains various phrases that can be used to ask for a description of the content within a rectangular area (bounding box) in an image.",
         "type": "comment"
     },
-    "240": {
-        "file_id": 12,
+    "226": {
+        "file_id": 10,
         "content": "    \"Would you kindly describe the content of the area enclosed by <TASK> in the image?\",\n    \"Help me understand the objects or scenery within the bounding box <TASK> in the image.\",\n    \"I would like to know about the section of the image enclosed by the rectangle <TASK>. Can you describe it?\",\n    \"Describe the selected rectangular area <TASK> in the photo.\",\n    \"Tell me about the region <TASK> of the image.\",\n    \"I request a description of the area <TASK> in the picture.\",\n    \"Can you elaborate on the content of the bounding box <TASK> in?\",\n    \"Please share details about the rectangular region <TASK> within the image.\",\n    \"What can I find in the bbox <TASK> of the provided image?\",\n    \"In the image, could you provide a description for the coordinates <TASK>?\",\n    \"Could you tell me more about the area <TASK> in the snapshot?\",\n    \"Fill me in on the details of the rectangular box <TASK> within the image.\",\n    \"What's going on in the section of contained within the bounding box <TASK>?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:288-300"
     },
-    "241": {
-        "file_id": 12,
+    "227": {
+        "file_id": 10,
         "content": "These lines of code contain various prompts for a task-related description, asking the user to describe the content within a specified bounding box or rectangular area in an image.",
         "type": "comment"
     },
-    "242": {
-        "file_id": 12,
+    "228": {
+        "file_id": 10,
         "content": "    \"I would like a description of the content within the bbox <TASK> in.\",\n    \"Please enlighten me about the area <TASK> in the photograph.\",\n    \"Can you give me a visual rundown of the area <TASK> in?\",\n    \"Describe the visual elements within the selected area <TASK> of the image.\",\n    \"Tell me what you see in the area <TASK> within the context of the image.\",\n    \"Explain the content within the rectangular region <TASK> of the image.\",\n    \"I'd like some information about the bounding box <TASK> in the photo.\",\n    \"What is happening within the rectangle defined by coordinates <TASK> in the image?\",\n    \"Please describe the content within the area <TASK> displayed in the image.\",\n    \"What can be seen in the bounding box <TASK> in the context of the provided image?\",\n    \"Share some details about the objects or environment within the bounding box <TASK> in.\",\n    \"Please describe the area <TASK> in the image for me.\",\n    \"Can you generate a description of the contents within the selected region <TASK> in?\",",
         "type": "code",
         "location": "/composite_demo/utils.py:301-313"
     },
-    "243": {
-        "file_id": 12,
+    "229": {
+        "file_id": 10,
         "content": "These lines of code represent different prompts for the user to request a description or explanation of the content within a specific bounding box or region in an image. The <TASK> placeholder likely refers to the coordinates or location of the desired area within the image.",
         "type": "comment"
     },
-    "244": {
-        "file_id": 12,
+    "230": {
+        "file_id": 10,
         "content": "    \"What objects or scenery can be found in the area <TASK> in the image?\",\n    \"Please tell me more about the rectangular section <TASK> in the photo.\",\n    \"Could you describe the content of the bbox <TASK> in the image?\",\n    \"What does the selected region <TASK> in the image encompass?\",\n    \"I am interested in the region <TASK> of the image; please describe it.\",\n    \"Can you provide some context for the area <TASK> within the picture?\",\n    \"Please give me some details about the rectangle <TASK> in the image.\",\n    \"In the photo, what can you see within the region defined by the bounding box <TASK>?\",\n    \"I would like a detailed description of the portion of enclosed by the bbox <TASK>.\",\n    \"Please help me understand the content present within the rectangle <TASK> in.\",\n    \"Would you mind describing the rectangular area <TASK> in the provided image?\"\n]",
         "type": "code",
         "location": "/composite_demo/utils.py:314-325"
     },
-    "245": {
-        "file_id": 12,
+    "231": {
+        "file_id": 10,
         "content": "These lines of code contain various prompts asking for descriptions or context about specific regions or objects within an image. The <TASK> placeholder likely represents a specific reference number or index, allowing the program to dynamically ask for information on different sections of the image as needed.",
         "type": "comment"
     },
-    "246": {
-        "file_id": 13,
+    "232": {
+        "file_id": 11,
+        "content": "/dataset.md",
+        "type": "filepath"
+    },
+    "233": {
+        "file_id": 11,
+        "content": "CogVLM-SFT-311K is a bilingual visual instruction dataset for CogVLM v1.0 training, containing 22,464 images with descriptions and 56,673 images with multi-turn conversations, licensed under Attribution-NonCommercial 4.0 International, and following a JSON structure format.",
+        "type": "summary"
+    },
+    "234": {
+        "file_id": 11,
+        "content": "# CogVLM-SFT-311K: Bilingual Visual Instruction Data in CogVLM SFT\nCogVLM-SFT-311K is the primary aligned corpus used in the initial training of CogVLM v1.0. The process of constructing this dataset is as follows:\n1. Approximately 3500 high-quality data samples were selected from the open source [MiniGPT-4](https://huggingface.co/datasets/Vision-CAIR/cc_sbu_align), known as minigpt4-3500.\n2. Minigpt4-3500 was integrated with [Llava-Instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K) and translated into Chinese through a language model.\n3. We discovered significant noise in the detailed description part of minigpt4-3500 and Llava-instruct. Thus, we corrected these Chinese corpora and retranslated them into English.\n## License\n+ Due to non-commercial agreements, we did not use these data in the bilingual version of CogVLM or any other models involving commercialization.\n+ The dataset license adheres to: <br> Attribution-NonCommercial 4.0 International. It should abide by the policy of OpenAI: https://openai.com/policies/terms-of-use",
+        "type": "code",
+        "location": "/dataset.md:1-11"
+    },
+    "235": {
+        "file_id": 11,
+        "content": "This code describes the construction of CogVLM-SFT-311K dataset, a bilingual visual instruction data used in initial training of CogVLM v1.0. It includes 3500 high-quality samples from MiniGPT-4, integration with Llava-Instruct-150K and Chinese translation, followed by noise correction and retranslation to English. The dataset is licensed under Attribution-NonCommercial 4.0 International due to non-commercial agreements.",
+        "type": "comment"
+    },
+    "236": {
+        "file_id": 11,
+        "content": "This will not allow you to use these data for any **commercial activitiesI**.\n## Dataset Address\n+ [CogVLM-SFT-311K](https://huggingface.co/datasets/THUDM/CogVLM-SFT-311K)\n## Dataset Information\nThe dataset contains three folders corresponding to the mixed part of minigpt4-3500 and llava, the llava solo conversation, and the multi-turn conversation datasets. Their layout is as follows:\n```\n.CogVLM-SFT-311K\n├── llava_details-minigpt4_3500_formate\n├── llava_instruction_multi_conversations_formate\n└── llava_instruction_single_conversation_formate\n```\nIn our open-source data, the datasets are distributed as follows:\n```\n.llava_details-minigpt4_3500_formate\n├── images\n│   └── 00000001.jpg\n└── labels\n    └── 00000001.json\n```\nImages are stored in the images folder, while labels containing the corresponding image description or dialogue are stored in the labels folder.\n## Dataset Quantity\n+ llava_details-minigpt4_3500_formate: 22,464 images and descriptions\n+ llava_instruction_multi_conversations_formate: 56,673 images and multi-turn conversations",
+        "type": "code",
+        "location": "/dataset.md:12-40"
+    },
+    "237": {
+        "file_id": 11,
+        "content": "Dataset address provided for CogVLM-SFT-311K.\nDataset contains three folders with mixed data from minigpt4-3500 and llava datasets.\nData is distributed in images and labels folders.\nIncludes 22,464 images and descriptions and 56,673 images with multi-turn conversations.",
+        "type": "comment"
+    },
+    "238": {
+        "file_id": 11,
+        "content": "+ llava_instruction_single_conversation_formate: 76,634 images and single-turn conversations\nDataset Format\nCaption format for image description\n```\n{\n  \"captions\": [\n    {\n      \"role\": \"caption\",\n      \"content\": \"The photograph features a beach scene with a group of people surfing in the ocean. There are ten individuals spaced out in the water, sitting or lying on various sizes of body boards. The surfers line up in a row, close to the sandy shoreline. Some of the body boards are visible floating on the surface of the water, with the surfers riding on them or nearby.\"\n    }\n  ]\n}\n```\nConversation format for image dialogue\n```\n{\n  \"conversations\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What can be inferred about the zebras' behavior and surroundings?\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Based on the image, we can infer that the two zebras are likely seeking relief from the sun's heat, as they are standing side by side under the branches of a thorny tree. This shade-providing ",
+        "type": "code",
+        "location": "/dataset.md:41-66"
+    },
+    "239": {
+        "file_id": 11,
+        "content": "Code is defining a dataset format for single-turn conversations and image descriptions. It includes a caption format for image description and a conversation format for image dialogue, both in JSON structure.",
+        "type": "comment"
+    },
+    "240": {
+        "file_id": 11,
+        "content": "tree offers some respite from the sun, possibly during the hottest part of the day. The zebras are in a green field with grass, providing them with an ideal environment to graze and eat while staying near their source of shelter. This shows that the zebras' behavior is influenced by the conditions and available resources in their surroundings. It also highlights that these animals adopt strategies to adapt to the fluctuating conditions of their environment, such as cooperation and seeking shelter, to survive and thrive in their natural habitat.\"\n    }\n  ]\n}\n```\n## References\nThis project utilizes data and concepts based on the following research papers:\n- Zhu, D., Chen, J., Shen, X., Li, X., & Elhoseiny, M. (2023). MiniGPT-4: Enhancing Vision-Language Understanding with Advanced Large Language Models. arXiv preprint arXiv:2304.10592.\n- Liu, H., Li, C., Wu, Q., & Lee, Y. J. (2023). Visual Instruction Tuning. arXiv:2304.08485. ",
+        "type": "code",
+        "location": "/dataset.md:66-75"
+    },
+    "241": {
+        "file_id": 11,
+        "content": "The code seems to be describing a scene where zebras are seeking shelter under a tree in a green field to adapt to their environment and survive.",
+        "type": "comment"
+    },
+    "242": {
+        "file_id": 12,
         "content": "/finetune_demo/evaluate_cogagent.sh",
         "type": "filepath"
     },
-    "247": {
-        "file_id": 13,
+    "243": {
+        "file_id": 12,
         "content": "This script configures DeepSpeed-accelerated training for a CogAgent chat model, setting environment variables, distributed backend, learning rate decay style, and checkpoint options. It trains on specified data locations, enables evaluation, uses a random seed, and executes the DeepSpeed command with given parameters.",
         "type": "summary"
     },
-    "248": {
-        "file_id": 13,
+    "244": {
+        "file_id": 12,
         "content": "#! /bin/bash\n# export PATH=/usr/local/cuda/bin:$PATH\n# export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH\nNUM_GPUS_PER_WORKER=8\nMP_SIZE=1\nscript_path=$(realpath $0)\nscript_dir=$(dirname $script_path)\nmain_dir=$(dirname $script_dir)\nMODEL_TYPE=\"cogagent-chat\"\nVERSION=\"chat\"\n# Tips: max_length should be longer than 256, to accomodate low-resolution image tokens\nMODEL_ARGS=\"--from_pretrained ./checkpoints/ft_cogagent_model \\\n    --max_length 400 \\\n    --local_tokenizer lmsys/vicuna-7b-v1.5 \\\n    --version $VERSION\"\nOPTIONS_SAT=\"SAT_HOME=~/.sat_models\"\nOPTIONS_NCCL=\"NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$NUM_GPUS_PER_WORKER\"\nHOST_FILE_PATH=\"hostfile\"\ntrain_data=\"./archive_split/train\"\ntest_data=\"./archive_split/test\"\ngpt_options=\" \\\n       --experiment-name finetune-$MODEL_TYPE \\\n       --model-parallel-size ${MP_SIZE} \\\n       --mode finetune \\\n       --train-iters 0 \\\n       --resume-dataloader \\\n       $MODEL_ARGS \\\n       --train-data ${train_data} \\\n       --test-data ${test_data} \\",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent.sh:1-34"
     },
-    "249": {
-        "file_id": 13,
+    "245": {
+        "file_id": 12,
         "content": "This script is configuring environment variables for finetuning a CogAgent chat model, specifying model arguments, and defining options for SAT and NCCL. It also sets the experiment name, model-parallel size, training data location, and test data location.",
         "type": "comment"
     },
-    "250": {
-        "file_id": 13,
+    "246": {
+        "file_id": 12,
         "content": "       --distributed-backend nccl \\\n       --lr-decay-style cosine \\\n       --warmup .02 \\\n       --checkpoint-activations \\\n       --save-interval 200 \\\n       --eval-interval 200 \\\n       --save \"./checkpoints\" \\\n       --strict-eval \\\n       --eval-batch-size 1 \\\n       --split 1. \\\n       --deepspeed_config test_config_bf16.json \\\n       --skip-init \\\n       --seed 2023\n\"\nrun_cmd=\"${OPTIONS_NCCL} ${OPTIONS_SAT} deepspeed --master_port 16666 --hostfile ${HOST_FILE_PATH} evaluate_cogagent_demo.py ${gpt_options}\"\necho ${run_cmd}\neval ${run_cmd}\nset +x",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent.sh:35-56"
     },
-    "251": {
-        "file_id": 13,
+    "247": {
+        "file_id": 12,
         "content": "This code is configuring and executing a DeepSpeed-accelerated training job for a GPT-like model. It sets distributed backend as NCCL, learning rate decay style as cosine, warmup rate to 0.2, enables checkpoint activations, saves checkpoints every 200 steps, evaluates after every 200 steps, and uses the \"checkpoints\" directory for saving checkpoints. The code also performs strict evaluation, sets evaluation batch size to 1, specifies a dataset split of 1, uses the deepspeed_config file \"test_config_bf16.json\", skips initialization, and sets a random seed of 2023. It then executes the DeepSpeed command with the specified options.",
         "type": "comment"
     },
-    "252": {
-        "file_id": 14,
+    "248": {
+        "file_id": 13,
         "content": "/finetune_demo/evaluate_cogagent_demo.py",
         "type": "filepath"
     },
-    "253": {
-        "file_id": 14,
+    "249": {
+        "file_id": 13,
         "content": "The code creates a function to convert lists and numpy arrays into tensors, generates chat conversation outputs using an autoregressive model with optional beam search strategy, and utilizes a transformer model for text generation. It defines a dataset function, sets up argument parsing for interacting with a specific model version and pretrained checkpoint, initializes a fine-tuned CogAgent model, prepares tokenizer and image processors, and calls a training function.",
         "type": "summary"
     },
-    "254": {
-        "file_id": 14,
+    "250": {
+        "file_id": 13,
         "content": "import os\nimport torch\nimport argparse\nimport sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nfrom sat import mpu, get_args, get_tokenizer\nfrom sat.training.deepspeed_training import training_main\nfrom sat.helpers import print_rank0\nfrom collections import defaultdict\nfrom functools import partial\nfrom utils.models import FineTuneTestCogAgentModel\nfrom utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor\ndef data_collator(examples, cross_image_processor=None):\n    def to_tensor(value):\n        \"\"\"Converts lists or numpy arrays to tensors.\"\"\"\n        if isinstance(value, list):\n            return torch.tensor(value)\n        elif isinstance(value, np.ndarray):\n            return torch.from_numpy(value)\n        return value\n    def concatenate_tensors(attribute, key):\n        \"\"\"Concatenates tensors for a specific attribute and key.\"\"\"\n        if attribute is None:\n            return torch.cat([ex[key] for ex in examples if isinstance(ex[key], torch.Tensor)])",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:1-29"
     },
-    "255": {
-        "file_id": 14,
+    "251": {
+        "file_id": 13,
         "content": "Creating a data collator function for converting lists and numpy arrays to tensors, concatenating tensors for specific attributes.",
         "type": "comment"
     },
-    "256": {
-        "file_id": 14,
+    "252": {
+        "file_id": 13,
         "content": "        else:\n            return torch.cat([ex[attribute][key] for ex in examples if isinstance(ex[attribute][key], torch.Tensor)])\n    # Convert all lists and numpy arrays in examples to tensors\n    for example in examples:\n        for key, value in example.items():\n            example[key] = to_tensor(value)\n    # Extract and concatenate attributes from examples\n    img_args = {}\n    for attribute in ['vision', 'cross']:\n        if attribute == 'cross' and cross_image_processor is None:\n            continue\n        if attribute in examples[-1]:  # Using the last example as reference\n            for key in examples[-1][attribute]:\n                tensor_key = f\"{attribute}_{key}\"\n                tensors_to_concatenate = [ex[attribute][key] for ex in examples if isinstance(ex[attribute][key], torch.Tensor)]\n                if tensors_to_concatenate:\n                    img_args[tensor_key] = concatenate_tensors(attribute, key)\n                else:\n                    img_args[tensor_key] = examples[-1][attribute][key]",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:30-51"
     },
-    "257": {
-        "file_id": 14,
+    "253": {
+        "file_id": 13,
         "content": "This code is checking if the attribute 'cross' exists in each example and if the cross_image_processor is not None. If either of these conditions are not met, it skips this attribute. Otherwise, it iterates over each example and checks if the current attribute exists within that example. It then concatenates any tensors found into a single tensor and stores it in img_args dictionary under the key \"{attribute}_{key}\". If no tensors are found for an attribute, it uses the last example as reference to populate the img_args dictionary.",
         "type": "comment"
     },
-    "258": {
-        "file_id": 14,
+    "254": {
+        "file_id": 13,
         "content": "    # Remove 'vision' and 'cross' keys from examples\n    for example in examples:\n        example.pop('vision', None)\n        example.pop('cross', None)\n    # Create model_args by concatenating tensors and copying other attributes\n    model_args = {key: concatenate_tensors(None, key) \n                  if isinstance(examples[-1][key], torch.Tensor) else examples[-1][key] \n                  for key in examples[-1]\n                  }\n    # Merge img_args into model_args\n    model_args.update(img_args)\n    return model_args\ndef broadcast_auto(data_dict):\n    # Classify keys based on their data type\n    tensor_keys_by_dtype = defaultdict(list)\n    non_tensor_keys = []\n    for key, value in data_dict.items():\n        if isinstance(value, torch.Tensor):\n            tensor_keys_by_dtype[value.dtype].append(key)\n        else:\n            non_tensor_keys.append(key)\n    # Broadcast tensor data and collect in a new dictionary\n    broadcasted_data = {}\n    for dtype, keys in tensor_keys_by_dtype.items():\n        broadcasted_data.update(mpu.broadcast_data(keys, data_dict, dtype))",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:53-82"
     },
-    "259": {
-        "file_id": 14,
+    "255": {
+        "file_id": 13,
         "content": "This function is removing 'vision' and 'cross' keys from examples and creating model_args by concatenating tensors and copying other attributes. Then, it merges img_args into model_args and returns the result. The second function classifies keys based on their data type, broadcasts tensor data, and collects in a new dictionary.",
         "type": "comment"
     },
-    "260": {
-        "file_id": 14,
+    "256": {
+        "file_id": 13,
         "content": "    # Add non-tensor data to the new dictionary\n    for key in non_tensor_keys:\n        broadcasted_data[key] = data_dict[key]\n    return broadcasted_data\ndef get_batch(data_iterator, args, timers):\n    # Broadcast data.\n    timers('data loader').start()\n    if data_iterator is not None:\n        data = next(data_iterator)\n    else:\n        data = None\n    timers('data loader').stop()\n    data_b = broadcast_auto(data)\n    for k in data_b:\n        if type(data_b[k]) is torch.Tensor and data_b[k].dtype is not torch.int32 and data_b[k].dtype is not torch.long:\n            if args.fp16:\n                data_b[k] = data_b[k].half()\n            elif args.bf16:\n                data_b[k] = data_b[k].bfloat16()\n    return data_b\nfrom torch.nn import CrossEntropyLoss\nimport numpy as np\nfrom sat.model.mixins import CachedAutoregressiveMixin\nfrom sat.generation.autoregressive_sampling import filling_sequence\nfrom sat.generation.sampling_strategies import BaseStrategy, BeamSearchStrategy\ndef chat(model, tokenizer, tokens,\n         max_length: int = 1800, num_beams=5, top_p=0.95, top_k=0, temperature=0.8, **kwargs):",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:84-116"
     },
-    "261": {
-        "file_id": 14,
+    "257": {
+        "file_id": 13,
         "content": "This function takes in a model, tokenizer, and tokens, and returns the generated output for a chat conversation. It uses an autoregressive model with optional beam search strategy to generate responses based on input tokens. The maximum length of generated outputs is set to 1800, and parameters such as number of beams, top_p, top_k, and temperature can be customized.",
         "type": "comment"
     },
-    "262": {
-        "file_id": 14,
+    "258": {
+        "file_id": 13,
         "content": "    inputs = tokens.to(model.parameters().__next__().device)[0]\n    seq = torch.cat(\n        [inputs, torch.tensor([-1] * (max_length - len(inputs)), device=inputs.device)], dim=0\n    )\n    strategy = BaseStrategy(temperature=temperature, top_p=0.4, top_k=1, end_tokens=[tokenizer.eos_token_id])\n    # strategy = BeamSearchStrategy(temperature=temperature, top_p=top_p, top_k=top_k, end_tokens=[tokenizer.eos_token_id],\n    #                               num_beams=num_beams, consider_end=True)\n    get_func = llama2_text_processor_inference.get_func(None, None, image_rope_mask=kwargs['image_rope_mask'])\n    output = filling_sequence(\n        model, seq,\n        batch_size=1,\n        strategy=strategy,\n        get_masks_and_position_ids=get_func,\n        **kwargs\n    )[0]  # drop memory\n    return output\ndef forward_step_eval(data_iterator, model, args, timers):\n    def compute_metrics(eval_preds):\n        preds, labels, device = eval_preds\n        preds = preds.unsqueeze(0)\n        if isinstance(preds, tuple):",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:117-140"
     },
-    "263": {
-        "file_id": 14,
+    "259": {
+        "file_id": 13,
         "content": "This code is using a transformer model to generate text based on a given input. It uses a specific strategy for generating the text and applies a text processor function to the input before passing it to the model. The generated text is then returned as output.",
         "type": "comment"
     },
-    "264": {
-        "file_id": 14,
+    "260": {
+        "file_id": 13,
         "content": "            preds = preds[0]\n        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)\n        if args.ignore_pad_token_for_loss:\n            # Replace -100 in the labels as we can't decode them.\n            labels = np.where(labels != -100, labels, tokenizer.pad_token_id)\n        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)\n        score_dict = {\n            \"acc\": [],\n            \"acc_w/o_case\": [],\n        }\n        for pred, label in zip(decoded_preds, decoded_labels):\n            if args.rank == 0:\n                print('pred', pred, 'label', label, flush=True)\n            if pred == label:\n                score_dict['acc'].append(1.)\n            else:\n                score_dict['acc'].append(0.)\n            if pred.lower() == label.lower():\n                score_dict['acc_w/o_case'].append(1.)\n            else:\n                score_dict['acc_w/o_case'].append(0.)\n        for k, v in score_dict.items():\n            score_dict[k] = float(np.mean(v))\n        return score_dict",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:141-167"
     },
-    "265": {
-        "file_id": 14,
+    "261": {
+        "file_id": 13,
         "content": "This code calculates the accuracy of predicted and actual outputs for a text generation model. It compares the predicted tokens with their corresponding labels (ground truth) and stores the accuracy results in a dictionary called 'score_dict'. The script also handles case sensitivity by providing separate accuracy scores with and without considering it.",
         "type": "comment"
     },
-    "266": {
-        "file_id": 14,
+    "262": {
+        "file_id": 13,
         "content": "    # Get the batch.\n    timers('batch generator').start()\n    data_b = get_batch(\n        data_iterator, args, timers)\n    timers('batch generator').stop()\n    context_len = int(data_b['context_length'][0])\n    tokens = data_b['input_ids'][:, :context_len]\n    data_b['vision_expert_mask'] = data_b['vision_expert_mask'][:, :context_len]\n    data_b['image_embed_mask'] = data_b['image_embed_mask'][:, :context_len]\n    data_b['image_rope_mask'] = data_b['image_rope_mask'][:, :context_len]\n    data_b.pop('input_ids')\n    data_b.pop('attention_mask')\n    data_b.pop('position_ids')\n    labels = data_b.pop('labels')\n    qid = data_b.pop('question_id')\n    model.add_mixin('auto-regressive', CachedAutoregressiveMixin())\n    outputs = chat(model, tokenizer, tokens, **data_b)[0][context_len:]\n    # print(outputs)\n    model.del_mixin('auto-regressive')\n    return torch.tensor(0, device=outputs.device), {k: torch.tensor(v, device=outputs.device) for k, v in\n                                                    compute_metrics(",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:169-193"
     },
-    "267": {
-        "file_id": 14,
+    "263": {
+        "file_id": 13,
         "content": "This code is getting a batch of data and extracting the necessary components for evaluation. It also sets up the model to behave as an autoregressive sequence generator, uses it to generate outputs for each token in the extracted components, removes the mixin, and converts the results into tensors for further processing or returning.",
         "type": "comment"
     },
-    "268": {
-        "file_id": 14,
+    "264": {
+        "file_id": 13,
         "content": "                                                        (outputs.cpu(), labels.cpu(), outputs.device)).items()}\nfrom torch.nn import CrossEntropyLoss\ndef forward_step(data_iterator, model, args, timers):\n    \"\"\"Forward step.\"\"\"\n    # Get the batch.\n    timers('batch generator').start()\n    data_b = get_batch(\n        data_iterator, args, timers)\n    labels = data_b.pop('labels')\n    timers('batch generator').stop()\n    logits = model(**data_b)[0]\n    lm_logits = logits.to(torch.float32)\n    # Shift so that tokens < n predict n\n    shift_labels = labels[..., 1:].contiguous()\n    shift_logits = lm_logits[..., -1-shift_labels.size(-1):-1, :].contiguous()\n    # Flatten the tokens\n    loss_fct = CrossEntropyLoss(ignore_index=-100)\n    loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))\n    loss = loss.to(torch.float32)\n    return loss, {'loss': loss}\nfrom utils.utils import ItemDataset\ndef create_dataset_function(image_processor, text_processor, cross_image_processor, path, args):",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:194-220"
     },
-    "269": {
-        "file_id": 14,
+    "265": {
+        "file_id": 13,
         "content": "The code defines a function \"forward_step\" that performs a forward pass in a model, computes the loss between predicted logits and labels, and returns the loss as output. It uses CrossEntropyLoss for computing loss, ignores padding tokens (-100), and converts the tensors to float32 type. The \"create_dataset_function\" function creates a dataset function using image and text processors, cross_image_processor, path, and args.",
         "type": "comment"
     },
-    "270": {
-        "file_id": 14,
+    "266": {
+        "file_id": 13,
         "content": "    dataset = ItemDataset(image_processor, text_processor, args, path, cross_image_processor=cross_image_processor)\n    return dataset\nif __name__ == '__main__':\n    py_parser = argparse.ArgumentParser(add_help=False)\n    py_parser.add_argument('--max_length', type=int)\n    py_parser.add_argument('--ignore_pad_token_for_loss', action='store_false')\n    py_parser.add_argument(\"--version\", type=str, default=\"chat\", help='version to interact with')\n    py_parser.add_argument(\"--from_pretrained\", type=str, default=\"cogagent-chat\", help='pretrained ckpt')\n    py_parser.add_argument(\"--local_tokenizer\", type=str, default=\"lmsys/vicuna-7b-v1.5\", help='tokenizer path')\n    py_parser.add_argument(\"--vit_checkpoint_activations\", action='store_true')\n    py_parser = FineTuneTestCogAgentModel.add_model_specific_args(py_parser)\n    known, args_list = py_parser.parse_known_args()\n    args = get_args(args_list)\n    args = argparse.Namespace(**vars(args), **vars(known))\n    if args.use_qlora:\n        args.device = 'cpu'",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:221-237"
     },
-    "271": {
-        "file_id": 14,
+    "267": {
+        "file_id": 13,
         "content": "This code defines a dataset function, parses command-line arguments, and returns the dataset. It also sets up argument parsing for interacting with a specific version of the model and using a specific pretrained checkpoint and tokenizer.",
         "type": "comment"
     },
-    "272": {
-        "file_id": 14,
+    "268": {
+        "file_id": 13,
         "content": "    model, args = FineTuneTestCogAgentModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})\n    if args.use_qlora and torch.cuda.is_available():\n        model = model.to('cuda')\n    from utils.utils import llama2_tokenizer\n    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)\n    image_processor = get_image_processor(args.eva_args[\"image_size\"][0])\n    cross_image_processor = get_image_processor(args.cross_image_pix)\n    text_processor = llama2_text_processor(tokenizer, args.max_length, args.image_length)\n    training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor, cross_image_processor), collate_fn=partial(data_collator, cross_image_processor=cross_image_processor), forward_step_eval=forward_step_eval)",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogagent_demo.py:239-248"
     },
-    "273": {
-        "file_id": 14,
+    "269": {
+        "file_id": 13,
         "content": "The code is initializing a fine-tuned CogAgent model, preparing the tokenizer and image processors, and calling a training function with specified parameters.",
         "type": "comment"
     },
-    "274": {
-        "file_id": 15,
+    "270": {
+        "file_id": 14,
         "content": "/finetune_demo/evaluate_cogvlm.sh",
         "type": "filepath"
     },
-    "275": {
-        "file_id": 15,
+    "271": {
+        "file_id": 14,
         "content": "The script fine-tunes the \"cogvlm-base-490\" model using 8 GPUs, a local tokenizer and saves checkpoints every 200 iterations. It utilizes NCCL distributed backend, cosine learning rate decay, warmup rate of 0.02, Deepspeed for evaluation, and strict mode for results.",
         "type": "summary"
     },
-    "276": {
-        "file_id": 15,
+    "272": {
+        "file_id": 14,
         "content": "#! /bin/bash\n# export PATH=/usr/local/cuda/bin:$PATH\n# export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH\nNUM_GPUS_PER_WORKER=8\nMP_SIZE=1\nscript_path=$(realpath $0)\nscript_dir=$(dirname $script_path)\nmain_dir=$(dirname $script_dir)\nMODEL_TYPE=\"cogvlm-base-490\"\nVERSION=\"base\"\nMODEL_ARGS=\"--from_pretrained ./checkpoints/merged_lora_490 \\\n    --max_length 1288 \\\n    --lora_rank 10 \\\n    --use_lora \\\n    --local_tokenizer lmsys/vicuna-7b-v1.5 \\\n    --version $VERSION\"\n# Tips: If training models of resolution 244, you can set --max_length smaller \nOPTIONS_SAT=\"SAT_HOME=~/.sat_models\"\nOPTIONS_NCCL=\"NCCL_DEBUG=info NCCL_IB_DISABLE=0 NCCL_NET_GDR_LEVEL=2 LOCAL_WORLD_SIZE=$NUM_GPUS_PER_WORKER\"\nHOST_FILE_PATH=\"hostfile\"\ntrain_data=\"./archive_split/train\"\ntest_data=\"./archive_split/test\"\ngpt_options=\" \\\n       --experiment-name finetune-$MODEL_TYPE \\\n       --model-parallel-size ${MP_SIZE} \\\n       --mode finetune \\\n       --train-iters 0 \\\n       --resume-dataloader \\\n       $MODEL_ARGS \\\n       --train-data ${train_data} \\",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm.sh:1-36"
     },
-    "277": {
-        "file_id": 15,
+    "273": {
+        "file_id": 14,
         "content": "This script sets up the environment for fine-tuning a specific model, \"cogvlm-base-490\". It uses 8 GPUs per worker, and sets the maximum length for input to 1288. The model is loaded from a merged Lora checkpoint. It also uses a local tokenizer (lmsys/vicuna-7b-v1.5) and specifies that this is the base version of the model. The script also defines some environment variables and file paths for the training process, as well as the paths to train and test data.",
         "type": "comment"
     },
-    "278": {
-        "file_id": 15,
+    "274": {
+        "file_id": 14,
         "content": "       --test-data ${test_data} \\\n       --distributed-backend nccl \\\n       --lr-decay-style cosine \\\n       --warmup .02 \\\n       --checkpoint-activations \\\n       --save-interval 200 \\\n       --eval-interval 200 \\\n       --save \"./checkpoints\" \\\n       --strict-eval \\\n       --eval-batch-size 1 \\\n       --split 1. \\\n       --deepspeed_config test_config_bf16.json \\\n       --skip-init \\\n       --seed 2023\n\"\nrun_cmd=\"${OPTIONS_NCCL} ${OPTIONS_SAT} deepspeed --master_port 16666 --hostfile ${HOST_FILE_PATH} evaluate_cogvlm_demo.py ${gpt_options}\"\necho ${run_cmd}\neval ${run_cmd}\nset +x",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm.sh:37-59"
     },
-    "279": {
-        "file_id": 15,
+    "275": {
+        "file_id": 14,
         "content": "The code is running a finetuning demo for CogVLM. It uses NCCL distributed backend, cosine learning rate decay, warmup rate of 0.02, and saves checkpoints every 200 iterations. It evaluates the model every 200 iterations, saves results in \"checkpoints\", uses strict evaluation, sets an eval batch size of 1, splits data with 1.0, uses a specific Deepspeed configuration file, skips initialization, and sets a seed value of 2023. Finally, it runs the command to evaluate the model using Deepspeed and other options.",
         "type": "comment"
     },
-    "280": {
-        "file_id": 16,
+    "276": {
+        "file_id": 15,
         "content": "/finetune_demo/evaluate_cogvlm_demo.py",
         "type": "filepath"
     },
-    "281": {
-        "file_id": 16,
+    "277": {
+        "file_id": 15,
         "content": "The code imports modules, prepares data, defines functions for autoregressive sampling and model predictions, calculates accuracy, creates a dataset, handles command-line arguments, loads pretrained models, sets tokenizer path, enables GPU usage if available, and creates image and text processors for model evaluation.",
         "type": "summary"
     },
-    "282": {
-        "file_id": 16,
+    "278": {
+        "file_id": 15,
         "content": "import os\nimport torch\nimport argparse\nfrom functools import partial\nimport sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nfrom sat import mpu, get_args, get_tokenizer\nfrom sat.training.deepspeed_training import training_main\nfrom sat.helpers import print_rank0\nfrom utils.models import FineTuneTestCogVLMModel\nfrom utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor\ndef data_collator(examples):\n    examples = [ex for ex in examples if len(ex) > 0] # drop {}\n    for example in examples:\n        for k in example:\n            if isinstance(example[k], list):\n                example[k] = torch.tensor(example[k])\n            elif isinstance(example[k], np.ndarray):\n                example[k] = torch.from_numpy(example[k])\n    img_args = {}\n    tmp_example = examples[0]\n    for k in tmp_example['vision']:\n        if type(tmp_example['vision'][k]) is torch.Tensor:\n            img_args['vision_'+k] = torch.cat([example['vision'][k] for example in examples])",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:1-27"
     },
-    "283": {
-        "file_id": 16,
+    "279": {
+        "file_id": 15,
         "content": "The code imports necessary modules, sets up data collation function for fine-tuning a CogVLM model, and defines a collator that prepares examples for training or evaluation.",
         "type": "comment"
     },
-    "284": {
-        "file_id": 16,
+    "280": {
+        "file_id": 15,
         "content": "        else:\n            img_args['vision_'+k] = example['vision'][k]\n    for example in examples:\n        example.pop('vision')\n        if 'cross' in example:\n            example.pop('cross')\n    model_args = {}\n    tmp_example = examples[0]\n    for k in tmp_example:\n        if type(tmp_example[k]) is torch.Tensor:\n            model_args[k] = torch.cat([example[k] for example in examples])\n        else:\n            model_args[k] = tmp_example[k]\n    model_args.update(img_args)\n    return model_args\nfrom collections import defaultdict\ndef broadcast_auto(data_dict):\n    type2list = defaultdict(list)\n    other = []\n    for k in data_dict:\n        if type(data_dict[k]) is torch.Tensor:\n            type2list[data_dict[k].dtype].append(k)\n        else:\n            other.append(k)\n    new_data = {}\n    for k in type2list:\n        new_data.update(mpu.broadcast_data(type2list[k], data_dict, k))\n    for k in other:\n        new_data[k] = data_dict[k]\n    return new_data\ndef get_batch(data_iterator, args, timers):\n    # Broadcast data.",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:28-63"
     },
-    "285": {
-        "file_id": 16,
+    "281": {
+        "file_id": 15,
         "content": "The code is preparing data for a machine learning model by extracting relevant information from examples and broadcasting it to the correct format.\n\n1. It first checks if the example has \"vision\" and \"cross\" keys, then removes them.\n2. It creates a dictionary of image-related keys as 'vision_' + key for each example.\n3. It combines all image tensors from each example into one tensor and stores non-tensor data in their original form.\n4. The resulting dictionary contains the data prepared for model training or evaluation.\n5. A function `broadcast_auto` is defined to help with broadcasting data types, but it is not used in this code block.\n6. Another function `get_batch` is called, which uses the previously mentioned functions to prepare the data batch.",
         "type": "comment"
     },
-    "286": {
-        "file_id": 16,
+    "282": {
+        "file_id": 15,
         "content": "    timers('data loader').start()\n    if data_iterator is not None:\n        data = next(data_iterator)\n    else:\n        data = None\n    timers('data loader').stop()\n    data_b = broadcast_auto(data)\n    for k in data_b:\n        if type(data_b[k]) is torch.Tensor and data_b[k].dtype is not torch.int32 and data_b[k].dtype is not torch.long:\n            if args.fp16:\n                data_b[k] = data_b[k].half()\n            elif args.bf16:\n                data_b[k] = data_b[k].bfloat16()\n    return data_b\nfrom torch.nn import CrossEntropyLoss\nimport numpy as np\nfrom sat.model.mixins import CachedAutoregressiveMixin\nfrom sat.generation.autoregressive_sampling import filling_sequence\nfrom sat.generation.sampling_strategies import BaseStrategy, BeamSearchStrategy\ndef chat(model, tokenizer, tokens,\n         max_length: int = 1800, num_beams=5, top_p=0.95, top_k=0, temperature=0.8, **kwargs):\n    inputs = tokens.to(model.parameters().__next__().device)[0]\n    seq = torch.cat(\n        [inputs, torch.tensor([-1] * (max_length - len(inputs)), device=inputs.device)], dim=0",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:64-91"
     },
-    "287": {
-        "file_id": 16,
+    "283": {
+        "file_id": 15,
         "content": "Function `chat` takes a model, tokenizer, tokens (input text), and optional arguments for autoregressive sampling such as maximum length and number of beams. It converts the input text to device-compatible format, extends it with -1 values to reach desired length, then performs autoregressive sampling using the provided model and sampling parameters.",
         "type": "comment"
     },
-    "288": {
-        "file_id": 16,
+    "284": {
+        "file_id": 15,
         "content": "    )\n    strategy = BaseStrategy(temperature=temperature, top_p=0.4, top_k=1, end_tokens=[tokenizer.eos_token_id])\n    # strategy = BeamSearchStrategy(temperature=temperature, top_p=top_p, top_k=top_k, end_tokens=[tokenizer.eos_token_id],\n    #                               num_beams=num_beams, consider_end=True)\n    get_func = llama2_text_processor_inference.get_func(None, None, image_rope_mask=kwargs['image_rope_mask'])\n    output = filling_sequence(\n        model, seq,\n        batch_size=1,\n        strategy=strategy,\n        get_masks_and_position_ids=get_func,\n        **kwargs\n    )[0]  # drop memory\n    return output\ndef forward_step_eval(data_iterator, model, args, timers):\n    def compute_metrics(eval_preds):\n        preds, labels, device = eval_preds\n        preds = preds.unsqueeze(0)\n        if isinstance(preds, tuple):\n            preds = preds[0]\n        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)\n        if args.ignore_pad_token_for_loss:\n            # Replace -100 in the labels as we can't decode them.",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:92-116"
     },
-    "289": {
-        "file_id": 16,
+    "285": {
+        "file_id": 15,
         "content": "This code snippet defines a function `filling_sequence` that takes in a model, sequence, batch size, strategy, and additional kwargs. It returns the output of the model's prediction on the given sequence. The `forward_step_eval` function is a nested function that computes metrics from the predictions made by the model on a data iterator.",
         "type": "comment"
     },
-    "290": {
-        "file_id": 16,
+    "286": {
+        "file_id": 15,
         "content": "            labels = np.where(labels != -100, labels, tokenizer.pad_token_id)\n        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)\n        score_dict = {\n            \"acc\": [],\n            \"acc_w/o_case\": [],\n        }\n        for pred, label in zip(decoded_preds, decoded_labels):\n            if args.rank == 0:\n                print('pred', pred, 'label', label, flush=True)\n            if pred == label:\n                score_dict['acc'].append(1.)\n            else:\n                score_dict['acc'].append(0.)\n            if pred.lower() == label.lower():\n                score_dict['acc_w/o_case'].append(1.)\n            else:\n                score_dict['acc_w/o_case'].append(0.)\n        for k, v in score_dict.items():\n            score_dict[k] = float(np.mean(v))\n        return score_dict\n    # Get the batch.\n    timers('batch generator').start()\n    data_b = get_batch(\n        data_iterator, args, timers)\n    timers('batch generator').stop()\n    context_len = int(data_b['context_length'][0])",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:117-147"
     },
-    "291": {
-        "file_id": 16,
+    "287": {
+        "file_id": 15,
         "content": "This code calculates the accuracy and case-insensitive accuracy of a model's predictions against true labels, then returns these scores. It does so by first converting non-special tokens to the pad token in the 'labels' variable and decoding these labels using the tokenizer. The code then loops over pairs of predicted and true labels, incrementing appropriate score lists depending on whether they match or not. Finally, it calculates the mean for each score list and returns them as a dictionary. The code also times how long the data batch generator takes to execute.",
         "type": "comment"
     },
-    "292": {
-        "file_id": 16,
+    "288": {
+        "file_id": 15,
         "content": "    tokens = data_b['input_ids'][:, :context_len]\n    data_b['vision_expert_mask'] = data_b['vision_expert_mask'][:, :context_len]\n    data_b['image_embed_mask'] = data_b['image_embed_mask'][:, :context_len]\n    data_b['image_rope_mask'] = data_b['image_rope_mask'][:, :context_len]\n    data_b.pop('input_ids')\n    data_b.pop('attention_mask')\n    data_b.pop('position_ids')\n    labels = data_b.pop('labels')\n    qid = data_b.pop('question_id')\n    model.add_mixin('auto-regressive', CachedAutoregressiveMixin())\n    outputs = chat(model, tokenizer, tokens, **data_b)[0][context_len:]\n    # print(outputs)\n    model.del_mixin('auto-regressive')\n    return torch.tensor(0, device=outputs.device), {k: torch.tensor(v, device=outputs.device) for k, v in\n                                                    compute_metrics(\n                                                        (outputs.cpu(), labels.cpu(), outputs.device)).items()}\nfrom torch.nn import CrossEntropyLoss\ndef forward_step(data_iterator, model, args, timers):",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:148-170"
     },
-    "293": {
-        "file_id": 16,
+    "289": {
+        "file_id": 15,
         "content": "This code is preparing the input data for a model to predict an answer. It selects specific parts of the data, removes irrelevant fields, and applies a mixin to enable autoregressive behavior. The model then generates a response, which is processed further before returning a result.",
         "type": "comment"
     },
-    "294": {
-        "file_id": 16,
+    "290": {
+        "file_id": 15,
         "content": "    \"\"\"Forward step.\"\"\"\n    # Get the batch.\n    timers('batch generator').start()\n    data_b = get_batch(\n        data_iterator, args, timers)\n    labels = data_b.pop('labels')\n    timers('batch generator').stop()\n    logits = model(**data_b)[0]\n    lm_logits = logits.to(torch.float32)\n    # Shift so that tokens < n predict n\n    shift_labels = labels[..., 1:].contiguous()\n    shift_logits = lm_logits[..., -1-shift_labels.size(-1):-1, :].contiguous()\n    # Flatten the tokens\n    loss_fct = CrossEntropyLoss(ignore_index=-100)\n    loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))\n    loss = loss.to(torch.float32)\n    return loss, {'loss': loss}\nfrom utils.utils import ItemDataset\ndef create_dataset_function(image_processor, text_processor, path, args):\n    dataset = ItemDataset(image_processor, text_processor, args, path)\n    return dataset\nif __name__ == '__main__':\n    py_parser = argparse.ArgumentParser(add_help=False)\n    py_parser.add_argument('--max_length', type=int)\n    py_parser.add_argument('--ignore_pad_token_for_loss', action='store_false')",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:171-199"
     },
-    "295": {
-        "file_id": 16,
+    "291": {
+        "file_id": 15,
         "content": "This code is defining a function that performs forward step in a machine learning model, and another function for creating dataset with image and text processors.",
         "type": "comment"
     },
-    "296": {
-        "file_id": 16,
+    "292": {
+        "file_id": 15,
         "content": "    py_parser.add_argument(\"--version\", type=str, default=\"chat\", help='version to interact with')\n    py_parser.add_argument(\"--from_pretrained\", type=str, default=\"cogvlm-chat\", help='pretrained ckpt')\n    py_parser.add_argument(\"--local_tokenizer\", type=str, default=\"lmsys/vicuna-7b-v1.5\", help='tokenizer path')\n    py_parser.add_argument(\"--vit_checkpoint_activations\", action='store_true')\n    py_parser = FineTuneTestCogVLMModel.add_model_specific_args(py_parser)\n    known, args_list = py_parser.parse_known_args()\n    args = get_args(args_list)\n    args = argparse.Namespace(**vars(args), **vars(known))\n    if args.use_qlora:\n        args.device = 'cpu'\n    model, args = FineTuneTestCogVLMModel.from_pretrained(args.from_pretrained, args, overwrite_args={'model_parallel_size': args.model_parallel_size} if args.model_parallel_size != 1 else {})\n    if args.use_qlora and torch.cuda.is_available():\n        model = model.to('cuda')\n    from utils.utils import llama2_tokenizer\n    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=args.version)",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:200-215"
     },
-    "297": {
-        "file_id": 16,
+    "293": {
+        "file_id": 15,
         "content": "This code is parsing command-line arguments, setting default values and loading the pretrained model for a language model. It also specifies the tokenizer path and enables GPU usage if available.",
         "type": "comment"
     },
-    "298": {
-        "file_id": 16,
+    "294": {
+        "file_id": 15,
         "content": "    image_processor = get_image_processor(args.eva_args[\"image_size\"][0])\n    text_processor = llama2_text_processor(tokenizer, args.max_length, args.image_length)\n    training_main(args, model_cls=model, forward_step_function=forward_step, create_dataset_function=partial(create_dataset_function, image_processor, text_processor), collate_fn=data_collator, forward_step_eval=forward_step_eval)",
         "type": "code",
         "location": "/finetune_demo/evaluate_cogvlm_demo.py:216-219"
     },
+    "295": {
+        "file_id": 15,
+        "content": "Creating image and text processors for model evaluation.",
+        "type": "comment"
+    },
+    "296": {
+        "file_id": 16,
+        "content": "/finetune_demo/finetune_cogagent_demo.py",
+        "type": "filepath"
+    },
+    "297": {
+        "file_id": 16,
+        "content": "The code prepares data for fine-tuning, initializes models and mixins, converts data to tensors, trains the model, applies decoding strategies, calculates accuracy metrics, and saves the merged model.",
+        "type": "summary"
+    },
+    "298": {
+        "file_id": 16,
+        "content": "import os\nimport torch\nimport argparse\nfrom functools import partial\nimport sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nfrom sat import mpu, get_args, get_tokenizer\nfrom sat.training.deepspeed_training import training_main\nfrom sat.helpers import print_rank0\nfrom utils.models import FineTuneTrainCogAgentModel\nfrom utils.utils import llama2_text_processor, llama2_text_processor_inference, get_image_processor\ndef disable_untrainable_params(self):\n    total_trainable = 0\n    # enable = ['vit']\n    enable = [\"encoder\", \"cross_attention\", \"linear_proj\", 'mlp.vision', 'rotary.vision', 'eoi', 'boi', 'vit']\n    if self.args.use_ptuning:\n        enable.extend(['ptuning'])\n    if self.args.use_lora or self.args.use_qlora:\n        enable.extend(['matrix_A', 'matrix_B'])\n    for n, p in self.named_parameters():\n        flag = False\n        for e in enable:\n            if type(e) is tuple:\n                if e[0].lower() in n.lower() and e[1].lower() in n.lower() and 55 > int(n[:n.find('.mlp')].split('.')[-1]) > 45:",
+        "type": "code",
+        "location": "/finetune_demo/finetune_cogagent_demo.py:1-26"
+    },
     "299": {
         "file_id": 16,
-        "content": "Creating image and text processors for model evaluation.",
+        "content": "The code is initializing a function to disable untrainable parameters in a model. It does this by specifying a list of layers that should be enabled for training and then iterating over the named parameters, setting the flag if the layer name matches any of the specified layers. If the parameter has its flag set to True, it will be trainable.",
         "type": "comment"
     }
 }

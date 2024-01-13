@@ -1,35 +1,34 @@
 {
     "400": {
-        "file_id": 23,
-        "content": "                        print(content)\n                    except:\n                        print(\"Special Token:\", decoded_line)\n        else:\n            # 处理非流式响应\n            decoded_line = response.json()\n            content = decoded_line.get(\"choices\", [{}])[0].get(\"message\", \"\").get(\"content\", \"\")\n            print(content)\n    else:\n        print(\"Error:\", response.status_code)\n        return None\ndef encode_image(image_path):\n    \"\"\"\n    Encodes an image file into a base64 string.\n    Args:\n        image_path (str): The path to the image file.\n    This function opens the specified image file, reads its content, and encodes it into a base64 string.\n    The base64 encoding is used to send images over HTTP as text.\n    \"\"\"\n    with open(image_path, \"rb\") as image_file:\n        return base64.b64encode(image_file.read()).decode(\"utf-8\")\ndef simple_image_chat(use_stream=True, img_path=None):\n    \"\"\"\n    Facilitates a simple chat interaction involving an image.\n    Args:\n        use_stream (bool): Specifies whether to use streaming for chat responses.",
-        "type": "code",
-        "location": "/openai_demo/openai_api_request.py:50-82"
-    },
-    "401": {
-        "file_id": 23,
-        "content": "Processing API request for OpenAI text completion.\nHandling non-streaming chat responses from OpenAI.\nEncoding an image file into a base64 string using the encode_image function.",
-        "type": "comment"
-    },
-    "402": {
-        "file_id": 23,
-        "content": "        img_path (str): Path to the image file to be included in the chat.\n    This function encodes the specified image and constructs a predefined conversation involving the image.\n    It then calls `create_chat_completion` to generate a response from the model.\n    The conversation includes asking about the content of the image and a follow-up question.\n    \"\"\"\n    img_url = f\"data:image/jpeg;base64,{encode_image(img_path)}\"\n    messages = [\n        {\n            \"role\": \"user\",\n            \"content\": [\n                {\n                    \"type\": \"text\", \"text\": \"What’s in this image?\",\n                },\n                {\n                    \"type\": \"image_url\",\n                    \"image_url\": {\n                        \"url\": img_url\n                    },\n                },\n            ],\n        },\n        {\n            \"role\": \"assistant\",\n            \"content\": \"The image displays a wooden boardwalk extending through a vibrant green grassy wetland. The sky is partly cloudy with soft, wispy clouds,",
-        "type": "code",
-        "location": "/openai_demo/openai_api_request.py:83-108"
-    },
-    "403": {
-        "file_id": 23,
-        "content": "This function encodes an image and creates a chat conversation around it, then uses OpenAI's API to generate a response from the model. It includes questions about the image content.",
-        "type": "comment"
-    },
-    "404": {
-        "file_id": 23,
+        "file_id": 22,
         "content": " indicating nice weather. Vegetation is seen on either side of the boardwalk, and trees are present in the background, suggesting that this area might be a natural reserve or park designed for ecological preservation and outdoor recreation. The boardwalk allows visitors to explore the area without disturbing the natural habitat.\",\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"Do you think this is a spring or winter photo?\"\n        },\n    ]\n    create_chat_completion(\"cogvlm-chat-17b\", messages=messages, use_stream=use_stream)\nif __name__ == \"__main__\":\n    simple_image_chat(use_stream=False, img_path=\"demo.jpg\")",
         "type": "code",
         "location": "/openai_demo/openai_api_request.py:108-119"
     },
+    "401": {
+        "file_id": 22,
+        "content": "This code initializes a chatbot conversation with an image description and a user question about the season of the photo. It then uses the OpenAI API to create a completion based on the provided input.",
+        "type": "comment"
+    },
+    "402": {
+        "file_id": 23,
+        "content": "/requirements.txt",
+        "type": "filepath"
+    },
+    "403": {
+        "file_id": 23,
+        "content": "This code specifies the required packages and their versions for a Python project, including natural language processing, deep learning, data visualization, and web application development.",
+        "type": "summary"
+    },
+    "404": {
+        "file_id": 23,
+        "content": "SwissArmyTransformer>=0.4.9\ntransformers>=4.36.1\nxformers>=0.0.22\ntorch>=2.1.0\ntorchvision>=0.16.2\nspacy>=3.6.0\npillow>=10.0.1\ndeepspeed>=0.11.0\nseaborn>=0.13.0\nloguru~=0.7.2\nstreamlit>=1.29.0\ntimm>=0.9.12\naccelerate>=0.25.0\npydantic>=2.5.2\n# for openai demo\nopenai>=1.4.0\nsse-starlette>=1.8.2\nfastapi>=0.105.0\nhttpx>=0.25.2\nuvicorn~=0.24.0",
+        "type": "code",
+        "location": "/requirements.txt:1-21"
+    },
     "405": {
         "file_id": 23,
-        "content": "This code initializes a chatbot conversation with an image description and a user question about the season of the photo. It then uses the OpenAI API to create a completion based on the provided input.",
+        "content": "This code specifies the required packages and their versions for a Python project, including natural language processing, deep learning, data visualization, and web application development.",
         "type": "comment"
     },
     "406": {
@@ -66,481 +65,482 @@
     },
     "412": {
         "file_id": 25,
-        "content": "/utils/split_dataset.py",
+        "content": "/utils/models/__init__.py",
         "type": "filepath"
     },
     "413": {
         "file_id": 25,
-        "content": "The code searches for files with a specific suffix, shuffles and splits them into train, validation, and test sets, ensuring reproducibility, and outputs a \"done\" message upon completion.",
+        "content": "Imports necessary models and functions for CogAgent and CogVLM from respective modules.",
         "type": "summary"
     },
     "414": {
         "file_id": 25,
-        "content": "import os\nimport shutil\ndef find_all_files(path, suffix=\".jpg\"):\n    target_files = []\n    for cur_dir, _, files in os.walk(path, followlinks=True):\n        for f in files:\n            if f.endswith(suffix):\n                target_files.append(os.path.join(cur_dir, f))\n    print(f'find {len(target_files)} files...')\n    return target_files\nall_files = find_all_files('archive')\nos.makedirs(\"archive_split\", exist_ok=True)\nos.makedirs(\"archive_split/train\", exist_ok=True)\nos.makedirs(\"archive_split/valid\", exist_ok=True)\nos.makedirs(\"archive_split/test\", exist_ok=True)\nimport random\nrandom.seed(2023)\nrandom.shuffle(all_files)\ntrain = all_files[:8000]\nvalid = all_files[8000:8000+500]\ntest = all_files[8000+500:8000+500+1500]\nprint(\"building train\")\nfor file in train:\n    shutil.move(file, os.path.join(\"archive_split/train\", file.split(\"/\")[-1]))\nprint(\"building valid\")\nfor file in valid:\n    shutil.move(file, os.path.join(\"archive_split/valid\", file.split(\"/\")[-1]))\nprint(\"building test\")\nfor file in test:\n    shutil.move(file, os.path.join(\"archive_split/test\", file.split(\"/\")[-1]))",
-        "type": "code",
-        "location": "/utils/split_dataset.py:1-34"
-    },
-    "415": {
-        "file_id": 25,
-        "content": "This code finds all files with a specified suffix (.jpg in this case) in the given directory, shuffles them, and splits them into train, validation, and test sets by moving the files to their respective directories. The random seed is set for reproducibility.",
-        "type": "comment"
-    },
-    "416": {
-        "file_id": 25,
-        "content": "print(\"done\")",
-        "type": "code",
-        "location": "/utils/split_dataset.py:35-35"
-    },
-    "417": {
-        "file_id": 25,
-        "content": "Prints \"done\" message indicating task completion.",
-        "type": "comment"
-    },
-    "418": {
-        "file_id": 26,
-        "content": "/utils/models/__init__.py",
-        "type": "filepath"
-    },
-    "419": {
-        "file_id": 26,
-        "content": "Imports necessary models and functions for CogAgent and CogVLM from respective modules.",
-        "type": "summary"
-    },
-    "420": {
-        "file_id": 26,
         "content": "from .cogagent_model import CogAgentModel, FineTuneTrainCogAgentModel, FineTuneTestCogAgentModel\nfrom .cogvlm_model import CogVLMModel, FineTuneTrainCogVLMModel, FineTuneTestCogVLMModel",
         "type": "code",
         "location": "/utils/models/__init__.py:1-2"
     },
-    "421": {
-        "file_id": 26,
+    "415": {
+        "file_id": 25,
         "content": "Imports necessary models and functions for CogAgent and CogVLM from respective modules.",
         "type": "comment"
     },
-    "422": {
-        "file_id": 27,
+    "416": {
+        "file_id": 26,
         "content": "/utils/models/cogagent_model.py",
         "type": "filepath"
     },
-    "423": {
-        "file_id": 27,
+    "417": {
+        "file_id": 26,
         "content": "The code initializes a GLU module for CogAgent, uses Vision Transformer (VIT) model and introduces ExternalVisionModel instance. It also defines FineTuneTrainCogAgentModel class for model fine-tuning with optional PTuningV2Mixin and LoraMixin mixins, and includes specific configuration options using a parser.",
         "type": "summary"
     },
-    "424": {
-        "file_id": 27,
+    "418": {
+        "file_id": 26,
         "content": "from sat.model.official.llama_model import LLaMAModel\nimport json\nimport torch\nfrom functools import partial\nfrom sat.model.base_model import BaseMixin\nimport torch.nn as nn\nimport numpy as np\nfrom sat.resources.urls import MODEL_URLS\nfrom .eva_clip_L_hf import Eva2LargeEncoder\nfrom .mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin\nMODEL_URLS[\"cogagent-chat\"] = \"r2://cogagent-chat.zip\"\nMODEL_URLS[\"cogagent-vqa\"] = \"r2://cogagent-vqa.zip\"\nclass GLU(nn.Module):\n    def __init__(self, args, in_features):\n        super().__init__()\n        self.linear_proj = nn.Linear(in_features, args.hidden_size, bias=False)\n        self.norm1 = nn.LayerNorm(args.hidden_size)\n        self.act1 = nn.GELU()\n        self.act2 = nn.functional.silu\n        self.dense_h_to_4h = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False)\n        self.gate_proj = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False)\n        self.dense_4h_to_h = nn.Linear(args.inner_hidden_size, args.hidden_size, bias=False)",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:1-27"
     },
-    "425": {
-        "file_id": 27,
+    "419": {
+        "file_id": 26,
         "content": "This code defines a GLU (Gated Linear Units) module for the CogAgent model. It initializes layers such as linear projections, layer norm, activation functions, and dense layers for the GLU operation. The model URLs are also defined for CogAgent chat and VQA models.",
         "type": "comment"
     },
-    "426": {
-        "file_id": 27,
+    "420": {
+        "file_id": 26,
         "content": "    def forward(self, x):\n        x = self.linear_proj(x)\n        x = self.act1(self.norm1(x))\n        x = self.act2(self.gate_proj(x)) * self.dense_h_to_4h(x)\n        x = self.dense_4h_to_h(x)\n        return x\nfrom .eva_clip_model import EVA2CLIPModel\nimport argparse\nfrom copy import deepcopy\ndef override_dist_dtype_device_args(args, b={}):\n    if args.mode == 'inference':\n        minimal_args = argparse.Namespace(\n            world_size=args.world_size,\n            rank=args.rank,\n            local_rank=args.local_rank,\n            skip_init=args.skip_init,\n            use_gpu_initialization=args.use_gpu_initialization,\n            deepspeed=args.deepspeed,\n            bf16=args.bf16,\n            fp16=args.fp16,\n            mode=args.mode,\n            device=args.device\n        )\n    else:\n        minimal_args = argparse.Namespace(\n                world_size=args.world_size,\n                rank=args.rank,\n                local_rank=args.local_rank,\n                skip_init=args.skip_init,\n                use_gpu_initialization=args.use_gpu_initialization,",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:29-59"
     },
-    "427": {
-        "file_id": 27,
+    "421": {
+        "file_id": 26,
         "content": "The code defines a forward function for a model and imports the EVA2CLIPModel class. It also includes a function called override_dist_dtype_device_args that takes in arguments and returns minimal arguments based on the mode (inference or training) of the model. The function is used to simplify the argument parsing process.",
         "type": "comment"
     },
-    "428": {
-        "file_id": 27,
+    "422": {
+        "file_id": 26,
         "content": "                deepspeed=args.deepspeed,\n                bf16=args.bf16,\n                fp16=args.fp16,\n                mode=args.mode,\n                checkpoint_activations=args.checkpoint_activations if not hasattr(args, 'vit_checkpoint_activations') else args.vit_checkpoint_activations,\n                checkpoint_num_layers=args.checkpoint_num_layers,\n                device=args.device,\n                hidden_dropout=0.,\n                attention_dropout=0.,\n            )\n    if hasattr(args, 'model_parallel_size'):\n        b['model_parallel_size'] = args.model_parallel_size\n    return argparse.Namespace(**deepcopy(b), **vars(minimal_args))\nclass ExternalVisionModel(BaseMixin):\n    '''A combination of vit and a linear projection'''\n    def __init__(self, args, vitclass):\n        '''\n            args: the args to initialize the vit model\n            vitclass: the class of VIT model, must be a subclass of BaseModel\n            project_dim: the dimension of the projection layer\n            default_load: the default load path for the vit model",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:60-82"
     },
-    "429": {
-        "file_id": 27,
+    "423": {
+        "file_id": 26,
         "content": "This code initializes a Vision Transformer (VIT) model and adds a linear projection layer on top. It takes arguments for various options like deepspeed, bf16, fp16, mode, checkpoint activations, checkpoint num layers, device, model parallel size, and more. The initialized VIT model is then used to create an ExternalVisionModel instance.",
         "type": "comment"
     },
-    "430": {
-        "file_id": 27,
+    "424": {
+        "file_id": 26,
         "content": "            model_parallel_size: the model parallel size for the vit model\n        '''\n        super().__init__()\n        self.vit = vitclass()\n        # self.ppx = nn.Embedding(80, 1024)\n        # self.ppy = nn.Embedding(80, 1024)\n        # nn.init.uniform_(self.ppx.weight.data)\n        # nn.init.uniform_(self.ppy.weight.data)\n        # self.pos_embed = nn.Parameter(\n        #     torch.from_numpy(get_2d_sincos_pos_embed(1024, 80)).float()\n        # )\n        cross_image_length = (args.cross_image_pix//14)**2\n        self.pos_embed = nn.Parameter(\n            torch.zeros(cross_image_length, 1024)\n        )\n    def forward(self, *args, **kw_args):\n        enc = self.vit(*args, **kw_args)\n        # i = torch.arange(80, device=enc.device)\n        # j = torch.arange(80, device=enc.device)\n        # posx = self.ppx(i).unsqueeze(0).repeat(80, 1, 1)\n        # posy = self.ppy(j).unsqueeze(1).repeat(1, 80, 1)\n        # pos = (posx + posy).view(-1, 1024).unsqueeze(0)\n        # return enc + pos + self.pos_embed.unsqueeze(0)",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:83-108"
     },
-    "431": {
-        "file_id": 27,
+    "425": {
+        "file_id": 26,
         "content": "This code initializes a model with a VIT (Vision Transformer) class and adds position embedding. The model parallel size is set, and an optional positional embedding layer can be added for the ViT input. It also includes parameters to specify the number of images being used in cross-modal reasoning. The forward function returns the output from the VIT model with position embedding and self.pos_embed added.",
         "type": "comment"
     },
-    "432": {
-        "file_id": 27,
+    "426": {
+        "file_id": 26,
         "content": "        return enc + self.pos_embed.unsqueeze(0)\nclass ImageMixin(BaseMixin):\n    def __init__(self, args):\n        super().__init__()\n        vit_args = override_dist_dtype_device_args(args, args.eva_args)\n        self.vit_model = EVA2CLIPModel(EVA2CLIPModel.get_args(**vars(vit_args)))\n        self.in_features = 1792\n        self.linear_proj = GLU(args, self.in_features)\n        self.image_length = args.image_length\n        self.boi = nn.Parameter(torch.zeros(1, 1, args.hidden_size))\n        self.eoi = nn.Parameter(torch.zeros(1, 1, args.hidden_size))\n        # self.ppx = nn.Embedding(16,1792)\n        # self.ppy = nn.Embedding(16,1792)\n        # self.pos_embed = nn.Parameter(\n        #     torch.from_numpy(get_2d_sincos_pos_embed(1792, 16)).float()\n        # )\n        self.pos_embed = nn.Parameter(\n            torch.zeros(self.image_length, 1792)\n        )\n    def word_embedding_forward(self, input_ids, output_cross_layer, **kw_args):\n        vision_inputs = {}\n        for k in kw_args:\n            if k.startswith('vision_') and k != 'vision_expert_mask':",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:109-135"
     },
-    "433": {
-        "file_id": 27,
+    "427": {
+        "file_id": 26,
         "content": "This code defines a class named \"ImageMixin\" which inherits from \"BaseMixin\". This class initializes an instance of the EVA2CLIPModel and sets up several parameters for processing image features. The code also defines methods to handle image embeddings, but the provided snippet doesn't show this part.",
         "type": "comment"
     },
-    "434": {
-        "file_id": 27,
+    "428": {
+        "file_id": 26,
         "content": "                vision_inputs[k[7:]] = kw_args[k]\n        if input_ids.shape[1] == 1 or not vision_inputs:\n            return self.transformer.word_embeddings(input_ids)\n        image_emb = self.vit_model(**vision_inputs)[0]\n        # i = torch.arange(16, device=image_emb.device)\n        # j = torch.arange(16, device=image_emb.device)\n        # posx = self.ppx(i).unsqueeze(0).repeat(16, 1, 1)\n        # posy = self.ppy(j).unsqueeze(1).repeat(1, 16, 1)\n        # pos = (posx + posy).view(256, -1).unsqueeze(0)\n        # image_emb = image_emb + pos + self.pos_embed.unsqueeze(0)\n        image_emb = image_emb + self.pos_embed.unsqueeze(0)\n        image_emb = self.linear_proj(image_emb)\n        image_embed_mask = kw_args['image_embed_mask']\n        word_embedding = self.transformer.word_embeddings(input_ids).clone()\n        word_embedding[image_embed_mask.bool()] = torch.cat([self.boi.repeat(len(image_emb), 1, 1), image_emb, self.eoi.repeat(len(image_emb), 1, 1)], dim=1).reshape(-1, image_emb.shape[-1])\n        return word_embedding.contiguous()",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:136-155"
     },
-    "435": {
-        "file_id": 27,
+    "429": {
+        "file_id": 26,
         "content": "The code takes a combination of input text and image, performs necessary computations for image embeddings, and combines the image embeddings with the word embeddings to create a final embedding. The code is part of the COG-VLM model, which uses both text and image inputs.",
         "type": "comment"
     },
-    "436": {
-        "file_id": 27,
+    "430": {
+        "file_id": 26,
         "content": "class CogAgentModel(LLaMAModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kwargs):\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)\n        self.image_length = args.image_length\n        self.cross_image_pix = args.cross_image_pix\n        self.add_mixin(\"eva\", ImageMixin(args))\n        self.del_mixin(\"mlp\")\n        self.add_mixin(\"mlp\", LlamaVisionExpertFCMixin(args.hidden_size, args.inner_hidden_size, args.num_layers, 32))\n        self.del_mixin(\"rotary\")\n        self.add_mixin(\"rotary\", LlamaVisionExpertAttnMixin(args.hidden_size, args.num_attention_heads, args.num_layers, 32))\n        cross_model = ExternalVisionModel(args, vitclass=partial(Eva2LargeEncoder, image_size=self.cross_image_pix))\n        # if args.mode != 'inference':\n        # cross_model.vit.model.set_grad_checkpointing(True)\n        self.add_mixin(\"encoder\", cross_model)\n    @classmethod\n    def add_model_specific_args(cls, parser):\n        group = parser.add_argument_group('CogAgent', 'CogAgent Configurations')",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:157-175"
     },
-    "437": {
-        "file_id": 27,
+    "431": {
+        "file_id": 26,
         "content": "This code defines a CogAgentModel class that inherits from LLaMAModel and adds specific configurations for the CogAgent model. It initializes the model with image-related arguments, adds ImageMixin and MlpExpertFC/AttnExpertFC Mixins, and includes an ExternalVisionModel as part of the model.",
         "type": "comment"
     },
-    "438": {
-        "file_id": 27,
+    "432": {
+        "file_id": 26,
         "content": "        group.add_argument('--image_length', type=int, default=256)\n        group.add_argument('--cross_image_pix', type=int, default=1120) # Standard CogAgent use 1120; if you want to adjust this param, finetune the model first.\n        group.add_argument('--eva_args', type=json.loads, default={})\n        return super().add_model_specific_args(parser)\n    def forward(self, input_ids, vision_expert_mask, image_embed_mask, **kwargs):\n        cross_inputs = {}\n        for k in kwargs:\n            if k.startswith('cross_'):\n                cross_inputs[k[6:]] = kwargs[k]\n        if kwargs.get(\"mems_cross\") is not None:\n            kwargs['encoder_outputs'] = kwargs[\"mems_cross\"][0]\n        else:\n            outputs = self.get_mixin('encoder')(**cross_inputs)\n            kwargs['encoder_outputs'] = outputs\n        kwargs['cross_attention_mask'] = cross_inputs['attention_mask'] \n        if input_ids.shape[1] > 1:\n            return super().forward(input_ids=input_ids, vision_expert_mask=vision_expert_mask, image_embed_mask=image_embed_mask, **kwargs)",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:176-195"
     },
-    "439": {
-        "file_id": 27,
+    "433": {
+        "file_id": 26,
         "content": "This code adds arguments for model parameters and defines the forward method to handle cross-attention inputs.",
         "type": "comment"
     },
-    "440": {
-        "file_id": 27,
+    "434": {
+        "file_id": 26,
         "content": "        return super().forward(input_ids=input_ids, **kwargs)\nclass FineTuneTrainCogAgentModel(CogAgentModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)\n        self.args = args\n        # If you want to use model parallel with a mp_size=1 checkpoint, and meanwhile you also want to use lora,\n        # you have to add_mixin after loading model checkpoint.\n    @classmethod\n    def add_model_specific_args(cls, parser):\n        group = parser.add_argument_group('CogAgent-finetune', 'CogAgent finetune Configurations')\n        group.add_argument('--pre_seq_len', type=int, default=8)\n        group.add_argument('--lora_rank', type=int, default=10)\n        group.add_argument('--use_ptuning', action=\"store_true\")\n        group.add_argument('--use_lora', action=\"store_true\")\n        group.add_argument('--use_qlora', action=\"store_true\")\n        group.add_argument('--layer_range', nargs='+', type=int, default=None)",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:196-214"
     },
-    "441": {
-        "file_id": 27,
+    "435": {
+        "file_id": 26,
         "content": "The code is defining a class `FineTuneTrainCogAgentModel` which inherits from `CogAgentModel`. It has an initializer that initializes the superclass, sets `args`, and provides optional arguments for model parallelism and LoRA. The class also includes `add_model_specific_args` to add specific configuration options for the model fine-tuning process.",
         "type": "comment"
     },
-    "442": {
-        "file_id": 27,
+    "436": {
+        "file_id": 26,
         "content": "        return super().add_model_specific_args(parser)\nfrom sat.model.finetune import PTuningV2Mixin\nfrom sat.model.finetune.lora2 import LoraMixin\nclass FineTuneTestCogAgentModel(CogAgentModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)\n        if args.use_ptuning:\n            self.add_mixin(\"ptuning\", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))\n        if args.use_lora:\n            self.add_mixin(\"lora\", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)\n            self.get_mixin(\"eva\").vit_model.add_mixin(\"lora\", LoraMixin(args.eva_args['num_layers'], args.lora_rank, layer_range=args.layer_range), reinit=True)\n        elif args.use_qlora:\n            self.add_mixin(\"lora\", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:215-229"
     },
-    "443": {
-        "file_id": 27,
+    "437": {
+        "file_id": 26,
         "content": "This code is initializing a FineTuneTestCogAgentModel with optional PTuningV2Mixin and LoraMixin mixins. If args.use_ptuning is True, it adds the PTuningV2Mixin. If args.use_lora or args.use_qlora is True, it adds the LoraMixin to the model and its get_mixin('eva') respectively. The reinit parameter ensures the model mixins are properly initialized.",
         "type": "comment"
     },
-    "444": {
-        "file_id": 27,
+    "438": {
+        "file_id": 26,
         "content": "        self.args = args\n    @classmethod\n    def add_model_specific_args(cls, parser):\n        group = parser.add_argument_group('CogAgent-finetune', 'CogAgent finetune Configurations')\n        group.add_argument('--pre_seq_len', type=int, default=8)\n        group.add_argument('--lora_rank', type=int, default=10)\n        group.add_argument('--use_ptuning', action=\"store_true\")\n        group.add_argument('--use_lora', action=\"store_true\")\n        group.add_argument('--use_qlora', action=\"store_true\")\n        group.add_argument('--layer_range', nargs='+', type=int, default=None)\n        return super().add_model_specific_args(parser)",
         "type": "code",
         "location": "/utils/models/cogagent_model.py:230-241"
     },
-    "445": {
-        "file_id": 27,
+    "439": {
+        "file_id": 26,
         "content": "This code adds model-specific arguments to a parser for a CogAgent finetune configuration. It includes options for pre_seq_len, lora_rank, use of PTuning, LORA, QLORA, and layer range.",
         "type": "comment"
     },
-    "446": {
-        "file_id": 28,
+    "440": {
+        "file_id": 27,
         "content": "/utils/models/cogvlm_model.py",
         "type": "filepath"
     },
-    "447": {
-        "file_id": 28,
+    "441": {
+        "file_id": 27,
         "content": "The code defines a `GLU` class for CogVLM language model, sets up URLs, initializes an `EVA2CLIPModel`, performs word embedding forward pass with vision inputs, and introduces a `FineTuneTrainCogVLMModel` class that fine-tunes the model by adding mixins.",
         "type": "summary"
     },
-    "448": {
-        "file_id": 28,
+    "442": {
+        "file_id": 27,
         "content": "from sat.model.official.llama_model import LLaMAModel\nimport json\nimport torch\nfrom sat.model.base_model import BaseMixin\nimport torch.nn as nn\nfrom .mixin import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin\nfrom sat.resources.urls import MODEL_URLS\nMODEL_URLS[\"cogvlm-base-224\"] = \"r2://cogvlm-base-224.zip\"\nMODEL_URLS[\"cogvlm-base-490\"] = \"r2://cogvlm-base-490.zip\"\nMODEL_URLS[\"cogvlm-chat-v1.1\"] = \"r2://cogvlm-chat-v1.1.zip\"\nMODEL_URLS[\"cogvlm-grounding-base\"] = \"r2://cogvlm-grounding-base.zip\"\nMODEL_URLS[\"cogvlm-grounding-generalist-v1.1\"] = \"r2://cogvlm-grounding-generalist-v1.1.zip\"\nclass GLU(nn.Module):\n    def __init__(self, args, in_features):\n        super().__init__()\n        self.linear_proj = nn.Linear(in_features, args.hidden_size, bias=False)\n        self.norm1 = nn.LayerNorm(args.hidden_size)\n        self.act1 = nn.GELU()\n        self.act2 = nn.functional.silu\n        self.dense_h_to_4h = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False)\n        self.gate_proj = nn.Linear(args.hidden_size, args.inner_hidden_size, bias=False)",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:1-25"
     },
-    "449": {
-        "file_id": 28,
+    "443": {
+        "file_id": 27,
         "content": "This code defines a class `GLU` and imports various modules for creating a large language model. It also sets up URLs for different models in the CogVLM library.",
         "type": "comment"
     },
-    "450": {
-        "file_id": 28,
+    "444": {
+        "file_id": 27,
         "content": "        self.dense_4h_to_h = nn.Linear(args.inner_hidden_size, args.hidden_size, bias=False)\n    def forward(self, x):\n        x = self.linear_proj(x)\n        x = self.act1(self.norm1(x))\n        x = self.act2(self.gate_proj(x)) * self.dense_h_to_4h(x)\n        x = self.dense_4h_to_h(x)\n        return x\nfrom .eva_clip_model import EVA2CLIPModel\nimport argparse\nfrom copy import deepcopy\ndef override_dist_dtype_device_args(args, b={}):\n    if args.mode == 'inference':\n        minimal_args = argparse.Namespace(\n            world_size=args.world_size,\n            rank=args.rank,\n            local_rank=args.local_rank,\n            skip_init=args.skip_init,\n            use_gpu_initialization=args.use_gpu_initialization,\n            deepspeed=args.deepspeed,\n            bf16=args.bf16,\n            fp16=args.fp16,\n            mode=args.mode,\n            device=args.device\n        )\n    else:\n        minimal_args = argparse.Namespace(\n                world_size=args.world_size,\n                rank=args.rank,\n                local_rank=args.local_rank,",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:26-56"
     },
-    "451": {
-        "file_id": 28,
+    "445": {
+        "file_id": 27,
         "content": "This code is defining a class for the CogVLM model and its forward function, as well as a function to override certain arguments when running in inference mode.",
         "type": "comment"
     },
-    "452": {
-        "file_id": 28,
+    "446": {
+        "file_id": 27,
         "content": "                skip_init=args.skip_init,\n                use_gpu_initialization=args.use_gpu_initialization,\n                deepspeed=args.deepspeed,\n                bf16=args.bf16,\n                fp16=args.fp16,\n                mode=args.mode,\n                checkpoint_activations=args.checkpoint_activations if not hasattr(args, 'vit_checkpoint_activations') else args.vit_checkpoint_activations,\n                checkpoint_num_layers=args.checkpoint_num_layers,\n                device=args.device,\n                hidden_dropout=0.,\n                attention_dropout=0.,\n            )\n    if hasattr(args, 'model_parallel_size'):\n        b['model_parallel_size'] = args.model_parallel_size\n    return argparse.Namespace(**deepcopy(b), **vars(minimal_args))\nclass ImageMixin(BaseMixin):\n    def __init__(self, args):\n        super().__init__()\n        vit_args = override_dist_dtype_device_args(args, args.eva_args)\n        self.vit_model = EVA2CLIPModel(EVA2CLIPModel.get_args(**vars(vit_args)))\n        self.in_features = 1792",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:57-78"
     },
-    "453": {
-        "file_id": 28,
+    "447": {
+        "file_id": 27,
         "content": "Functionality:\n- Initializing an instance of `EVA2CLIPModel` with given arguments.\n- Overriding the dist, dtype, and device args from `args` and `eva_args`.\n- Setting the `vit_model` attribute of the `ImageMixin` class to the initialized model.\n- Setting the `in_features` attribute to 1792.",
         "type": "comment"
     },
-    "454": {
-        "file_id": 28,
+    "448": {
+        "file_id": 27,
         "content": "        self.linear_proj = GLU(args, self.in_features)\n        self.image_length = args.image_length\n        self.boi = nn.Parameter(torch.zeros(1, 1, args.hidden_size))\n        self.eoi = nn.Parameter(torch.zeros(1, 1, args.hidden_size))\n    def word_embedding_forward(self, input_ids, output_cross_layer, **kw_args):\n        vision_inputs = {}\n        for k in kw_args:\n            if k.startswith('vision_') and k != 'vision_expert_mask':\n                vision_inputs[k[7:]] = kw_args[k]\n        if input_ids.shape[1] == 1 or not vision_inputs:\n            return self.transformer.word_embeddings(input_ids)\n        image_emb = self.vit_model(**vision_inputs)[0]\n        image_emb = self.linear_proj(image_emb)\n        image_embed_mask = kw_args['image_embed_mask']\n        word_embedding = self.transformer.word_embeddings(input_ids).clone()\n        word_embedding[image_embed_mask.bool()] = torch.cat([self.boi.repeat(len(image_emb), 1, 1), image_emb, self.eoi.repeat(len(image_emb), 1, 1)], dim=1).reshape(-1, image_emb.shape[-1])",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:79-96"
     },
-    "455": {
-        "file_id": 28,
+    "449": {
+        "file_id": 27,
         "content": "This code defines a class method that performs word embedding forward pass. It first checks if input has only one token or no vision inputs, in which case it returns the output from the transformer's word embeddings. If there are vision inputs, it passes them to the Vision Transformer model (vit_model), applies linear projection, and then masks and combines vision and word embeddings.",
         "type": "comment"
     },
-    "456": {
-        "file_id": 28,
+    "450": {
+        "file_id": 27,
         "content": "        return word_embedding.contiguous()\nclass CogVLMModel(LLaMAModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kwargs):\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)\n        self.image_length = args.image_length\n        self.add_mixin(\"eva\", ImageMixin(args))\n        self.del_mixin(\"mlp\")\n        self.add_mixin(\"mlp\", LlamaVisionExpertFCMixin(args.hidden_size, args.inner_hidden_size, args.num_layers, 32))\n        self.del_mixin(\"rotary\")\n        self.add_mixin(\"rotary\", LlamaVisionExpertAttnMixin(args.hidden_size, args.num_attention_heads, args.num_layers, 32))\n    @classmethod\n    def add_model_specific_args(cls, parser):\n        group = parser.add_argument_group('CogVLM', 'CogVLM Configurations')\n        group.add_argument('--image_length', type=int, default=256)\n        group.add_argument('--eva_args', type=json.loads, default={})\n        return super().add_model_specific_args(parser)\n    def forward(self, input_ids, vision_expert_mask, image_embed_mask, **kwargs):",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:97-117"
     },
-    "457": {
-        "file_id": 28,
+    "451": {
+        "file_id": 27,
         "content": "Function: CogVLMModel\n- Initializes the CogVLM model with specified arguments, transformer, and parallel_output.\n- Sets image_length, adds ImageMixin, removes mlp mixin, adds LlamaVisionExpertFCMixin, removes rotary mixin, adds LlamaVisionExpertAttnMixin.\n- Adds model-specific arguments for CogVLM to the parser.\n- Defines forward function for model.",
         "type": "comment"
     },
-    "458": {
-        "file_id": 28,
+    "452": {
+        "file_id": 27,
         "content": "        if input_ids.shape[1] > 1:\n            return super().forward(input_ids=input_ids, vision_expert_mask=vision_expert_mask, image_embed_mask=image_embed_mask, **kwargs)\n        return super().forward(input_ids=input_ids, **kwargs)\nclass FineTuneTrainCogVLMModel(CogVLMModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)\n        self.args = args\n        # If you want to use model parallel with a mp_size=1 checkpoint, and meanwhile you also want to use lora,\n        # you have to add_mixin after loading model checkpoint.\n    @classmethod\n    def add_model_specific_args(cls, parser):\n        group = parser.add_argument_group('CogVLM-finetune', 'CogVLM finetune Configurations')\n        group.add_argument('--pre_seq_len', type=int, default=8)\n        group.add_argument('--lora_rank', type=int, default=10)\n        group.add_argument('--use_ptuning', action=\"store_true\")",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:118-135"
     },
-    "459": {
-        "file_id": 28,
+    "453": {
+        "file_id": 27,
         "content": "This code defines a class `FineTuneTrainCogVLMModel` that inherits from `CogVLMModel`. The constructor initializes the object and adds some model-specific arguments for fine-tuning. The function `add_model_specific_args` is used to add these specific arguments to the parser.",
         "type": "comment"
     },
-    "460": {
-        "file_id": 28,
+    "454": {
+        "file_id": 27,
         "content": "        group.add_argument('--use_lora', action=\"store_true\")\n        group.add_argument('--use_qlora', action=\"store_true\")\n        group.add_argument('--layer_range', nargs='+', type=int, default=None)\n        return super().add_model_specific_args(parser)\nfrom sat.model.finetune import PTuningV2Mixin\nfrom sat.model.finetune.lora2 import LoraMixin\nclass FineTuneTestCogVLMModel(CogVLMModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)\n        if args.use_ptuning:\n            self.add_mixin(\"ptuning\", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))\n        if args.use_lora:\n            self.add_mixin(\"lora\", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range), reinit=True)\n            self.get_mixin(\"eva\").vit_model.add_mixin(\"lora\", LoraMixin(args.eva_args['num_layers'], args.lora_rank, layer_range=args.layer_range), reinit=True)",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:136-151"
     },
-    "461": {
-        "file_id": 28,
+    "455": {
+        "file_id": 27,
         "content": "This code is adding model-specific arguments and mixins to the FineTuneTestCogVLMModel class. It adds options for using PTuningV2Mixin, LoraMixin, and EvaMixin based on the provided arguments. The code allows for fine-tuning of the model with these mixins if specified.",
         "type": "comment"
     },
-    "462": {
-        "file_id": 28,
+    "456": {
+        "file_id": 27,
         "content": "        elif args.use_qlora:\n            self.add_mixin(\"lora\", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)\n        self.args = args\n    @classmethod\n    def add_model_specific_args(cls, parser):\n        group = parser.add_argument_group('CogVLM-finetune', 'CogVLM finetune Configurations')\n        group.add_argument('--pre_seq_len', type=int, default=8)\n        group.add_argument('--lora_rank', type=int, default=10)\n        group.add_argument('--use_ptuning', action=\"store_true\")\n        group.add_argument('--use_lora', action=\"store_true\")\n        group.add_argument('--use_qlora', action=\"store_true\")\n        group.add_argument('--layer_range', nargs='+', type=int, default=None)\n        return super().add_model_specific_args(parser)",
         "type": "code",
         "location": "/utils/models/cogvlm_model.py:152-165"
     },
-    "463": {
-        "file_id": 28,
+    "457": {
+        "file_id": 27,
         "content": "This code is adding arguments for CogVLM finetuning. If --use_qlora argument is provided, a LoraMixin with qlora set to True is added to the model. It also adds default values for pre_seq_len, lora_rank, use_ptuning, use_lora, use_qlora, and layer_range.",
         "type": "comment"
     },
-    "464": {
-        "file_id": 29,
+    "458": {
+        "file_id": 28,
         "content": "/utils/models/eva_clip_L_hf.py",
         "type": "filepath"
     },
-    "465": {
-        "file_id": 29,
+    "459": {
+        "file_id": 28,
         "content": "Both comments describe the initialization and definition of vision transformer models, with Comment A emphasizing CLIP Vision model's layer configuration and Comment B explaining Eva2LargeEncoder for EVAVisionTransformer model and position embedding.",
         "type": "summary"
     },
-    "466": {
-        "file_id": 29,
+    "460": {
+        "file_id": 28,
         "content": "from math import pi\nimport torch\nfrom torch import nn\nfrom einops import rearrange, repeat\nimport logging\ndef broadcat(tensors, dim = -1):\n    num_tensors = len(tensors)\n    shape_lens = set(list(map(lambda t: len(t.shape), tensors)))\n    assert len(shape_lens) == 1, 'tensors must all have the same number of dimensions'\n    shape_len = list(shape_lens)[0]\n    dim = (dim + shape_len) if dim < 0 else dim\n    dims = list(zip(*map(lambda t: list(t.shape), tensors)))\n    expandable_dims = [(i, val) for i, val in enumerate(dims) if i != dim]\n    assert all([*map(lambda t: len(set(t[1])) <= 2, expandable_dims)]), 'invalid dimensions for broadcastable concatentation'\n    max_dims = list(map(lambda t: (t[0], max(t[1])), expandable_dims))\n    expanded_dims = list(map(lambda t: (t[0], (t[1],) * num_tensors), max_dims))\n    expanded_dims.insert(dim, (dim, dims[dim]))\n    expandable_shapes = list(zip(*map(lambda t: t[1], expanded_dims)))\n    tensors = list(map(lambda t: t[0].expand(*t[1]), zip(tensors, expandable_shapes)))",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:1-20"
     },
-    "467": {
-        "file_id": 29,
+    "461": {
+        "file_id": 28,
         "content": "This function, `broadcast`, performs broadcastable concatenation of tensors along a specified dimension. It takes a list of tensors and a dimension (default is -1) as input parameters. It checks if all tensors have the same number of dimensions and that the dimensions are valid for broadcasting. Then it expands the dimensions, creating new tensor shapes to accommodate the broadcasted operation. Finally, it expands each tensor along its corresponding dimension and returns a list of expanded tensors.",
         "type": "comment"
     },
-    "468": {
-        "file_id": 29,
+    "462": {
+        "file_id": 28,
         "content": "    return torch.cat(tensors, dim = dim)\ndef rotate_half(x):\n    x = rearrange(x, '... (d r) -> ... d r', r = 2)\n    x1, x2 = x.unbind(dim = -1)\n    x = torch.stack((-x2, x1), dim = -1)\n    return rearrange(x, '... d r -> ... (d r)')\nclass VisionRotaryEmbeddingFast(nn.Module):\n    def __init__(\n        self,\n        dim,\n        pt_seq_len,\n        ft_seq_len=None,\n        custom_freqs = None,\n        freqs_for = 'lang',\n        theta = 10000,\n        max_freq = 10,\n        num_freqs = 1,\n        patch_dropout = 0.\n    ):\n        super().__init__()\n        if custom_freqs:\n            freqs = custom_freqs\n        elif freqs_for == 'lang':\n            freqs = 1. / (theta ** (torch.arange(0, dim, 2)[:(dim // 2)].float() / dim))\n        elif freqs_for == 'pixel':\n            freqs = torch.linspace(1., max_freq / 2, dim // 2) * pi\n        elif freqs_for == 'constant':\n            freqs = torch.ones(num_freqs).float()\n        else:\n            raise ValueError(f'unknown modality {freqs_for}')\n        if ft_seq_len is None: ft_seq_len = pt_seq_len",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:21-54"
     },
-    "469": {
-        "file_id": 29,
+    "463": {
+        "file_id": 28,
         "content": "This code defines a class `VisionRotaryEmbeddingFast` for creating rotary position embeddings. It takes in parameters such as the dimensionality (dim), patch sequence length (pt_seq_len), feature sequence length (ft_seq_len), custom frequencies, and frequency mode. It initializes the object by determining the frequencies based on the provided parameters using the `freqs` variable. The code also includes a helper function called `rotate_half` for rotating half of the tensor.",
         "type": "comment"
     },
-    "470": {
-        "file_id": 29,
+    "464": {
+        "file_id": 28,
         "content": "        t = torch.arange(ft_seq_len) / ft_seq_len * pt_seq_len\n        freqs = torch.einsum('..., f -> ... f', t, freqs)\n        freqs = repeat(freqs, '... n -> ... (n r)', r = 2)\n        freqs = broadcat((freqs[:, None, :], freqs[None, :, :]), dim = -1)\n        freqs_cos = freqs.cos().view(-1, freqs.shape[-1])\n        freqs_sin = freqs.sin().view(-1, freqs.shape[-1])\n        self.patch_dropout = patch_dropout\n        self.register_buffer(\"freqs_cos\", freqs_cos)\n        self.register_buffer(\"freqs_sin\", freqs_sin)\n        logging.info(f'Shape of rope freq: {self.freqs_cos.shape}')\n    def forward(self, t, patch_indices_keep=None):\n        if patch_indices_keep is not None:\n            batch = t.size()[0]\n            batch_indices = torch.arange(batch)\n            batch_indices = batch_indices[..., None]\n            freqs_cos = repeat(self.freqs_cos, 'i j -> n i m j', n=t.shape[0], m=t.shape[1])\n            freqs_sin = repeat(self.freqs_sin, 'i j -> n i m j', n=t.shape[0], m=t.shape[1])\n            freqs_cos = freqs_cos[batch_indices, patch_indices_keep]",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:55-80"
     },
-    "471": {
-        "file_id": 29,
+    "465": {
+        "file_id": 28,
         "content": "Computing Fourier coefficients for time sequence.\nRegistering Fourier coefficients as buffers.",
         "type": "comment"
     },
-    "472": {
-        "file_id": 29,
+    "466": {
+        "file_id": 28,
         "content": "            freqs_cos = rearrange(freqs_cos, 'n i m j -> n m i j')\n            freqs_sin = freqs_sin[batch_indices, patch_indices_keep]\n            freqs_sin = rearrange(freqs_sin, 'n i m j -> n m i j')\n            return  t * freqs_cos + rotate_half(t) * freqs_sin\n        return  t * self.freqs_cos + rotate_half(t) * self.freqs_sin\nimport torch.nn as nn\nimport os\nfrom dataclasses import dataclass\nfrom typing import Optional, Tuple, Union\nfrom functools import partial\nimport numpy as np\nimport torch\nimport torch.nn.functional as F\nfrom torch import nn\n# --------------------------------------------------------\n# Adapted from  https://github.com/microsoft/unilm/tree/master/beit\n# --------------------------------------------------------\nimport math\nimport os\nfrom functools import partial\nimport torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nimport logging\ntry:\n    from timm.models.layers import drop_path, to_2tuple, trunc_normal_\nexcept:\n    from timm.layers import drop_path, to_2tuple, trunc_normal_\nclass PatchDropout(nn.Module):",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:81-115"
     },
-    "473": {
-        "file_id": 29,
+    "467": {
+        "file_id": 28,
         "content": "Code at line 80-114:\nThe code calculates the output by multiplying input 't' with cosine values from self.freqs_cos and rotated half of 't' with sinusoidal values from self.freqs_sin, then summing them together. This is part of a model function that returns the transformed input.\n\nCode from 80 to 114:\nThis section defines a PatchDropout class which applies dropout to specific patches in an image and performs operations such as forward, __call__, and extra methods like _get_drop_patches. It takes patch size and drop probability as parameters for initialization and uses torch.nn.functional.dropout internally.",
         "type": "comment"
     },
-    "474": {
-        "file_id": 29,
+    "468": {
+        "file_id": 28,
         "content": "    \"\"\"\n    https://arxiv.org/abs/2212.00794\n    \"\"\"\n    def __init__(self, prob, exclude_first_token=True):\n        super().__init__()\n        assert 0 <= prob < 1.\n        self.prob = prob\n        self.exclude_first_token = exclude_first_token  # exclude CLS token\n        logging.info(f\"os.getenv('RoPE')={os.getenv('RoPE')}\")\n    def forward(self, x):\n        if not self.training or self.prob == 0.:\n            return x\n        if self.exclude_first_token:\n            cls_tokens, x = x[:, :1], x[:, 1:]\n        else:\n            cls_tokens = torch.jit.annotate(torch.Tensor, x[:, :1])\n        batch = x.size()[0]\n        num_tokens = x.size()[1]\n        batch_indices = torch.arange(batch)\n        batch_indices = batch_indices[..., None]\n        keep_prob = 1 - self.prob\n        num_patches_keep = max(1, int(num_tokens * keep_prob))\n        rand = torch.randn(batch, num_tokens)\n        patch_indices_keep = rand.topk(num_patches_keep, dim=-1).indices\n        x = x[batch_indices, patch_indices_keep]\n        if self.exclude_first_token:",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:116-150"
     },
-    "475": {
-        "file_id": 29,
+    "469": {
+        "file_id": 28,
         "content": "This code defines a class for masking a random set of patches in an input tensor during training. It takes two arguments, the probability of masking and whether to exclude the first token (CLS) or not. The forward method applies the mask based on these parameters.",
         "type": "comment"
     },
-    "476": {
-        "file_id": 29,
+    "470": {
+        "file_id": 28,
         "content": "            x = torch.cat((cls_tokens, x), dim=1)\n        if self.training and os.getenv('RoPE') == '1':\n            return x, patch_indices_keep\n        return x\nif os.getenv('ENV_TYPE') == 'deepspeed':\n    try:\n        from deepspeed.runtime.activation_checkpointing.checkpointing import checkpoint\n    except:\n        from torch.utils.checkpoint import checkpoint\nelse:\n    from torch.utils.checkpoint import checkpoint\nimport xformers.ops as xops\nclass DropPath(nn.Module):\n    \"\"\"Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).\n    \"\"\"\n    def __init__(self, drop_prob=None):\n        super(DropPath, self).__init__()\n        self.drop_prob = drop_prob\n    def forward(self, x):\n        return drop_path(x, self.drop_prob, self.training)\n    def extra_repr(self) -> str:\n        return 'p={}'.format(self.drop_prob)\nclass Mlp(nn.Module):\n    def __init__(\n        self, \n        in_features, \n        hidden_features=None, \n        out_features=None, \n        act_layer=nn.GELU, \n        norm_layer=nn.LayerNorm, ",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:151-189"
     },
-    "477": {
-        "file_id": 29,
+    "471": {
+        "file_id": 28,
         "content": "Code is defining classes for DropPath and Mlp in a neural network model. DropPath implements drop paths (Stochastic Depth) to randomly zero out some channels of input during training. Mlp defines a fully connected layer with a middle layer that can be used as an additional module in the network. Both classes take in features and activation layers as parameters for their construction.",
         "type": "comment"
     },
-    "478": {
-        "file_id": 29,
+    "472": {
+        "file_id": 28,
         "content": "        drop=0.,\n        subln=False,\n        ):\n        super().__init__()\n        out_features = out_features or in_features\n        hidden_features = hidden_features or in_features\n        self.fc1 = nn.Linear(in_features, hidden_features)\n        self.act = act_layer()\n        self.ffn_ln = norm_layer(hidden_features) if subln else nn.Identity()\n        self.fc2 = nn.Linear(hidden_features, out_features)\n        self.drop = nn.Dropout(drop)\n    def forward(self, x):\n        x = self.fc1(x)\n        x = self.act(x)\n        # x = self.drop(x)\n        # commit this for the orignal BERT implement \n        x = self.ffn_ln(x)\n        x = self.fc2(x)\n        x = self.drop(x)\n        return x\nclass SwiGLU(nn.Module):\n    def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.SiLU, drop=0., \n                norm_layer=nn.LayerNorm, subln=False):\n        super().__init__()\n        out_features = out_features or in_features\n        hidden_features = hidden_features or in_features\n        self.w1 = nn.Linear(in_features, hidden_features)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:190-223"
     },
-    "479": {
-        "file_id": 29,
+    "473": {
+        "file_id": 28,
         "content": "Class \"eva_clip_L_hf\" is a neural network layer that takes in input features, performs linear transformation (fc1), applies activation function (act), normalization (ffn_ln if subln=False) and another linear transformation (fc2). It also has a dropout layer.\n\nClass \"SwiGLU\" is a neural network layer that takes in input features, performs two linear transformations (w1 and w2) and applies activation functions.",
         "type": "comment"
     },
-    "480": {
-        "file_id": 29,
+    "474": {
+        "file_id": 28,
         "content": "        self.w2 = nn.Linear(in_features, hidden_features)\n        self.act = act_layer()\n        self.ffn_ln = norm_layer(hidden_features) if subln else nn.Identity()\n        self.w3 = nn.Linear(hidden_features, out_features)\n        self.drop = nn.Dropout(drop)\n    def forward(self, x):\n        x1 = self.w1(x)\n        x2 = self.w2(x)\n        hidden = self.act(x1) * x2\n        x = self.ffn_ln(hidden)\n        x = self.w3(x)\n        x = self.drop(x)\n        return x\nclass Attention(nn.Module):\n    def __init__(\n            self, dim, num_heads=8, qkv_bias=False, qk_scale=None, attn_drop=0.,\n            proj_drop=0., window_size=None, attn_head_dim=None, xattn=False, rope=None, subln=False, norm_layer=nn.LayerNorm):\n        super().__init__()\n        self.num_heads = num_heads\n        head_dim = dim // num_heads\n        if attn_head_dim is not None:\n            head_dim = attn_head_dim\n        all_head_dim = head_dim * self.num_heads\n        self.scale = qk_scale or head_dim ** -0.5\n        self.subln = subln\n        if self.subln:",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:224-254"
     },
-    "481": {
-        "file_id": 29,
+    "475": {
+        "file_id": 28,
         "content": "This code defines a neural network model for the \"Efficient Vision Transformer\" architecture. It includes modules such as Linear layers (nn.Linear), activation functions (act_layer), normalization layers (norm_layer), and Dropout layers (nn.Dropout). The Attention class is used to compute attention scores using multi-head attention.",
         "type": "comment"
     },
-    "482": {
-        "file_id": 29,
+    "476": {
+        "file_id": 28,
         "content": "            self.q_proj = nn.Linear(dim, all_head_dim, bias=False)\n            self.k_proj = nn.Linear(dim, all_head_dim, bias=False)\n            self.v_proj = nn.Linear(dim, all_head_dim, bias=False)\n        else:\n            self.qkv = nn.Linear(dim, all_head_dim * 3, bias=False)\n        if qkv_bias:\n            self.q_bias = nn.Parameter(torch.zeros(all_head_dim))\n            self.v_bias = nn.Parameter(torch.zeros(all_head_dim))\n        else:\n            self.q_bias = None\n            self.v_bias = None\n        if window_size:\n            self.window_size = window_size\n            self.num_relative_distance = (2 * window_size[0] - 1) * (2 * window_size[1] - 1) + 3\n            self.relative_position_bias_table = nn.Parameter(\n                torch.zeros(self.num_relative_distance, num_heads))  # 2*Wh-1 * 2*Ww-1, nH\n            # cls to token & token 2 cls & cls to cls\n            # get pair-wise relative position index for each token inside the window\n            coords_h = torch.arange(window_size[0])",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:255-276"
     },
-    "483": {
-        "file_id": 29,
+    "477": {
+        "file_id": 28,
         "content": "Initialize query, key, and value projection layers for the MultiHeadAttention module. If qkv_bias is True, add separate bias parameters for each projection layer. If window_size is provided, initialize relative position bias table and set num_relative_distance and coords_h variables.",
         "type": "comment"
     },
-    "484": {
-        "file_id": 29,
+    "478": {
+        "file_id": 28,
         "content": "            coords_w = torch.arange(window_size[1])\n            coords = torch.stack(torch.meshgrid([coords_h, coords_w]))  # 2, Wh, Ww\n            coords_flatten = torch.flatten(coords, 1)  # 2, Wh*Ww\n            relative_coords = coords_flatten[:, :, None] - coords_flatten[:, None, :]  # 2, Wh*Ww, Wh*Ww\n            relative_coords = relative_coords.permute(1, 2, 0).contiguous()  # Wh*Ww, Wh*Ww, 2\n            relative_coords[:, :, 0] += window_size[0] - 1  # shift to start from 0\n            relative_coords[:, :, 1] += window_size[1] - 1\n            relative_coords[:, :, 0] *= 2 * window_size[1] - 1\n            relative_position_index = \\\n                torch.zeros(size=(window_size[0] * window_size[1] + 1, ) * 2, dtype=relative_coords.dtype)\n            relative_position_index[1:, 1:] = relative_coords.sum(-1)  # Wh*Ww, Wh*Ww\n            relative_position_index[0, 0:] = self.num_relative_distance - 3\n            relative_position_index[0:, 0] = self.num_relative_distance - 2\n            relative_position_index[0, 0] = self.num_relative_distance - 1",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:277-290"
     },
-    "485": {
-        "file_id": 29,
+    "479": {
+        "file_id": 28,
         "content": "This code calculates relative coordinates and creates an index for the relative position in a 2D grid. It then assigns labels to these positions based on their distances from the center of the grid and from the outer edges.",
         "type": "comment"
     },
-    "486": {
-        "file_id": 29,
+    "480": {
+        "file_id": 28,
         "content": "            self.register_buffer(\"relative_position_index\", relative_position_index)\n        else:\n            self.window_size = None\n            self.relative_position_bias_table = None\n            self.relative_position_index = None\n        self.attn_drop = nn.Dropout(attn_drop)\n        self.inner_attn_ln = norm_layer(all_head_dim) if subln else nn.Identity()\n        # self.proj = nn.Linear(all_head_dim, all_head_dim)\n        self.proj = nn.Linear(all_head_dim, dim)\n        self.proj_drop = nn.Dropout(proj_drop)\n        self.xattn = xattn\n        self.xattn_drop = attn_drop\n        self.rope = rope\n    def forward(self, x, rel_pos_bias=None, attn_mask=None):\n        B, N, C = x.shape\n        if self.subln: \n            q = F.linear(input=x, weight=self.q_proj.weight, bias=self.q_bias)\n            k = F.linear(input=x, weight=self.k_proj.weight, bias=None)\n            v = F.linear(input=x, weight=self.v_proj.weight, bias=self.v_bias)\n            q = q.reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3)     # B, num_heads, N, C",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:292-315"
     },
-    "487": {
-        "file_id": 29,
+    "481": {
+        "file_id": 28,
         "content": "This code defines a class for a self-attention mechanism. It initializes variables for the window size, relative position bias table, and index. If no window size is provided, it sets them to None. The class also includes an attention dropout layer and layers for linear transformations. The forward function performs linear transformations on input x, reshapes the output, and permutes the dimensions.",
         "type": "comment"
     },
-    "488": {
-        "file_id": 29,
+    "482": {
+        "file_id": 28,
         "content": "            k = k.reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3)  \n            v = v.reshape(B, N, self.num_heads, -1).permute(0, 2, 1, 3) \n        else: \n            qkv_bias = None\n            if self.q_bias is not None:\n                qkv_bias = torch.cat((self.q_bias, torch.zeros_like(self.v_bias, requires_grad=False), self.v_bias))\n            qkv = F.linear(input=x, weight=self.qkv.weight, bias=qkv_bias)\n            qkv = qkv.reshape(B, N, 3, self.num_heads, -1).permute(2, 0, 3, 1, 4)   # 3, B, num_heads, N, C\n            q, k, v = qkv[0], qkv[1], qkv[2]\n        if self.rope:\n            # slightly fast impl\n            q_t = q[:, :, 1:, :]\n            ro_q_t = self.rope(q_t)\n            q = torch.cat((q[:, :, :1, :], ro_q_t), -2).type_as(v)\n            k_t = k[:, :, 1:, :]\n            ro_k_t = self.rope(k_t)\n            k = torch.cat((k[:, :, :1, :], ro_k_t), -2).type_as(v)\n        if self.xattn:\n            q = q.permute(0, 2, 1, 3)   # B, num_heads, N, C -> B, N, num_heads, C\n            k = k.permute(0, 2, 1, 3)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:316-340"
     },
-    "489": {
-        "file_id": 29,
+    "483": {
+        "file_id": 28,
         "content": "This code is responsible for the transformation and computation of query (q), key (k), and value (v) tensors in a transformer model. The code handles these operations based on certain conditions: if self.rope or self.xattn are True, it performs additional operations such as applying the rope function or permuting the tensor shapes. The qkv_bias is used when both self.q_bias and self.v_bias exist, otherwise, a linear layer (F.linear) is used to compute qkv. Finally, the code reshapes and permutes the tensors according to their specific shapes.",
         "type": "comment"
     },
-    "490": {
-        "file_id": 29,
+    "484": {
+        "file_id": 28,
         "content": "            v = v.permute(0, 2, 1, 3)\n            x = xops.memory_efficient_attention(\n                q, k, v,\n                p=self.xattn_drop,\n                scale=self.scale,\n                )\n            x = x.reshape(B, N, -1)\n            x = self.inner_attn_ln(x)\n            x = self.proj(x)\n            x = self.proj_drop(x)\n        else:\n            q = q * self.scale\n            attn = (q @ k.transpose(-2, -1))\n            if self.relative_position_bias_table is not None:\n                relative_position_bias = \\\n                    self.relative_position_bias_table[self.relative_position_index.view(-1)].view(\n                        self.window_size[0] * self.window_size[1] + 1,\n                        self.window_size[0] * self.window_size[1] + 1, -1)  # Wh*Ww,Wh*Ww,nH\n                relative_position_bias = relative_position_bias.permute(2, 0, 1).contiguous()  # nH, Wh*Ww, Wh*Ww\n                attn = attn + relative_position_bias.unsqueeze(0).type_as(attn)\n            if rel_pos_bias is not None:",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:341-364"
     },
-    "491": {
-        "file_id": 29,
+    "485": {
+        "file_id": 28,
         "content": "This code block is performing multi-head self-attention using either memory efficient method or matrix multiplication, depending on the flag. It also applies dropout and optionally adds relative position biases to the attention scores.",
         "type": "comment"
     },
-    "492": {
-        "file_id": 29,
+    "486": {
+        "file_id": 28,
         "content": "                attn = attn + rel_pos_bias.type_as(attn)\n            if attn_mask is not None:\n                attn_mask = attn_mask.bool()\n                attn = attn.masked_fill(~attn_mask[:, None, None, :], float(\"-inf\"))\n            attn = attn.softmax(dim=-1)\n            attn = self.attn_drop(attn)\n            x = (attn @ v).transpose(1, 2).reshape(B, N, -1)\n            x = self.inner_attn_ln(x)\n            x = self.proj(x)\n            x = self.proj_drop(x)\n        return x\nclass Block(nn.Module):\n    def __init__(self, dim, num_heads, mlp_ratio=4., qkv_bias=False, qk_scale=None, drop=0., attn_drop=0.,\n                 drop_path=0., init_values=None, act_layer=nn.GELU, norm_layer=nn.LayerNorm,\n                 window_size=None, attn_head_dim=None, xattn=False, rope=None, postnorm=False,\n                 subln=False, naiveswiglu=False):\n        super().__init__()\n        self.norm1 = norm_layer(dim)\n        self.attn = Attention(\n            dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:365-390"
     },
-    "493": {
-        "file_id": 29,
+    "487": {
+        "file_id": 28,
         "content": "This code defines a block for the Transformer architecture. It consists of a normalization layer, an attention mechanism with optional self-attention masking and dropout, a feedforward network with optional dropout, and possibly other operations depending on the parameters specified in the constructor.",
         "type": "comment"
     },
-    "494": {
-        "file_id": 29,
+    "488": {
+        "file_id": 28,
         "content": "            attn_drop=attn_drop, proj_drop=drop, window_size=window_size, attn_head_dim=attn_head_dim,\n            xattn=xattn, rope=rope, subln=subln, norm_layer=norm_layer)\n        # NOTE: drop path for stochastic depth, we shall see if this is better than dropout here\n        self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()\n        self.norm2 = norm_layer(dim)\n        mlp_hidden_dim = int(dim * mlp_ratio)\n        if naiveswiglu:\n            self.mlp = SwiGLU(\n                in_features=dim, \n                hidden_features=mlp_hidden_dim, \n                subln=subln,\n                norm_layer=norm_layer,\n            )\n        else:\n            self.mlp = Mlp(\n                in_features=dim, \n                hidden_features=mlp_hidden_dim, \n                act_layer=act_layer,\n                subln=subln,\n                drop=drop\n            )\n        if init_values is not None and init_values > 0:\n            self.gamma_1 = nn.Parameter(init_values * torch.ones((dim)),requires_grad=True)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:391-415"
     },
-    "495": {
-        "file_id": 29,
+    "489": {
+        "file_id": 28,
         "content": "This code defines a class with various layers and parameters for a transformer model. It includes an attention dropout, projection dropout, window size, attention head dimensions, cross-attention, relative position embedding, normalization layer, and a drop path for stochastic depth. The MLP block is optional depending on the naiveswiglu variable. If init_values is not None and greater than 0, it initializes the gamma_1 parameter.",
         "type": "comment"
     },
-    "496": {
-        "file_id": 29,
+    "490": {
+        "file_id": 28,
         "content": "            self.gamma_2 = nn.Parameter(init_values * torch.ones((dim)),requires_grad=True)\n        else:\n            self.gamma_1, self.gamma_2 = None, None\n        self.postnorm = postnorm\n    def forward(self, x, rel_pos_bias=None, attn_mask=None):\n        if self.gamma_1 is None:\n            if self.postnorm:\n                x = x + self.drop_path(self.norm1(self.attn(x, rel_pos_bias=rel_pos_bias, attn_mask=attn_mask)))\n                x = x + self.drop_path(self.norm2(self.mlp(x)))\n            else:\n                x = x + self.drop_path(self.attn(self.norm1(x), rel_pos_bias=rel_pos_bias, attn_mask=attn_mask))\n                x = x + self.drop_path(self.mlp(self.norm2(x)))\n        else:\n            if self.postnorm:\n                x = x + self.drop_path(self.gamma_1 * self.norm1(self.attn(x, rel_pos_bias=rel_pos_bias, attn_mask=attn_mask)))\n                x = x + self.drop_path(self.gamma_2 * self.norm2(self.mlp(x)))\n            else:\n                x = x + self.drop_path(self.gamma_1 * self.attn(self.norm1(x), rel_pos_bias=rel_pos_bias, attn_mask=attn_mask))",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:416-435"
     },
-    "497": {
-        "file_id": 29,
+    "491": {
+        "file_id": 28,
         "content": "This code is defining a forward function for a transformer model that includes attention and feed-forward layers. It has the option to include layer normalization before or after the layers, and uses dropout for regularization. The gamma parameters are learnable scaling factors for the output of each layer when they're not set to None.",
         "type": "comment"
     },
-    "498": {
-        "file_id": 29,
+    "492": {
+        "file_id": 28,
         "content": "                x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))\n        return x\nclass PatchEmbed(nn.Module):\n    \"\"\" Image to Patch Embedding\n    \"\"\"\n    def __init__(self, img_size=224, patch_size=16, in_chans=3, embed_dim=768):\n        super().__init__()\n        img_size = to_2tuple(img_size)\n        patch_size = to_2tuple(patch_size)\n        num_patches = (img_size[1] // patch_size[1]) * (img_size[0] // patch_size[0])\n        self.patch_shape = (img_size[0] // patch_size[0], img_size[1] // patch_size[1])\n        self.img_size = img_size\n        self.patch_size = patch_size\n        self.num_patches = num_patches\n        self.proj = nn.Conv2d(in_chans, embed_dim, kernel_size=patch_size, stride=patch_size)\n    def forward(self, x, **kwargs):\n        B, C, H, W = x.shape\n        # FIXME look at relaxing size constraints\n        assert H == self.img_size[0] and W == self.img_size[1], \\\n            f\"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]}).\"\n        x = self.proj(x).flatten(2).transpose(1, 2)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:436-460"
     },
-    "499": {
-        "file_id": 29,
+    "493": {
+        "file_id": 28,
         "content": "The code defines a class `eva_clip_L_hf` that performs some operation on input `x` using drop path and mlp layers, and returns the result. It also includes a nested class `PatchEmbed` that takes an image as input, performs convolutional projection to convert it into patches, and flattens and transposes the output. The code contains an assertion for checking if the input image size matches the expected model size.",
+        "type": "comment"
+    },
+    "494": {
+        "file_id": 28,
+        "content": "        return x\nclass RelativePositionBias(nn.Module):\n    def __init__(self, window_size, num_heads):\n        super().__init__()\n        self.window_size = window_size\n        self.num_relative_distance = (2 * window_size[0] - 1) * (2 * window_size[1] - 1) + 3\n        self.relative_position_bias_table = nn.Parameter(\n            torch.zeros(self.num_relative_distance, num_heads))  # 2*Wh-1 * 2*Ww-1, nH\n        # cls to token & token 2 cls & cls to cls\n        # get pair-wise relative position index for each token inside the window\n        coords_h = torch.arange(window_size[0])\n        coords_w = torch.arange(window_size[1])\n        coords = torch.stack(torch.meshgrid([coords_h, coords_w]))  # 2, Wh, Ww\n        coords_flatten = torch.flatten(coords, 1)  # 2, Wh*Ww\n        relative_coords = coords_flatten[:, :, None] - coords_flatten[:, None, :]  # 2, Wh*Ww, Wh*Ww\n        relative_coords = relative_coords.permute(1, 2, 0).contiguous()  # Wh*Ww, Wh*Ww, 2\n        relative_coords[:, :, 0] += window_size[0] - 1  # shift to start from 0",
+        "type": "code",
+        "location": "/utils/models/eva_clip_L_hf.py:461-481"
+    },
+    "495": {
+        "file_id": 28,
+        "content": "This code initializes a RelativePositionBias class that calculates pair-wise relative position indices for tokens within a specified window. The class takes two parameters: window_size and num_heads. It creates a relative_position_bias_table with the shape (num_relative_distance, num_heads) and fills it with zeros. The code then calculates the pair-wise relative position indices using meshgrid and meshgrid inverse operations. These calculated indices are used for biasing the attention scores in the transformer model.",
+        "type": "comment"
+    },
+    "496": {
+        "file_id": 28,
+        "content": "        relative_coords[:, :, 1] += window_size[1] - 1\n        relative_coords[:, :, 0] *= 2 * window_size[1] - 1\n        relative_position_index = \\\n            torch.zeros(size=(window_size[0] * window_size[1] + 1,) * 2, dtype=relative_coords.dtype)\n        relative_position_index[1:, 1:] = relative_coords.sum(-1)  # Wh*Ww, Wh*Ww\n        relative_position_index[0, 0:] = self.num_relative_distance - 3\n        relative_position_index[0:, 0] = self.num_relative_distance - 2\n        relative_position_index[0, 0] = self.num_relative_distance - 1\n        self.register_buffer(\"relative_position_index\", relative_position_index)\n    def forward(self):\n        relative_position_bias = \\\n            self.relative_position_bias_table[self.relative_position_index.view(-1)].view(\n                self.window_size[0] * self.window_size[1] + 1,\n                self.window_size[0] * self.window_size[1] + 1, -1)  # Wh*Ww,Wh*Ww,nH\n        return relative_position_bias.permute(2, 0, 1).contiguous()  # nH, Wh*Ww, Wh*Ww\nclass EVAVisionTransformer(nn.Module):",
+        "type": "code",
+        "location": "/utils/models/eva_clip_L_hf.py:482-501"
+    },
+    "497": {
+        "file_id": 28,
+        "content": "This code calculates the relative position indices and generates a position bias table for a vision transformer model. The position bias is used in the forward pass to account for relative positions between tokens within the input window.",
+        "type": "comment"
+    },
+    "498": {
+        "file_id": 28,
+        "content": "    \"\"\" Vision Transformer with support for patch or hybrid CNN input stage\n    \"\"\"\n    def __init__(self, img_size=224, patch_size=16, in_chans=3, num_classes=1000, embed_dim=768, depth=12,\n                 num_heads=12, mlp_ratio=4., qkv_bias=False, qk_scale=None, drop_rate=0., attn_drop_rate=0.,\n                 drop_path_rate=0., norm_layer=nn.LayerNorm, init_values=None, patch_dropout=0.,\n                 use_abs_pos_emb=True, use_rel_pos_bias=False, use_shared_rel_pos_bias=False, rope=False,\n                 use_mean_pooling=True, init_scale=0.001, grad_checkpointing=False, xattn=False, postnorm=False,\n                 pt_hw_seq_len=16, intp_freq=False, naiveswiglu=False, subln=False):\n        super().__init__()\n        self.image_size = img_size\n        self.num_classes = num_classes\n        self.num_features = self.embed_dim = embed_dim  # num_features for consistency with other models\n        self.patch_embed = PatchEmbed(\n            img_size=img_size, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)",
+        "type": "code",
+        "location": "/utils/models/eva_clip_L_hf.py:502-516"
+    },
+    "499": {
+        "file_id": 28,
+        "content": "This code is initializing a Vision Transformer model with options for patch or hybrid CNN input stage. It takes in parameters such as image size, patch size, number of channels, number of classes, embedding dimension, depth, number of attention heads, mlp ratio, and more. The model uses PatchEmbed class from the same module to handle the input embeddings.",
         "type": "comment"
     }
 }

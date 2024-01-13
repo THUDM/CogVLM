@@ -1,0 +1,15 @@
+{
+    "/utils/utils/language.py:1-28": "Chat and VQA History to Prompt Converter",
+    "/utils/utils/language.py:108-130": "Prepping Input Data for Model",
+    "/utils/utils/language.py:131-146": "Text Processing Utilities",
+    "/utils/utils/language.py:148-173": "Mask and Position ID Creation Function",
+    "/utils/utils/language.py:174-200": "Image Caption Tokenizer Setup",
+    "/utils/utils/language.py:201-223": "Prepare Input for Language Model",
+    "/utils/utils/language.py:224-238": "Functions for Image Retrieval",
+    "/utils/utils/language.py:29-63": "Llama2 Tokenizer and Text Processor",
+    "/utils/utils/language.py:64-83": "Preparing Inputs for Language Models",
+    "/utils/utils/language.py:84-107": "Preprocessing Input Sequence for Embedding and Vision",
+    "/utils/utils/vision.py": "Blip Image Processing Utils",
+    "/utils/utils/vision.py:1-31": "BlipImageEvalProcessor: Image Preprocessing in Torchvision",
+    "/utils/utils/vision.py:33-34": "Image Processor Factory"
+}

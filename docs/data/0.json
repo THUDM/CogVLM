@@ -308,239 +308,241 @@
     },
     "56": {
         "file_id": 1,
-        "content": "/dataset.md",
+        "content": "/basic_demo/cli_demo_hf.py",
         "type": "filepath"
     },
     "57": {
         "file_id": 1,
-        "content": "CogVLM-SFT-311K is a bilingual visual instruction dataset for CogVLM v1.0 training, containing 22,464 images with descriptions and 56,673 images with multi-turn conversations, licensed under Attribution-NonCommercial 4.0 International, and following a JSON structure format.",
+        "content": "This code demonstrates a CLI using CogAgent and CogVLM, utilizing the Vicuna-7b-v1.5 tokenizer for chat interaction with users. It supports GPU with bfloat16 for performance, processes one image at a time, uses argparse for command line arguments, and includes a loop for user input.",
         "type": "summary"
     },
     "58": {
         "file_id": 1,
-        "content": "# CogVLM-SFT-311K: Bilingual Visual Instruction Data in CogVLM SFT\nCogVLM-SFT-311K is the primary aligned corpus used in the initial training of CogVLM v1.0. The process of constructing this dataset is as follows:\n1. Approximately 3500 high-quality data samples were selected from the open source [MiniGPT-4](https://huggingface.co/datasets/Vision-CAIR/cc_sbu_align), known as minigpt4-3500.\n2. Minigpt4-3500 was integrated with [Llava-Instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K) and translated into Chinese through a language model.\n3. We discovered significant noise in the detailed description part of minigpt4-3500 and Llava-instruct. Thus, we corrected these Chinese corpora and retranslated them into English.\n## License\n+ Due to non-commercial agreements, we did not use these data in the bilingual version of CogVLM or any other models involving commercialization.\n+ The dataset license adheres to: <br> Attribution-NonCommercial 4.0 International. It should abide by the policy of OpenAI: https://openai.com/policies/terms-of-use",
-        "type": "code",
-        "location": "/dataset.md:1-11"
-    },
-    "59": {
-        "file_id": 1,
-        "content": "This code describes the construction of CogVLM-SFT-311K dataset, a bilingual visual instruction data used in initial training of CogVLM v1.0. It includes 3500 high-quality samples from MiniGPT-4, integration with Llava-Instruct-150K and Chinese translation, followed by noise correction and retranslation to English. The dataset is licensed under Attribution-NonCommercial 4.0 International due to non-commercial agreements.",
-        "type": "comment"
-    },
-    "60": {
-        "file_id": 1,
-        "content": "This will not allow you to use these data for any **commercial activitiesI**.\n## Dataset Address\n+ [CogVLM-SFT-311K](https://huggingface.co/datasets/THUDM/CogVLM-SFT-311K)\n## Dataset Information\nThe dataset contains three folders corresponding to the mixed part of minigpt4-3500 and llava, the llava solo conversation, and the multi-turn conversation datasets. Their layout is as follows:\n```\n.CogVLM-SFT-311K\n├── llava_details-minigpt4_3500_formate\n├── llava_instruction_multi_conversations_formate\n└── llava_instruction_single_conversation_formate\n```\nIn our open-source data, the datasets are distributed as follows:\n```\n.llava_details-minigpt4_3500_formate\n├── images\n│   └── 00000001.jpg\n└── labels\n    └── 00000001.json\n```\nImages are stored in the images folder, while labels containing the corresponding image description or dialogue are stored in the labels folder.\n## Dataset Quantity\n+ llava_details-minigpt4_3500_formate: 22,464 images and descriptions\n+ llava_instruction_multi_conversations_formate: 56,673 images and multi-turn conversations",
-        "type": "code",
-        "location": "/dataset.md:12-40"
-    },
-    "61": {
-        "file_id": 1,
-        "content": "Dataset address provided for CogVLM-SFT-311K.\nDataset contains three folders with mixed data from minigpt4-3500 and llava datasets.\nData is distributed in images and labels folders.\nIncludes 22,464 images and descriptions and 56,673 images with multi-turn conversations.",
-        "type": "comment"
-    },
-    "62": {
-        "file_id": 1,
-        "content": "+ llava_instruction_single_conversation_formate: 76,634 images and single-turn conversations\nDataset Format\nCaption format for image description\n```\n{\n  \"captions\": [\n    {\n      \"role\": \"caption\",\n      \"content\": \"The photograph features a beach scene with a group of people surfing in the ocean. There are ten individuals spaced out in the water, sitting or lying on various sizes of body boards. The surfers line up in a row, close to the sandy shoreline. Some of the body boards are visible floating on the surface of the water, with the surfers riding on them or nearby.\"\n    }\n  ]\n}\n```\nConversation format for image dialogue\n```\n{\n  \"conversations\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What can be inferred about the zebras' behavior and surroundings?\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Based on the image, we can infer that the two zebras are likely seeking relief from the sun's heat, as they are standing side by side under the branches of a thorny tree. This shade-providing ",
-        "type": "code",
-        "location": "/dataset.md:41-66"
-    },
-    "63": {
-        "file_id": 1,
-        "content": "Code is defining a dataset format for single-turn conversations and image descriptions. It includes a caption format for image description and a conversation format for image dialogue, both in JSON structure.",
-        "type": "comment"
-    },
-    "64": {
-        "file_id": 1,
-        "content": "tree offers some respite from the sun, possibly during the hottest part of the day. The zebras are in a green field with grass, providing them with an ideal environment to graze and eat while staying near their source of shelter. This shows that the zebras' behavior is influenced by the conditions and available resources in their surroundings. It also highlights that these animals adopt strategies to adapt to the fluctuating conditions of their environment, such as cooperation and seeking shelter, to survive and thrive in their natural habitat.\"\n    }\n  ]\n}\n```\n## References\nThis project utilizes data and concepts based on the following research papers:\n- Zhu, D., Chen, J., Shen, X., Li, X., & Elhoseiny, M. (2023). MiniGPT-4: Enhancing Vision-Language Understanding with Advanced Large Language Models. arXiv preprint arXiv:2304.10592.\n- Liu, H., Li, C., Wu, Q., & Lee, Y. J. (2023). Visual Instruction Tuning. arXiv:2304.08485. ",
-        "type": "code",
-        "location": "/dataset.md:66-75"
-    },
-    "65": {
-        "file_id": 1,
-        "content": "The code seems to be describing a scene where zebras are seeking shelter under a tree in a green field to adapt to their environment and survive.",
-        "type": "comment"
-    },
-    "66": {
-        "file_id": 2,
-        "content": "/requirements.txt",
-        "type": "filepath"
-    },
-    "67": {
-        "file_id": 2,
-        "content": "This code specifies the required packages and their versions for a Python project, including natural language processing, deep learning, data visualization, and web application development.",
-        "type": "summary"
-    },
-    "68": {
-        "file_id": 2,
-        "content": "SwissArmyTransformer>=0.4.9\ntransformers>=4.36.1\nxformers>=0.0.22\ntorch>=2.1.0\ntorchvision>=0.16.2\nspacy>=3.6.0\npillow>=10.0.1\ndeepspeed>=0.11.0\nseaborn>=0.13.0\nloguru~=0.7.2\nstreamlit>=1.29.0\ntimm>=0.9.12\naccelerate>=0.25.0\npydantic>=2.5.2\n# for openai demo\nopenai>=1.4.0\nsse-starlette>=1.8.2\nfastapi>=0.105.0\nhttpx>=0.25.2\nuvicorn~=0.24.0",
-        "type": "code",
-        "location": "/requirements.txt:1-21"
-    },
-    "69": {
-        "file_id": 2,
-        "content": "This code specifies the required packages and their versions for a Python project, including natural language processing, deep learning, data visualization, and web application development.",
-        "type": "comment"
-    },
-    "70": {
-        "file_id": 3,
-        "content": "/basic_demo/cli_demo_hf.py",
-        "type": "filepath"
-    },
-    "71": {
-        "file_id": 3,
-        "content": "This code demonstrates a CLI using CogAgent and CogVLM, utilizing the Vicuna-7b-v1.5 tokenizer for chat interaction with users. It supports GPU with bfloat16 for performance, processes one image at a time, uses argparse for command line arguments, and includes a loop for user input.",
-        "type": "summary"
-    },
-    "72": {
-        "file_id": 3,
         "content": "\"\"\"\nThis is a demo for using CogAgent and CogVLM in CLI\nMake sure you have installed vicuna-7b-v1.5 tokenizer model (https://huggingface.co/lmsys/vicuna-7b-v1.5), full checkpoint of vicuna-7b-v1.5 LLM is not required.\nIn this demo, We us chat template, you can use others to replace such as 'vqa'.\nStrongly suggest to use GPU with bfloat16 support, otherwise, it will be slow.\nMention that only one picture can be processed at one conversation, which means you can not replace or insert another picture during the conversation.\n\"\"\"\nimport argparse\nimport torch\nfrom PIL import Image\nfrom transformers import AutoModelForCausalLM, LlamaTokenizer\nparser = argparse.ArgumentParser()\nparser.add_argument(\"--quant\", choices=[4], type=int, default=None, help='quantization bits')\nparser.add_argument(\"--from_pretrained\", type=str, default=\"THUDM/cogagent-chat-hf\", help='pretrained ckpt')\nparser.add_argument(\"--local_tokenizer\", type=str, default=\"lmsys/vicuna-7b-v1.5\", help='tokenizer path')\nparser.add_argument(\"--fp16\", action=\"store_true\")",
         "type": "code",
         "location": "/basic_demo/cli_demo_hf.py:1-19"
     },
-    "73": {
-        "file_id": 3,
+    "59": {
+        "file_id": 1,
         "content": "This code is for a command-line interface (CLI) demo using CogAgent and CogVLM. It requires the Vicuna-7b-v1.5 tokenizer model and suggests using GPU with bfloat16 support for better performance. Only one picture can be processed at a time in a conversation, and it supports 4-bit quantization. The code uses argparse to handle command-line arguments.",
         "type": "comment"
     },
-    "74": {
-        "file_id": 3,
+    "60": {
+        "file_id": 1,
         "content": "parser.add_argument(\"--bf16\", action=\"store_true\")\nargs = parser.parse_args()\nMODEL_PATH = args.from_pretrained\nTOKENIZER_PATH = args.local_tokenizer\nDEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'\ntokenizer = LlamaTokenizer.from_pretrained(TOKENIZER_PATH)\nif args.bf16:\n    torch_type = torch.bfloat16\nelse:\n    torch_type = torch.float16\nprint(\"========Use torch type as:{} with device:{}========\\n\\n\".format(torch_type, DEVICE))\nif args.quant:\n    model = AutoModelForCausalLM.from_pretrained(\n        MODEL_PATH,\n        torch_dtype=torch_type,\n        low_cpu_mem_usage=True,\n        load_in_4bit=True,\n        trust_remote_code=True\n    ).eval()\nelse:\n    model = AutoModelForCausalLM.from_pretrained(\n        MODEL_PATH,\n        torch_dtype=torch_type,\n        low_cpu_mem_usage=True,\n        load_in_4bit=args.quant is not None,\n        trust_remote_code=True\n    ).to(DEVICE).eval()\ntext_only_template = \"A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {} ASSISTANT:\"",
         "type": "code",
         "location": "/basic_demo/cli_demo_hf.py:20-52"
     },
-    "75": {
-        "file_id": 3,
+    "61": {
+        "file_id": 1,
         "content": "This code is parsing arguments and setting up a Hugging Face AutoModelForCausalLM. It first checks if the --bf16 argument is set, then sets the torch type accordingly (either bfloat16 or float16). If the quant argument is also set, it loads a 4-bit quantized model. The model is then loaded and moved to the appropriate device (CPU or CUDA, if available). Finally, it sets up a text_only_template for chat interaction with the user.",
         "type": "comment"
     },
-    "76": {
-        "file_id": 3,
+    "62": {
+        "file_id": 1,
         "content": "while True:\n    image_path = input(\"image path >>>>> \")\n    if image_path == '':\n        print('You did not enter image path, the following will be a plain text conversation.')\n        image = None\n        text_only_first_query = True    \n    else:\n        image = Image.open(image_path).convert('RGB')\n    history = []\n    while True:\n        query = input(\"Human:\")\n        if query == \"clear\":\n            break\n        if image is None:\n            if text_only_first_query:\n                query = text_only_template.format(query)\n                text_only_first_query = False\n            else:\n                old_prompt = ''\n                for _, (old_query, response) in enumerate(history):\n                    old_prompt += old_query + \" \" + response + \"\\n\"\n                query = old_prompt + \"USER: {} ASSISTANT:\".format(query)\n        if image is None:\n            input_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, template_version='base')\n        else:\n            in",
         "type": "code",
         "location": "/basic_demo/cli_demo_hf.py:54-83"
     },
-    "77": {
-        "file_id": 3,
+    "63": {
+        "file_id": 1,
         "content": "This code is creating a loop where the user can input either an image path or a query. If an image path is not entered, it will default to plain text conversation. The loop continues until the user enters \"clear\". If no image is provided and it's the first query, it formats the query as per the 'text_only_template'. If there is already a history of queries, it appends all previous queries with their corresponding responses, then adds the current query. It then builds the conversation input for the model based on whether an image is present or not.",
         "type": "comment"
     },
-    "78": {
-        "file_id": 3,
+    "64": {
+        "file_id": 1,
         "content": "put_by_model = model.build_conversation_input_ids(tokenizer, query=query, history=history, images=[image])\n        inputs = {\n            'input_ids': input_by_model['input_ids'].unsqueeze(0).to(DEVICE),\n            'token_type_ids': input_by_model['token_type_ids'].unsqueeze(0).to(DEVICE),\n            'attention_mask': input_by_model['attention_mask'].unsqueeze(0).to(DEVICE),\n            'images': [[input_by_model['images'][0].to(DEVICE).to(torch_type)]] if image is not None else None,\n        }\n        if 'cross_images' in input_by_model and input_by_model['cross_images']:\n            inputs['cross_images'] = [[input_by_model['cross_images'][0].to(DEVICE).to(torch_type)]]\n        # add any transformers params here.\n        gen_kwargs = {\"max_length\": 2048,\n                      \"do_sample\": False} # \"temperature\": 0.9\n        with torch.no_grad():\n            outputs = model.generate(**inputs, **gen_kwargs)\n            outputs = outputs[:, inputs['input_ids'].shape[1]:]\n            response = tokenizer.decode(outputs[0])",
         "type": "code",
         "location": "/basic_demo/cli_demo_hf.py:83-100"
     },
-    "79": {
-        "file_id": 3,
+    "65": {
+        "file_id": 1,
         "content": "Building conversation input data and preparing for model generation.",
         "type": "comment"
     },
-    "80": {
-        "file_id": 3,
+    "66": {
+        "file_id": 1,
         "content": "            response = response.split(\"</s>\")[0]\n            print(\"\\nCog:\", response)\n        history.append((query, response))",
         "type": "code",
         "location": "/basic_demo/cli_demo_hf.py:101-103"
     },
-    "81": {
-        "file_id": 3,
+    "67": {
+        "file_id": 1,
         "content": "Split response by \" Industrially \" and print the first part, then store in history.",
         "type": "comment"
     },
-    "82": {
-        "file_id": 4,
+    "68": {
+        "file_id": 2,
         "content": "/basic_demo/cli_demo_sat.py",
         "type": "filepath"
     },
-    "83": {
-        "file_id": 4,
+    "69": {
+        "file_id": 2,
         "content": "The code provides a command-line interface for a text generation model, allowing users to interact with it through parameters and environment variables. It also contributes to a distributed multi-process chat app handling user input, commands, translations in multiple languages, and broadcasting queries across GPUs if running on multiple devices.",
         "type": "summary"
     },
-    "84": {
-        "file_id": 4,
+    "70": {
+        "file_id": 2,
         "content": "# -*- encoding: utf-8 -*-\nimport os, sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nimport torch\nimport argparse\nfrom sat.model.mixins import CachedAutoregressiveMixin\nfrom sat.quantization.kernels import quantize\nfrom sat.model import AutoModel\nfrom utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor\nfrom utils.models import CogAgentModel, CogVLMModel\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--max_length\", type=int, default=2048, help='max length of the total sequence')\n    parser.add_argument(\"--top_p\", type=float, default=0.4, help='top p for nucleus sampling')\n    parser.add_argument(\"--top_k\", type=int, default=1, help='top k for top k sampling')\n    parser.add_argument(\"--temperature\", type=float, default=.8, help='temperature for sampling')\n    parser.add_argument(\"--chinese\", action='store_true', help='Chinese interface')\n    parser.add_argument(\"--version\", type=str, default=\"chat\",",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:1-22"
     },
-    "85": {
-        "file_id": 4,
+    "71": {
+        "file_id": 2,
         "content": "This code imports necessary libraries and defines the main function that uses an argument parser to handle user input for prompt length, sampling strategies, temperature, language preference, and model version. It appears to be a command-line interface for interacting with a text generation model.",
         "type": "comment"
     },
-    "86": {
-        "file_id": 4,
+    "72": {
+        "file_id": 2,
         "content": " choices=['chat', 'vqa', 'chat_old', 'base'], help='version of language process. if there is \\\"text_processor_version\\\" in model_config.json, this option will be overwritten')\n    parser.add_argument(\"--quant\", choices=[8, 4], type=int, default=None, help='quantization bits')\n    parser.add_argument(\"--from_pretrained\", type=str, default=\"cogagent-chat\", help='pretrained ckpt')\n    parser.add_argument(\"--local_tokenizer\", type=str, default=\"lmsys/vicuna-7b-v1.5\", help='tokenizer path')\n    parser.add_argument(\"--fp16\", action=\"store_true\")\n    parser.add_argument(\"--bf16\", action=\"store_true\")\n    parser.add_argument(\"--stream_chat\", action=\"store_true\")\n    args = parser.parse_args()\n    rank = int(os.environ.get('RANK', 0))\n    world_size = int(os.environ.get('WORLD_SIZE', 1))\n    args = parser.parse_args()\n    # load model\n    model, model_args = AutoModel.from_pretrained(\n        args.from_pretrained,\n        args=argparse.Namespace(\n        deepspeed=None,\n        local_rank=rank,\n        rank=rank,",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:22-41"
     },
-    "87": {
-        "file_id": 4,
+    "73": {
+        "file_id": 2,
         "content": "The code is parsing command-line arguments for a language model. The options include the language processing version, quantization bits, pretrained checkpoint, tokenizer path, and whether to use FP16 or BF16 precision. The script also checks environment variables RANK and WORLD_SIZE before loading the model using the specified parameters.",
         "type": "comment"
     },
-    "88": {
-        "file_id": 4,
+    "74": {
+        "file_id": 2,
         "content": "        world_size=world_size,\n        model_parallel_size=world_size,\n        mode='inference',\n        skip_init=True,\n        use_gpu_initialization=True if (torch.cuda.is_available() and args.quant is None) else False,\n        device='cpu' if args.quant else 'cuda',\n        **vars(args)\n    ), overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {})\n    model = model.eval()\n    from sat.mpu import get_model_parallel_world_size\n    assert world_size == get_model_parallel_world_size(), \"world size must equal to model parallel size for cli_demo!\"\n    language_processor_version = model_args.text_processor_version if 'text_processor_version' in model_args else args.version\n    print(\"[Language processor version]:\", language_processor_version)\n    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=language_processor_version)\n    image_processor = get_image_processor(model_args.eva_args[\"image_size\"][0])\n    cross_image_processor = get_image_processor(model_args.cross_image_pix) if \"cross_image_pix\" in model_args else None",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:42-58"
     },
-    "89": {
-        "file_id": 4,
+    "75": {
+        "file_id": 2,
         "content": "Creates a model with specified world and model parallel sizes, sets to inference mode if it's not the first process, uses GPU if available and quantization is not set, otherwise uses CPU, asserts that world size equals model parallel size for correct operation, prints language processor version, initializes tokenizer based on local_tokenizer argument and signal type (language processor version), and initializes image processor and cross-image processor if necessary.",
         "type": "comment"
     },
-    "90": {
-        "file_id": 4,
+    "76": {
+        "file_id": 2,
         "content": "    if args.quant:\n        quantize(model, args.quant)\n        if torch.cuda.is_available():\n            model = model.cuda()\n    model.add_mixin('auto-regressive', CachedAutoregressiveMixin())\n    text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length)\n    if args.chinese:\n        if rank == 0:\n            print('欢迎使用 CogAgent-CLI ，输入图像URL或本地路径读图，继续输入内容对话，clear 重新开始，stop 终止程序')\n    else:\n        if rank == 0:\n            print('Welcome to CogAgent-CLI. Enter an image URL or local file path to load an image. Continue inputting text to engage in a conversation. Type \"clear\" to start over, or \"stop\" to end the program.')\n    with torch.no_grad():\n        while True:\n            history = None\n            cache_image = None\n            if args.chinese:\n                if rank == 0:\n                    image_path = [input(\"请输入图像路径或URL： \")]\n                else:\n                    image_path = [None]\n            else:\n                if rank == 0:\n                    image_path = [input(\"Please enter the image path or URL: \")]",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:60-87"
     },
-    "91": {
-        "file_id": 4,
+    "77": {
+        "file_id": 2,
         "content": "Checking if quantization is needed, moving model to GPU if available, adding autoregressive mixin, initializing text processor, printing welcome message based on language, and starting an infinite loop for text input and image processing.",
         "type": "comment"
     },
-    "92": {
-        "file_id": 4,
+    "78": {
+        "file_id": 2,
         "content": "                else:\n                    image_path = [None]\n            if world_size > 1:\n                torch.distributed.broadcast_object_list(image_path, 0)\n            image_path = image_path[0]\n            assert image_path is not None\n            if image_path == 'stop':\n                break\n            if args.chinese:\n                if rank == 0:\n                    query = [input(\"用户：\")]\n                else:\n                    query = [None]\n            else:\n                if rank == 0:\n                    query = [input(\"User: \")]\n                else:\n                    query = [None]\n            if world_size > 1:\n                torch.distributed.broadcast_object_list(query, 0)\n            query = query[0]\n            assert query is not None\n            while True:\n                if query == \"clear\":\n                    break\n                if query == \"stop\":\n                    sys.exit(0)\n                try:\n                    response, history, cache_image = chat(\n                        image_path,",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:88-120"
     },
-    "93": {
-        "file_id": 4,
+    "79": {
+        "file_id": 2,
         "content": "Code snippet is part of a distributed multi-process chat application. It checks user input, broadcasts it among processes, and handles various commands like \"stop\" or \"clear\".",
         "type": "comment"
     },
-    "94": {
-        "file_id": 4,
+    "80": {
+        "file_id": 2,
         "content": "                        model,\n                        text_processor_infer,\n                        image_processor,\n                        query,\n                        history=history,\n                        cross_img_processor=cross_image_processor,\n                        image=cache_image,\n                        max_length=args.max_length,\n                        top_p=args.top_p,\n                        temperature=args.temperature,\n                        top_k=args.top_k,\n                        invalid_slices=text_processor_infer.invalid_slices,\n                        args=args\n                        )\n                except Exception as e:\n                    print(e)\n                    break\n                if rank == 0 and not args.stream_chat:\n                    if args.chinese:\n                        print(\"模型：\"+response)\n                    else:\n                        print(\"Model: \"+response)\n                image_path = None\n                if args.chinese:\n                    if rank == 0:",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:121-145"
     },
-    "95": {
-        "file_id": 4,
+    "81": {
+        "file_id": 2,
         "content": "Code creates a TextCompletion instance with given arguments. It handles exceptions and prints them if any occur. If `args.stream_chat` is False, it prints the model's response in the specified language (Chinese or English). Sets `image_path` to None.",
         "type": "comment"
     },
-    "96": {
-        "file_id": 4,
+    "82": {
+        "file_id": 2,
         "content": "                        query = [input(\"用户：\")]\n                    else:\n                        query = [None]\n                else:\n                    if rank == 0:\n                        query = [input(\"User: \")]\n                    else:\n                        query = [None]\n                if world_size > 1:\n                    torch.distributed.broadcast_object_list(query, 0)\n                query = query[0]\n                assert query is not None\nif __name__ == \"__main__\":\n    main()",
         "type": "code",
         "location": "/basic_demo/cli_demo_sat.py:146-161"
     },
-    "97": {
-        "file_id": 4,
+    "83": {
+        "file_id": 2,
         "content": "This code takes user input and assigns it to the 'query' variable. If the program is running on multiple GPUs, it broadcasts the query across all GPUs.",
         "type": "comment"
     },
-    "98": {
-        "file_id": 5,
+    "84": {
+        "file_id": 3,
         "content": "/basic_demo/web_demo.py",
         "type": "filepath"
     },
-    "99": {
-        "file_id": 5,
+    "85": {
+        "file_id": 3,
         "content": "The code creates a web demo with Gradio, using CogVLM and CogAgent models for image uploads, text prompts, agent functions, image processing, chatbot interface, response generation, UI, command line arguments, input elements, function configurations, argument parsing, and model parameters.",
         "type": "summary"
+    },
+    "86": {
+        "file_id": 3,
+        "content": "\"\"\"\nThis script is a simple web demo of the CogVLM and CogAgent models, designed for easy and quick demonstrations.\nFor a more sophisticated user interface, users are encouraged to refer to the 'composite_demo',\nwhich is built with a more aesthetically pleasing Streamlit framework.\nUsage:\n- Use the interface to upload images and enter text prompts to interact with the models.\nRequirements:\n- Gradio (only 3.x,4.x is not support) and other necessary Python dependencies must be installed.\n- Proper model checkpoints should be accessible as specified in the script.\nNote: This demo is ideal for a quick showcase of the CogVLM and CogAgent models. For a more comprehensive and interactive\nexperience, refer to the 'composite_demo'.\n\"\"\"\nimport gradio as gr\nimport os, sys\nsys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\nfrom PIL import Image\nimport torch\nimport time\nfrom sat.model.mixins import CachedAutoregressiveMixin\nfrom sat.mpu import get_model_parallel_world_size\nfrom sat.model import AutoModel",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:1-25"
+    },
+    "87": {
+        "file_id": 3,
+        "content": "This code is a simple web demo of the CogVLM and CogAgent models. It requires Gradio (version 3.x or 4.x) and other necessary Python dependencies. The script includes functionality to upload images and enter text prompts for interaction with the models. It's suitable for quick showcases, but a more comprehensive experience can be found in 'composite_demo'.",
+        "type": "comment"
+    },
+    "88": {
+        "file_id": 3,
+        "content": "from utils.utils import chat, llama2_tokenizer, llama2_text_processor_inference, get_image_processor, parse_response\nfrom utils.models import CogAgentModel, CogVLMModel\nDESCRIPTION = '''<h1 style='text-align: center'> <a href=\"https://github.com/THUDM/CogVLM\">CogVLM / CogAgent</a> </h1>'''\nNOTES = '<h3> This app is adapted from <a href=\"https://github.com/THUDM/CogVLM\">https://github.com/THUDM/CogVLM</a>. It would be recommended to check out the repo if you want to see the detail of our model, CogVLM & CogAgent. </h3>'\nMAINTENANCE_NOTICE1 = 'Hint 1: If the app report \"Something went wrong, connection error out\", please turn off your proxy and retry.<br>Hint 2: If you upload a large size of image like 10MB, it may take some time to upload and process. Please be patient and wait.'\nAGENT_NOTICE = 'Hint 1: To use <strong>Agent</strong> function, please use the <a href=\"https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L761\">prompts for agents</a>.'\nGROUNDING_NOTICE = 'Hint 2: To ",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:28-42"
+    },
+    "89": {
+        "file_id": 3,
+        "content": "These lines import necessary modules, define variables for the app's description and maintenance notice, and specify hints for using the agent function and grounding features.",
+        "type": "comment"
+    },
+    "90": {
+        "file_id": 3,
+        "content": "use <strong>Grounding</strong> function, please use the <a href=\"https://github.com/THUDM/CogVLM/blob/main/utils/utils/template.py#L344\">prompts for grounding</a>.'\ndefault_chatbox = [(\"\", \"Hi, What do you want to know about this image?\")]\nmodel = image_processor = text_processor_infer = None\nis_grounding = False\ndef process_image_without_resize(image_prompt):\n    image = Image.open(image_prompt)\n    # print(f\"height:{image.height}, width:{image.width}\")\n    timestamp = int(time.time())\n    file_ext = os.path.splitext(image_prompt)[1]\n    filename_grounding = f\"examples/{timestamp}_grounding{file_ext}\"\n    return image, filename_grounding\nfrom sat.quantization.kernels import quantize\ndef load_model(args): \n    model, model_args = AutoModel.from_pretrained(\n        args.from_pretrained,\n        args=argparse.Namespace(\n        deepspeed=None,\n        local_rank=0,\n        rank=0,\n        world_size=world_size,\n        model_parallel_size=world_size,\n        mode='inference',\n        fp16=args.fp16,\n        bf16=args.bf16,",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:42-75"
+    },
+    "91": {
+        "file_id": 3,
+        "content": "Code snippet initializes a function to process an image without resizing, loads the model with given arguments, and defines a helper function for quantization.",
+        "type": "comment"
+    },
+    "92": {
+        "file_id": 3,
+        "content": "        skip_init=True,\n        use_gpu_initialization=True if (torch.cuda.is_available() and args.quant is None) else False,\n        device='cpu' if args.quant else 'cuda'),\n        overwrite_args={'model_parallel_size': world_size} if world_size != 1 else {}\n    )\n    model = model.eval()\n    assert world_size == get_model_parallel_world_size(), \"world size must equal to model parallel size for cli_demo!\"\n    language_processor_version = model_args.text_processor_version if 'text_processor_version' in model_args else args.version\n    tokenizer = llama2_tokenizer(args.local_tokenizer, signal_type=language_processor_version)\n    image_processor = get_image_processor(model_args.eva_args[\"image_size\"][0])\n    cross_image_processor = get_image_processor(model_args.cross_image_pix) if \"cross_image_pix\" in model_args else None\n    if args.quant:\n        quantize(model, args.quant)\n        if torch.cuda.is_available():\n            model = model.cuda()\n    model.add_mixin('auto-regressive', CachedAutoregressiveMixin())",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:76-93"
+    },
+    "93": {
+        "file_id": 3,
+        "content": "Creating model with specified options and device. Ensuring world size matches model parallel size. Setting up tokenizer and image processors. Quantizing model if needed, moving to GPU if available. Adding autoregressive mixin.",
+        "type": "comment"
+    },
+    "94": {
+        "file_id": 3,
+        "content": "    text_processor_infer = llama2_text_processor_inference(tokenizer, args.max_length, model.image_length)\n    return model, image_processor, cross_image_processor, text_processor_infer\ndef post(\n        input_text,\n        temperature,\n        top_p,\n        top_k,\n        image_prompt,\n        result_previous,\n        hidden_image,\n        state\n        ):\n    result_text = [(ele[0], ele[1]) for ele in result_previous]\n    for i in range(len(result_text)-1, -1, -1):\n        if result_text[i][0] == \"\" or result_text[i][0] == None:\n            del result_text[i]\n    print(f\"history {result_text}\")\n    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding\n    try:\n        with torch.no_grad():\n            pil_img, image_path_grounding = process_image_without_resize(image_prompt)\n            response, _, cache_image = chat(\n                    image_path=\"\", \n                    model=model, \n                    text_processor=text_processor_infer,\n                    img_processor=image_processor,",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:95-125"
+    },
+    "95": {
+        "file_id": 3,
+        "content": "This code defines a function that takes input text, temperature, top_p, top_k, image prompt, previous result history, hidden image, and state as parameters. It cleans up the previous result history by removing any empty or null elements. Then, it processes an image based on the given image prompt and calls another function 'chat' to generate a response using the provided model, text processor, and image processor.",
+        "type": "comment"
+    },
+    "96": {
+        "file_id": 3,
+        "content": "                    query=input_text, \n                    history=result_text, \n                    cross_img_processor=cross_image_processor,\n                    image=pil_img, \n                    max_length=2048, \n                    top_p=top_p, \n                    temperature=temperature,\n                    top_k=top_k,\n                    invalid_slices=text_processor_infer.invalid_slices if hasattr(text_processor_infer, \"invalid_slices\") else [],\n                    no_prompt=False,\n                    args=state['args']\n            )\n    except Exception as e:\n        print(\"error message\", e)\n        result_text.append((input_text, 'Timeout! Please wait a few minutes and retry.'))\n        return \"\", result_text, hidden_image\n    answer = response\n    if is_grounding:\n        parse_response(pil_img, answer, image_path_grounding)\n        new_answer = answer.replace(input_text, \"\")\n        result_text.append((input_text, new_answer))\n        result_text.append((None, (image_path_grounding,)))\n    else:",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:126-149"
+    },
+    "97": {
+        "file_id": 3,
+        "content": "Function call to text generation model with input, history, processor, image, and additional parameters. Catch any exceptions and handle them by appending a timeout message to the result text. If grounding is enabled, parse the response and append it to the result text with the corresponding image path.",
+        "type": "comment"
+    },
+    "98": {
+        "file_id": 3,
+        "content": "        result_text.append((input_text, answer))\n    print(result_text)\n    print('finished')\n    return \"\", result_text, hidden_image\ndef clear_fn(value):\n    return \"\", default_chatbox, None\ndef clear_fn2(value):\n    return default_chatbox\ndef main(args):\n    global model, image_processor, cross_image_processor, text_processor_infer, is_grounding\n    model, image_processor, cross_image_processor, text_processor_infer = load_model(args)\n    is_grounding = 'grounding' in args.from_pretrained\n    gr.close_all()\n    with gr.Blocks(css='style.css') as demo:\n        state = gr.State({'args': args})\n        gr.Markdown(DESCRIPTION)\n        gr.Markdown(NOTES)\n        with gr.Row():\n            with gr.Column(scale=5):\n                with gr.Group():\n                    gr.Markdown(AGENT_NOTICE)\n                    gr.Markdown(GROUNDING_NOTICE)\n                    input_text = gr.Textbox(label='Input Text', placeholder='Please enter text prompt below and press ENTER.')\n                    with gr.Row():\n                        run_button = gr.Button('Generate')",
+        "type": "code",
+        "location": "/basic_demo/web_demo.py:150-185"
+    },
+    "99": {
+        "file_id": 3,
+        "content": "This code defines a function named `main`, which loads a model and related processors, initializes the UI components, and handles user input to generate responses based on the text prompt. The UI includes textboxes for input, buttons to trigger generation, and displays the generated results. There are also two helper functions defined (`clear_fn` and `clear_fn2`) that appear to clear the chatbox and other UI elements.",
+        "type": "comment"
     }
 }

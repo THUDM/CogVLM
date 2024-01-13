@@ -1,374 +1,373 @@
 {
     "500": {
-        "file_id": 29,
-        "content": "        return x\nclass RelativePositionBias(nn.Module):\n    def __init__(self, window_size, num_heads):\n        super().__init__()\n        self.window_size = window_size\n        self.num_relative_distance = (2 * window_size[0] - 1) * (2 * window_size[1] - 1) + 3\n        self.relative_position_bias_table = nn.Parameter(\n            torch.zeros(self.num_relative_distance, num_heads))  # 2*Wh-1 * 2*Ww-1, nH\n        # cls to token & token 2 cls & cls to cls\n        # get pair-wise relative position index for each token inside the window\n        coords_h = torch.arange(window_size[0])\n        coords_w = torch.arange(window_size[1])\n        coords = torch.stack(torch.meshgrid([coords_h, coords_w]))  # 2, Wh, Ww\n        coords_flatten = torch.flatten(coords, 1)  # 2, Wh*Ww\n        relative_coords = coords_flatten[:, :, None] - coords_flatten[:, None, :]  # 2, Wh*Ww, Wh*Ww\n        relative_coords = relative_coords.permute(1, 2, 0).contiguous()  # Wh*Ww, Wh*Ww, 2\n        relative_coords[:, :, 0] += window_size[0] - 1  # shift to start from 0",
-        "type": "code",
-        "location": "/utils/models/eva_clip_L_hf.py:461-481"
-    },
-    "501": {
-        "file_id": 29,
-        "content": "This code initializes a RelativePositionBias class that calculates pair-wise relative position indices for tokens within a specified window. The class takes two parameters: window_size and num_heads. It creates a relative_position_bias_table with the shape (num_relative_distance, num_heads) and fills it with zeros. The code then calculates the pair-wise relative position indices using meshgrid and meshgrid inverse operations. These calculated indices are used for biasing the attention scores in the transformer model.",
-        "type": "comment"
-    },
-    "502": {
-        "file_id": 29,
-        "content": "        relative_coords[:, :, 1] += window_size[1] - 1\n        relative_coords[:, :, 0] *= 2 * window_size[1] - 1\n        relative_position_index = \\\n            torch.zeros(size=(window_size[0] * window_size[1] + 1,) * 2, dtype=relative_coords.dtype)\n        relative_position_index[1:, 1:] = relative_coords.sum(-1)  # Wh*Ww, Wh*Ww\n        relative_position_index[0, 0:] = self.num_relative_distance - 3\n        relative_position_index[0:, 0] = self.num_relative_distance - 2\n        relative_position_index[0, 0] = self.num_relative_distance - 1\n        self.register_buffer(\"relative_position_index\", relative_position_index)\n    def forward(self):\n        relative_position_bias = \\\n            self.relative_position_bias_table[self.relative_position_index.view(-1)].view(\n                self.window_size[0] * self.window_size[1] + 1,\n                self.window_size[0] * self.window_size[1] + 1, -1)  # Wh*Ww,Wh*Ww,nH\n        return relative_position_bias.permute(2, 0, 1).contiguous()  # nH, Wh*Ww, Wh*Ww\nclass EVAVisionTransformer(nn.Module):",
-        "type": "code",
-        "location": "/utils/models/eva_clip_L_hf.py:482-501"
-    },
-    "503": {
-        "file_id": 29,
-        "content": "This code calculates the relative position indices and generates a position bias table for a vision transformer model. The position bias is used in the forward pass to account for relative positions between tokens within the input window.",
-        "type": "comment"
-    },
-    "504": {
-        "file_id": 29,
-        "content": "    \"\"\" Vision Transformer with support for patch or hybrid CNN input stage\n    \"\"\"\n    def __init__(self, img_size=224, patch_size=16, in_chans=3, num_classes=1000, embed_dim=768, depth=12,\n                 num_heads=12, mlp_ratio=4., qkv_bias=False, qk_scale=None, drop_rate=0., attn_drop_rate=0.,\n                 drop_path_rate=0., norm_layer=nn.LayerNorm, init_values=None, patch_dropout=0.,\n                 use_abs_pos_emb=True, use_rel_pos_bias=False, use_shared_rel_pos_bias=False, rope=False,\n                 use_mean_pooling=True, init_scale=0.001, grad_checkpointing=False, xattn=False, postnorm=False,\n                 pt_hw_seq_len=16, intp_freq=False, naiveswiglu=False, subln=False):\n        super().__init__()\n        self.image_size = img_size\n        self.num_classes = num_classes\n        self.num_features = self.embed_dim = embed_dim  # num_features for consistency with other models\n        self.patch_embed = PatchEmbed(\n            img_size=img_size, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)",
-        "type": "code",
-        "location": "/utils/models/eva_clip_L_hf.py:502-516"
-    },
-    "505": {
-        "file_id": 29,
-        "content": "This code is initializing a Vision Transformer model with options for patch or hybrid CNN input stage. It takes in parameters such as image size, patch size, number of channels, number of classes, embedding dimension, depth, number of attention heads, mlp ratio, and more. The model uses PatchEmbed class from the same module to handle the input embeddings.",
-        "type": "comment"
-    },
-    "506": {
-        "file_id": 29,
+        "file_id": 28,
         "content": "        num_patches = self.patch_embed.num_patches\n        self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))\n        # self.mask_token = nn.Parameter(torch.zeros(1, 1, embed_dim))\n        if use_abs_pos_emb:\n            self.pos_embed = nn.Parameter(torch.zeros(1, num_patches + 1, embed_dim))\n        else:\n            self.pos_embed = None\n        self.pos_drop = nn.Dropout(p=drop_rate)\n        if use_shared_rel_pos_bias:\n            self.rel_pos_bias = RelativePositionBias(window_size=self.patch_embed.patch_shape, num_heads=num_heads)\n        else:\n            self.rel_pos_bias = None\n        if rope:\n            half_head_dim = embed_dim // num_heads // 2\n            hw_seq_len = img_size // patch_size\n            self.rope = VisionRotaryEmbeddingFast(\n                dim=half_head_dim,\n                pt_seq_len=pt_hw_seq_len,\n                ft_seq_len=hw_seq_len if intp_freq else None,\n                # patch_dropout=patch_dropout\n            )\n        else: \n            self.rope = None\n        self.naiveswiglu = naiveswiglu",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:517-544"
     },
-    "507": {
-        "file_id": 29,
+    "501": {
+        "file_id": 28,
         "content": "This code initializes the class attributes for a transformer model. It creates parameters for the classification token, position embedding (optional), and dropout probability. The code also handles optional arguments for relative position bias and rotation embeddings, as well as an attribute for naive_swiglu function.",
         "type": "comment"
     },
-    "508": {
-        "file_id": 29,
+    "502": {
+        "file_id": 28,
         "content": "        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, depth)]  # stochastic depth decay rule\n        self.use_rel_pos_bias = use_rel_pos_bias\n        self.blocks = nn.ModuleList([\n            Block(\n                dim=embed_dim, num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,\n                drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[i], norm_layer=norm_layer,\n                init_values=init_values, window_size=self.patch_embed.patch_shape if use_rel_pos_bias else None,\n                xattn=xattn, rope=self.rope, postnorm=postnorm, subln=subln, naiveswiglu=naiveswiglu)\n            for i in range(depth)])\n        self.norm = nn.Identity() if use_mean_pooling else norm_layer(embed_dim)\n        self.fc_norm = norm_layer(embed_dim) if use_mean_pooling else None\n        self.head = nn.Linear(embed_dim, num_classes) if num_classes > 0 else nn.Identity()\n        if self.pos_embed is not None:\n            trunc_normal_(self.pos_embed, std=.02)\n        trunc_normal_(self.cls_token, std=.02)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:546-562"
     },
-    "509": {
-        "file_id": 29,
+    "503": {
+        "file_id": 28,
         "content": "Creates a list of Blocks for the transformer model, with dropout rate and stochastic depth decay rule. Adds norm layer and linear layer for output head. Initializes weights normally.",
         "type": "comment"
     },
-    "510": {
-        "file_id": 29,
+    "504": {
+        "file_id": 28,
         "content": "        # trunc_normal_(self.mask_token, std=.02)\n        self.apply(self._init_weights)\n        self.fix_init_weight()\n        if isinstance(self.head, nn.Linear):\n            trunc_normal_(self.head.weight, std=.02)\n            self.head.weight.data.mul_(init_scale)\n            self.head.bias.data.mul_(init_scale)\n        # setting a patch_dropout of 0. would mean it is disabled and this function would be the identity fn\n        self.patch_dropout = PatchDropout(patch_dropout) if patch_dropout > 0. else nn.Identity()\n        self.grad_checkpointing = grad_checkpointing\n    def fix_init_weight(self):\n        def rescale(param, layer_id):\n            param.div_(math.sqrt(2.0 * layer_id))\n        for layer_id, layer in enumerate(self.blocks):\n            rescale(layer.attn.proj.weight.data, layer_id + 1)\n            if self.naiveswiglu:\n                rescale(layer.mlp.w3.weight.data, layer_id + 1)\n            else:\n                rescale(layer.mlp.fc2.weight.data, layer_id + 1)\n    def get_cast_dtype(self) -> torch.dtype:",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:563-589"
     },
-    "511": {
-        "file_id": 29,
+    "505": {
+        "file_id": 28,
         "content": "This code initializes and configures the model. It applies weight initialization, sets patch dropout if necessary, and fixes the weight scale for certain layers.",
         "type": "comment"
     },
-    "512": {
-        "file_id": 29,
+    "506": {
+        "file_id": 28,
         "content": "        return self.blocks[0].mlp.fc2.weight.dtype\n    def _init_weights(self, m):\n        if isinstance(m, nn.Linear):\n            trunc_normal_(m.weight, std=.02)\n            if m.bias is not None:\n                nn.init.constant_(m.bias, 0)\n        elif isinstance(m, nn.LayerNorm):\n            nn.init.constant_(m.bias, 0)\n            nn.init.constant_(m.weight, 1.0)\n    def get_num_layers(self):\n        return len(self.blocks)\n    def lock(self, unlocked_groups=0, freeze_bn_stats=False):\n        assert unlocked_groups == 0, 'partial locking not currently supported for this model'\n        for param in self.parameters():\n            param.requires_grad = False\n    @torch.jit.ignore\n    def set_grad_checkpointing(self, enable=True):\n        self.grad_checkpointing = enable\n    @torch.jit.ignore\n    def no_weight_decay(self):\n        return {'pos_embed', 'cls_token'}\n    def get_classifier(self):\n        return self.head\n    def reset_classifier(self, num_classes, global_pool=''):\n        self.num_classes = num_classes",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:590-621"
     },
-    "513": {
-        "file_id": 29,
+    "507": {
+        "file_id": 28,
         "content": "Method return_dtype: Returns the data type of the weight matrix in the first block's MLP.\n\nMethod init_weights: Initializes the weights for linear layers using truncated normal distribution with a standard deviation of 0.02, and initializes bias to 0.\n\nMethod get_num_layers: Returns the number of blocks in the model.\n\nMethod lock: Locks all parameters in the model by setting their requires_grad attribute to False. Optional argument unlocked_groups can be used for partial locking (not currently supported).\n\nMethod set_grad_checkpointing: Enables or disables gradient checkpointing, a technique to save memory during backpropagation.\n\nMethod no_weight_decay: Specifies which layers should not have weight decay applied to them ('pos_embed' and 'cls_token' in this case).\n\nMethod get_classifier: Returns the classifier head of the model.\n\nMethod reset_classifier: Resets the classifier head by setting its num_classes attribute and optionally specifying a global pooling method.",
         "type": "comment"
     },
-    "514": {
-        "file_id": 29,
+    "508": {
+        "file_id": 28,
         "content": "        self.head = nn.Linear(self.embed_dim, num_classes) if num_classes > 0 else nn.Identity()\n    def forward_features(self, x, return_all_features=False):\n        x = self.patch_embed(x)\n        batch_size, seq_len, _ = x.size()\n        cls_tokens = self.cls_token.expand(batch_size, -1, -1)  # stole cls_tokens impl from Phil Wang, thanks\n        x = torch.cat((cls_tokens, x), dim=1)\n        if self.pos_embed is not None:\n            x = x + self.pos_embed\n        x = self.pos_drop(x)\n        # a patch_dropout of 0. would mean it is disabled and this function would do nothing but return what was passed in\n        if os.getenv('RoPE') == '1':\n            if self.training and not isinstance(self.patch_dropout, nn.Identity):\n                x, patch_indices_keep = self.patch_dropout(x)\n                self.rope.forward = partial(self.rope.forward, patch_indices_keep=patch_indices_keep)\n            else:\n                self.rope.forward = partial(self.rope.forward, patch_indices_keep=None)\n                x = self.patch_dropout(x)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:622-642"
     },
-    "515": {
-        "file_id": 29,
+    "509": {
+        "file_id": 28,
         "content": "This code initializes a linear layer for the head and defines a forward_features method. The method applies patch embedding, concatenates class tokens, adds positional embeddings, applies position dropout, and optionally applies patch dropout based on an environment variable 'RoPE'. If RoPE is set to 1 and patch_dropout is not an identity function, it performs a patch dropout operation and updates the forward method of rope module accordingly. Otherwise, it directly applies patch dropout.",
         "type": "comment"
     },
-    "516": {
-        "file_id": 29,
+    "510": {
+        "file_id": 28,
         "content": "        else:\n            x = self.patch_dropout(x)\n        rel_pos_bias = self.rel_pos_bias() if self.rel_pos_bias is not None else None\n        for i, blk in enumerate(self.blocks):\n            if i == len(self.blocks)-1:\n                continue\n            if self.grad_checkpointing:\n                x = checkpoint(blk, x, (rel_pos_bias,))\n            else:\n                x = blk(x, rel_pos_bias=rel_pos_bias)\n        if not return_all_features:\n            x = self.norm(x)\n            if self.fc_norm is not None:\n                return self.fc_norm(x.mean(1))\n            else:\n                return x[:, 0]\n        return x\n    def forward(self, x, return_all_features=False):\n        if return_all_features:\n            return self.forward_features(x, return_all_features)\n        x = self.forward_features(x)\n        x = self.head(x)\n        return x\nclass LayerNorm(nn.LayerNorm):\n    \"\"\"Subclass torch's LayerNorm (with cast back to input dtype).\"\"\"\n    def forward(self, x: torch.Tensor):\n        orig_type = x.dtype",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:643-674"
     },
-    "517": {
-        "file_id": 29,
+    "511": {
+        "file_id": 28,
         "content": "This code defines a layer norm function that is a subclass of PyTorch's LayerNorm. It also includes the forward pass for a model with blocks and patch dropout, and it returns features if requested.",
         "type": "comment"
     },
-    "518": {
-        "file_id": 29,
+    "512": {
+        "file_id": 28,
         "content": "        x = F.layer_norm(x, self.normalized_shape, self.weight, self.bias, self.eps)\n        return x.to(orig_type)\ntry:\n    from apex.normalization import FusedLayerNorm\nexcept:\n    FusedLayerNorm = LayerNorm\n    print(\"Please build and install Nvidia apex package with option '--cuda_ext' according to https://github.com/NVIDIA/apex#from-source .\")\n@dataclass\nclass CLIPVisionCfg:\n    layers: Union[Tuple[int, int, int, int], int] = 12\n    width: int = 768\n    head_width: int = 64\n    mlp_ratio: float = 4.0\n    patch_size: int = 16\n    image_size: Union[Tuple[int, int], int] = 224\n    ls_init_value: Optional[float] = None  # layer scale initial value\n    patch_dropout: float = 0. # what fraction of patches to dropout during training (0 would mean disabled and no patches dropped) - 0.5 to 0.75 recommended in the paper for optimal results\n    global_average_pool: bool = False # whether to global average pool the last embedding layer, instead of using CLS token (https://arxiv.org/abs/2205.01580)\n    drop_path_rate: Optional[float] = None  # drop path rate",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:675-696"
     },
-    "519": {
-        "file_id": 29,
+    "513": {
+        "file_id": 28,
         "content": "This code defines a class `CLIPVisionCfg` which contains configuration parameters for the CLIP Vision model. These include the number of layers, width of the model, width of the attention heads, scaling ratio for MLP, patch size, image size, initial layer scale value (optional), dropout rate for patches during training, whether to use global average pooling instead of CLS token, and optional drop path rate. The code also checks if Nvidia apex package is installed and suggests installing it with specific options if not already available.",
         "type": "comment"
     },
-    "520": {
-        "file_id": 29,
+    "514": {
+        "file_id": 28,
         "content": "    timm_model_name: str = None  # a valid model name overrides layers, width, patch_size\n    timm_model_pretrained: bool = False  # use (imagenet) pretrained weights for named model\n    timm_pool: str = 'avg'  # feature pooling for timm model ('abs_attn', 'rot_attn', 'avg', '')\n    timm_proj: str = 'linear'  # linear projection for timm model output ('linear', 'mlp', '')\n    timm_proj_bias: bool = False  # enable bias final projection\n    eva_model_name: str = None # a valid eva model name overrides layers, width, patch_size\n    qkv_bias: bool = True\n    fusedLN: bool = False\n    xattn: bool = False\n    postnorm: bool = False\n    rope: bool = False\n    pt_hw_seq_len: int = 16   # 224/14\n    intp_freq: bool = False\n    naiveswiglu: bool = False\n    subln: bool = False\ndef _build_vision_tower(\n        embed_dim: int,\n        vision_cfg: CLIPVisionCfg\n):\n    if isinstance(vision_cfg, dict):\n        vision_cfg = CLIPVisionCfg(**vision_cfg)\n    if vision_cfg.eva_model_name:\n        vision_heads = vision_cfg.width // vision_cfg.head_width",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:697-722"
     },
-    "521": {
-        "file_id": 29,
+    "515": {
+        "file_id": 28,
         "content": "This code defines variables and a function for building a vision tower in the CLIP model. The variables control options such as using a pre-trained timm model, feature pooling methods, projection types, and other model features like fused normalization, cross attention, etc. The function _build_vision_tower builds the vision tower based on the provided embed_dim and vision_cfg parameters. If the vision_cfg has a specified eva_model_name, it uses that for building the tower.",
         "type": "comment"
     },
-    "522": {
-        "file_id": 29,
+    "516": {
+        "file_id": 28,
         "content": "        norm_layer = LayerNorm\n        visual = EVAVisionTransformer(\n            img_size=vision_cfg.image_size,\n            patch_size=vision_cfg.patch_size,\n            num_classes=embed_dim,\n            use_mean_pooling=vision_cfg.global_average_pool, #False\n            init_values=vision_cfg.ls_init_value,\n            patch_dropout=vision_cfg.patch_dropout,\n            embed_dim=vision_cfg.width,\n            depth=vision_cfg.layers,\n            num_heads=vision_heads,\n            mlp_ratio=vision_cfg.mlp_ratio,\n            qkv_bias=vision_cfg.qkv_bias,\n            drop_path_rate=vision_cfg.drop_path_rate,\n            norm_layer= partial(FusedLayerNorm, eps=1e-6) if vision_cfg.fusedLN else partial(norm_layer, eps=1e-6),\n            xattn=vision_cfg.xattn,\n            rope=vision_cfg.rope,\n            postnorm=vision_cfg.postnorm,\n            pt_hw_seq_len= vision_cfg.pt_hw_seq_len,   # 224/14\n            intp_freq= vision_cfg.intp_freq,\n            naiveswiglu= vision_cfg.naiveswiglu,\n            subln= vision_cfg.subln",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:723-744"
     },
-    "523": {
-        "file_id": 29,
+    "517": {
+        "file_id": 28,
         "content": "Creating an EVAVisionTransformer model with specified configuration.\n\nHere, we are initializing an instance of the EVAVisionTransformer class with the given parameters: img_size, patch_size, num_classes, use_mean_pooling, init_values, patch_dropout, embed_dim, depth, num_heads, mlp_ratio, qkv_bias, drop_path_rate, norm_layer, xattn, rope, pt_hw_seq_len, intp_freq, naiveswiglu, and subln.\nThe norm_layer is defined with a partial function that applies FusedLayerNorm if vision_cfg.fusedLN is True, otherwise it applies the default norm_layer.",
         "type": "comment"
     },
-    "524": {
-        "file_id": 29,
+    "518": {
+        "file_id": 28,
         "content": "        )\n    return visual\nclass Eva2LargeEncoder(nn.Module):\n    def __init__(self, image_size=224):\n        super(Eva2LargeEncoder, self).__init__()\n        self.config = {\n            \"embed_dim\": 768,\n            \"vision_cfg\": {\n                \"image_size\": 336,\n                \"layers\": 24,\n                \"width\": 1024,\n                \"drop_path_rate\": 0,\n                \"head_width\": 64,\n                \"mlp_ratio\": 2.6667,\n                \"patch_size\": 14,\n                \"eva_model_name\": \"eva-clip-l-14-336\",\n                \"xattn\": True,\n                \"fusedLN\": True,\n                \"rope\": True,\n                \"pt_hw_seq_len\": 16,\n                \"intp_freq\": True,\n                \"naiveswiglu\": True,\n                \"subln\": True\n            }\n        }\n        self.config['vision_cfg']['image_size'] = image_size\n        import os\n        self.model = _build_vision_tower(**self.config)\n    def forward(self, image, **kwargs): # diverge from hf version\n        encode = self.model(image, return_all_features=True)[:, 1:, :]",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:745-779"
     },
-    "525": {
-        "file_id": 29,
+    "519": {
+        "file_id": 28,
         "content": "The code defines a class `Eva2LargeEncoder` which inherits from `nn.Module`. The class has an initializer that sets up the configuration for the vision transformer model and imports the model using the `_build_vision_tower` function with the provided configuration. In the forward method, it takes an image as input, passes it through the vision transformer model (`self.model`) and returns the encoded features. The returned features are sliced to exclude the first feature, which is typically a classification token or an additional positional embedding.",
         "type": "comment"
     },
-    "526": {
-        "file_id": 29,
+    "520": {
+        "file_id": 28,
         "content": "        return encode\nclass CrossVisionModel(nn.Module):\n    def __init__(self, config):\n        super().__init__()\n        self.vit = Eva2LargeEncoder(image_size=config.cross_image_size)\n        self.pos_embed = nn.Parameter(torch.zeros((self.vit.config['vision_cfg']['image_size'] // self.vit.config['vision_cfg']['patch_size']) ** 2, self.vit.config['vision_cfg']['width']))\n    def forward(self, images):\n        enc = self.vit(images)\n        return enc + self.pos_embed.unsqueeze(0)",
         "type": "code",
         "location": "/utils/models/eva_clip_L_hf.py:780-790"
     },
-    "527": {
-        "file_id": 29,
+    "521": {
+        "file_id": 28,
         "content": "Class for Cross Vision Model with Eva2LargeEncoder and position embedding.",
         "type": "comment"
     },
-    "528": {
-        "file_id": 30,
+    "522": {
+        "file_id": 29,
         "content": "/utils/models/eva_clip_model.py",
         "type": "filepath"
     },
-    "529": {
-        "file_id": 30,
+    "523": {
+        "file_id": 29,
         "content": "The transformer model's attention layer features classes for identity mapping, self-attention, memory-efficient calculations, and includes forward propagation with drop path, attention mechanism, residual connection, and MLP for hidden state enhancement. The EVA2CLIPModel class inherits from BaseModel, initializes properties and mixins, and uses add_model_specific_args to configure argument groups for its parameters.",
         "type": "summary"
     },
-    "530": {
-        "file_id": 30,
+    "524": {
+        "file_id": 29,
         "content": "import torch\nfrom sat.model.base_model import BaseModel\nfrom sat.model.mixins import BaseMixin\nfrom sat.model.official.vit_model import ViTProperty, ImagePatchEmbeddingMixin, InterpolatedPositionEmbeddingMixin, gelu\nfrom sat import mpu\nclass IdentityMixin(BaseMixin):\n    def __init__(self):\n        super().__init__()\n    def final_forward(self, logits, **kwargs):\n        return logits[:, 1:]\nimport xformers.ops as xops\nclass XAttn(BaseMixin):\n    def __init__(self, head_dim):\n        super().__init__()\n        self.scale = head_dim ** -0.5\n    def attention_fn(self, query_layer, key_layer, value_layer, attention_mask,\n                       attention_dropout=None, log_attention_weights=None, scaling_attention_score=True, **kwargs):\n        dropout_p = 0. # xformers does not support dropout for eva hidden size\n        query_layer = query_layer.permute(0, 2, 1, 3)   # B, num_heads, N, C -> B, N, num_heads, C\n        key_layer = key_layer.permute(0, 2, 1, 3)\n        value_layer = value_layer.permute(0, 2, 1, 3)",
         "type": "code",
         "location": "/utils/models/eva_clip_model.py:1-26"
     },
-    "531": {
-        "file_id": 30,
+    "525": {
+        "file_id": 29,
         "content": "This code defines two classes, `IdentityMixin` and `XAttn`, which inherit from the base mixin class `BaseMixin`. The `IdentityMixin` class performs identity mapping by returning all elements except the first one from its input. The `XAttn` class implements a self-attention function with optional masking, attention dropout, and logging of attention weights. It also applies a scaling factor to the attention scores for better numerical stability.",
         "type": "comment"
     },
-    "532": {
-        "file_id": 30,
+    "526": {
+        "file_id": 29,
         "content": "        out = xops.memory_efficient_attention(\n            query_layer, key_layer, value_layer,\n            p=dropout_p,\n            scale=self.scale,\n            )\n        return out\n    def attention_forward(self, hidden_states, mask, **kw_args):\n        self = self.transformer.layers[kw_args['layer_id']].attention\n        attention_fn = self.hooks['attention_fn']\n        mixed_raw_layer = self.query_key_value(hidden_states)\n        B, N, C = hidden_states.shape\n        mixed_raw_layer = mixed_raw_layer.reshape(B, N, 3, self.num_attention_heads_per_partition, -1).permute(2, 0, 3, 1, 4)   # 3, B, num_heads, N, C\n        query_layer, key_layer, value_layer = mixed_raw_layer[0], mixed_raw_layer[1], mixed_raw_layer[2]\n        dropout_fn = self.attention_dropout if self.training else None\n        context_layer = attention_fn(query_layer, key_layer, value_layer, mask, dropout_fn, **kw_args)\n        context_layer = context_layer.view(B, N, -1)\n        output = self.dense(context_layer)\n        if self.training:",
         "type": "code",
         "location": "/utils/models/eva_clip_model.py:28-52"
     },
-    "533": {
-        "file_id": 30,
+    "527": {
+        "file_id": 29,
         "content": "This code defines two functions. The first function, `memory_efficient_attention`, performs memory-efficient attention calculation by using a combination of masks and dropout. The second function, `attention_forward`, is responsible for forward propagation in the attention layer of a transformer model. It applies the defined attention mechanism on input hidden states based on the provided layer ID and mask.",
         "type": "comment"
     },
-    "534": {
-        "file_id": 30,
+    "528": {
+        "file_id": 29,
         "content": "            output = self.output_dropout(output)\n        return output\nclass NewLayerForward(BaseMixin):\n    def __init__(self):\n        super().__init__()\n    def layer_forward(self, hidden_states, mask, *args, **kw_args):\n        '''\n            hidden_states: [batch, seq_len, hidden_size]\n            mask: [(1, 1), seq_len, seq_len]\n        '''\n        self = self.transformer.layers[kw_args['layer_id']]\n        attention_input = hidden_states\n        # Self attention.\n        attention_output = self.input_layernorm(self.attention(attention_input, mask, **kw_args))\n        # DropPath for attention\n        if self.training and self.drop_path > 0.:\n            if mpu.get_cuda_rng_tracker is not None:\n                # drop_path must use model parallel rng tracker\n                # the tracker is initialized as seed of `seed + model_parallel_rank`\n                # deepspeed act-ckpt record the model parallel tracker states\n                with mpu.get_cuda_rng_tracker().fork():\n                    # drop_path percentage 0, others 1/(1-p)",
         "type": "code",
         "location": "/utils/models/eva_clip_model.py:53-79"
     },
-    "535": {
-        "file_id": 30,
+    "529": {
+        "file_id": 29,
         "content": "Layer forward function for a transformer layer, applies self-attention, and optional drop path during training.",
         "type": "comment"
     },
-    "536": {
-        "file_id": 30,
+    "530": {
+        "file_id": 29,
         "content": "                    random_tensor = (1-self.drop_path\n                                    + torch.rand((attention_output.shape[0],), dtype=attention_output.dtype, device=attention_output.device)).floor_() / (1-self.drop_path)\n                    attention_output = random_tensor.view(-1, 1, 1) * attention_output\n        # Residual connection.\n        hidden_states = attention_input + attention_output\n        mlp_input = hidden_states\n        # MLP.\n        mlp_output = self.post_attention_layernorm(self.mlp(mlp_input, **kw_args))\n        # DropPath for mlp\n        if self.training and self.drop_path > 0.:\n            if mpu.get_cuda_rng_tracker is not None:\n                with mpu.get_cuda_rng_tracker().fork():\n                    random_tensor = (1-self.drop_path\n                                    + torch.rand((mlp_output.shape[0],), dtype=mlp_output.dtype, device=mlp_output.device)).floor_() / (1-self.drop_path)\n                    mlp_output = random_tensor.view(-1, 1, 1) * mlp_output\n        # Second residual connection.",
         "type": "code",
         "location": "/utils/models/eva_clip_model.py:80-99"
     },
-    "537": {
-        "file_id": 30,
+    "531": {
+        "file_id": 29,
         "content": "Applies attention mechanism, adds residual connection and MLP to the hidden states.",
         "type": "comment"
     },
-    "538": {
-        "file_id": 30,
+    "532": {
+        "file_id": 29,
         "content": "        output = mlp_input + mlp_output\n        return output\nclass EVA2CLIPModel(BaseModel):\n    def __init__(self, args, transformer=None, parallel_output=True, **kwargs):\n        property = ViTProperty(args.image_size, args.patch_size, args.pre_len, args.post_len)\n        args.max_sequence_length = property.pre_len + property.num_patches + property.post_len\n        if 'activation_func' not in kwargs:\n            kwargs['activation_func'] = gelu\n        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)\n        self.transformer.property = property\n        self.add_mixin(\"patch_embedding\", ImagePatchEmbeddingMixin(args.in_channels, args.hidden_size, property))\n        self.add_mixin(\"pos_embedding\", InterpolatedPositionEmbeddingMixin())\n        self.add_mixin(\"final\", IdentityMixin())\n        self.add_mixin(\"newpost\", NewLayerForward())\n        self.add_mixin(\"xattn\", XAttn(args.hidden_size // args.num_attention_heads))\n    @classmethod\n    def add_model_specific_args(cls, parser):",
         "type": "code",
         "location": "/utils/models/eva_clip_model.py:100-119"
     },
-    "539": {
-        "file_id": 30,
+    "533": {
+        "file_id": 29,
         "content": "This code defines a class \"EVA2CLIPModel\" that inherits from \"BaseModel\". It initializes properties and mixins, and adds them to the model instance. The function \"add_model_specific_args\" is used to add model-specific arguments to a parser object.",
         "type": "comment"
     },
-    "540": {
-        "file_id": 30,
+    "534": {
+        "file_id": 29,
         "content": "        group = parser.add_argument_group('EVA2CLIP', 'EVA2CLIP Configurations')\n        group.add_argument('--image-size', nargs='+', type=int, default=[224, 224])\n        group.add_argument('--pre-len', type=int, default=1) # [cls] by default\n        group.add_argument('--post-len', type=int, default=0) # empty by default, but sometimes with special tokens, such as [det] in yolos.\n        group.add_argument('--in-channels', type=int, default=3)\n        group.add_argument('--patch-size', type=int, default=16)\n        return parser",
         "type": "code",
         "location": "/utils/models/eva_clip_model.py:120-126"
     },
-    "541": {
-        "file_id": 30,
+    "535": {
+        "file_id": 29,
         "content": "Configuring argument groups for EVA2CLIP model parameters.",
         "type": "comment"
     },
-    "542": {
-        "file_id": 31,
+    "536": {
+        "file_id": 30,
         "content": "/utils/models/mixin.py",
         "type": "filepath"
     },
-    "543": {
-        "file_id": 31,
+    "537": {
+        "file_id": 30,
         "content": "The code initializes layers and mixins, creates a tensor from a mask, separates hidden states, applies gate projections, and combines them back together. The module dictionary includes vision query key value, dense layers, and attention forward function with multi-head attention, rotary embeddings, and visual expert masking for model parallelism in transformer layers.",
         "type": "summary"
     },
-    "544": {
-        "file_id": 31,
+    "538": {
+        "file_id": 30,
         "content": "import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom sat.transformer_defaults import attention_fn_default\nfrom sat.model.base_model import BaseMixin, non_conflict\nfrom sat.mpu.layers import ColumnParallelLinear, RowParallelLinear\nfrom sat.mpu.utils import split_tensor_along_last_dim\nfrom sat import mpu\nclass LlamaVisionExpertFCMixin(BaseMixin):\n    def __init__(self, in_features, hidden_features, num_layers=32, num_vision_layers=0, vision_layer_range=None,\n                 params_dtype=torch.float, device=torch.device('cpu')):\n        super().__init__()\n        self.num_layers = num_layers\n        self.num_vision_layers = num_vision_layers\n        if vision_layer_range is None:\n            vision_layer_range = [i for i in range(min(num_vision_layers, num_layers))]\n        self.vision_layer_range = vision_layer_range\n        self.gate_proj = nn.ModuleList([ColumnParallelLinear(\n            in_features,\n            hidden_features,\n            gather_output=False,\n            init_method=None,",
         "type": "code",
         "location": "/utils/models/mixin.py:1-25"
     },
-    "545": {
-        "file_id": 31,
+    "539": {
+        "file_id": 30,
         "content": "This code is initializing an instance of the LlamaVisionExpertFCMixin class, which inherits from BaseMixin. It takes in parameters like in_features, hidden_features, num_layers, num_vision_layers, vision_layer_range, params_dtype and device for initialization. It also initializes a ModuleList of ColumnParallelLinear objects for the gate projection layer.",
         "type": "comment"
     },
-    "546": {
-        "file_id": 31,
+    "540": {
+        "file_id": 30,
         "content": "            bias=False,\n            params_dtype=params_dtype,\n            module=self,\n            name=\"dense_h_to_4h_gate\",\n            skip_init=True,\n            device=device\n        ) for i in range(num_layers)])\n        # Trainable vision expert parameters\n        vision_dense_h_to_4h_list = []\n        vision_dense_4h_to_h_list = []\n        gate_proj_list = []\n        for i in vision_layer_range:\n            vision_dense_h_to_4h = ColumnParallelLinear(\n                in_features,\n                hidden_features,\n                gather_output=False,\n                init_method=None,\n                bias=False,\n                params_dtype=params_dtype,\n                module=self,\n                name=\"vision_dense_h_to_4h\",\n                skip_init=True,\n                device=device\n            )\n            # Project back to h.\n            vision_dense_4h_to_h = RowParallelLinear(\n                hidden_features,\n                in_features,\n                input_is_parallel=True,\n                init_method=None,",
         "type": "code",
         "location": "/utils/models/mixin.py:26-58"
     },
-    "547": {
-        "file_id": 31,
+    "541": {
+        "file_id": 30,
         "content": "Creating a list of vision expert dense layers and their corresponding projection layers for the VisionTransformer model.",
         "type": "comment"
     },
-    "548": {
-        "file_id": 31,
+    "542": {
+        "file_id": 30,
         "content": "                bias=False,\n                params_dtype=params_dtype,\n                module=self,\n                name=\"vision_dense_4h_to_h\",\n                skip_init=True,\n                device=device\n            )\n            gate_proj = ColumnParallelLinear(\n                in_features,\n                hidden_features,\n                gather_output=False,\n                init_method=None,\n                bias=False,\n                params_dtype=params_dtype,\n                module=self,\n                name=\"vision_gate_proj\",\n                skip_init=True,\n                device=device\n            )\n            vision_dense_h_to_4h_list.append(vision_dense_h_to_4h)\n            vision_dense_4h_to_h_list.append(vision_dense_4h_to_h)\n            gate_proj_list.append(gate_proj)\n        self.vision_dense_h_to_4h_list = nn.ModuleDict([\n            (str(layer_id), vision_dense_h_to_4h)\n            for layer_id, vision_dense_h_to_4h in zip(vision_layer_range, vision_dense_h_to_4h_list)\n        ])\n        self.vision_dense_4h_to_h_list = nn.ModuleDict([",
         "type": "code",
         "location": "/utils/models/mixin.py:59-88"
     },
-    "549": {
-        "file_id": 31,
+    "543": {
+        "file_id": 30,
         "content": "Initializing multiple parallel linear layers for vision feature extraction and storing them in separate lists.",
         "type": "comment"
     },
-    "550": {
-        "file_id": 31,
+    "544": {
+        "file_id": 30,
         "content": "            (str(layer_id), vision_dense_4h_to_h)\n            for layer_id, vision_dense_4h_to_h in zip(vision_layer_range, vision_dense_4h_to_h_list)\n        ])\n        self.vision_gate_proj = nn.ModuleDict([\n            (str(layer_id), gate_proj)\n            for layer_id, gate_proj in zip(vision_layer_range, gate_proj_list)\n        ])\n    def mlp_forward(self, hidden_states, **kw_args):\n        mixin_self = self\n        self = self.transformer.layers[kw_args['layer_id']].mlp\n        if \"vision_expert_mask\" in kw_args:\n            vision_expert_mask = kw_args['vision_expert_mask']\n        else:\n            vision_expert_mask = None\n        layer_id_key = str(int(kw_args['layer_id']))\n        if kw_args['layer_id'] in mixin_self.vision_layer_range and (vision_expert_mask is not None) and vision_expert_mask.any():\n            vision_dense_h_to_4h = mixin_self.vision_dense_h_to_4h_list[layer_id_key]\n            vision_dense_4h_to_h = mixin_self.vision_dense_4h_to_h_list[layer_id_key]\n            vision_gate_proj = mixin_self.vision_gate_proj[layer_id_key]",
         "type": "code",
         "location": "/utils/models/mixin.py:89-110"
     },
-    "551": {
-        "file_id": 31,
+    "545": {
+        "file_id": 30,
         "content": "Code block is defining a mixin class for transformer layers with vision expert functionality. The class initializes and stores vision dense layers and gate projection layers for each vision layer in the transformer. The `mlp_forward` method allows selective usage of the vision expert layers based on a given 'layer_id' and a 'vision_expert_mask'.",
         "type": "comment"
     },
-    "552": {
-        "file_id": 31,
+    "546": {
+        "file_id": 30,
         "content": "            output = torch.empty(hidden_states.shape, dtype=hidden_states.dtype, device=hidden_states.device)\n            language_hidden_state = hidden_states[~vision_expert_mask.bool()]\n            language_intermediate_parallel = self.activation_func(mixin_self.gate_proj[kw_args['layer_id']](language_hidden_state)) * self.dense_h_to_4h(language_hidden_state)\n            output[~vision_expert_mask.bool()] = self.dense_4h_to_h(language_intermediate_parallel)  # language_output\n            vision_hidden_state = hidden_states[vision_expert_mask.bool()]\n            vision_intermediate_parallel = vision_dense_h_to_4h(vision_hidden_state)\n            gate_output = vision_gate_proj(vision_hidden_state)\n            vision_intermediate_parallel *= self.activation_func(gate_output)\n            output[vision_expert_mask.bool()] = vision_dense_4h_to_h(vision_intermediate_parallel)  # vision_output\n        else:\n            intermediate_parallel = self.activation_func(mixin_self.gate_proj[kw_args['layer_id']](hidden_states)) * self.dense_h_to_4h(hidden_states)",
         "type": "code",
         "location": "/utils/models/mixin.py:111-124"
     },
-    "553": {
-        "file_id": 31,
+    "547": {
+        "file_id": 30,
         "content": "This code creates a new tensor of the same shape as 'hidden_states' and assigns values based on a mask. It separates the hidden states into language and vision components, applies gate projections and intermediate calculations, and combines them back together in 'output'.",
         "type": "comment"
     },
-    "554": {
-        "file_id": 31,
+    "548": {
+        "file_id": 30,
         "content": "            output = self.dense_4h_to_h(intermediate_parallel)\n        return output.contiguous()\n    def copy_param(self):\n        with torch.no_grad():\n            for i in self.vision_layer_range:\n                self.vision_gate_proj[str(i)].weight.data.copy_(self.gate_proj[i].weight.data)\n                self.vision_dense_4h_to_h_list[str(i)].weight.data.copy_(self.transformer.layers[i].mlp.dense_4h_to_h.weight.data)\n                self.vision_dense_h_to_4h_list[str(i)].weight.data.copy_(self.transformer.layers[i].mlp.dense_h_to_4h.weight.data)\nfrom sat.mpu import get_model_parallel_world_size\nfrom sat.mpu.utils import divide\nfrom sat.model.position_embedding.triton_rotary_embeddings import FastRotaryEmbedding\nclass LlamaVisionExpertAttnMixin(BaseMixin):\n    def __init__(self, hidden_size, num_heads, num_layers=28, num_vision_layers=0, use_vision_expert=True, vision_layer_range=None,\n                 params_dtype=torch.float, device=torch.device('cpu')):\n        super().__init__()\n        world_size = get_model_parallel_world_size()",
         "type": "code",
         "location": "/utils/models/mixin.py:125-145"
     },
-    "555": {
-        "file_id": 31,
+    "549": {
+        "file_id": 30,
         "content": "Code: This code defines a class named \"LlamaVisionExpertAttnMixin\". It includes parameters such as hidden_size, num_heads, num_layers, num_vision_layers, use_vision_expert, vision_layer_range, params_dtype, and device. The class inherits from BaseMixin.\n\nStorage location: \"CogVLM/utils/models/mixin.py\":124-144",
         "type": "comment"
     },
-    "556": {
-        "file_id": 31,
+    "550": {
+        "file_id": 30,
         "content": "        self.hidden_size = hidden_size\n        self.num_attention_heads = num_heads\n        self.hidden_size_per_attention_head = divide(hidden_size, num_heads)\n        self.num_attention_heads_per_partition = divide(num_heads, world_size)\n        self.inner_hidden_size = num_heads * self.hidden_size_per_attention_head\n        self.rotary_emb = FastRotaryEmbedding(\n             hidden_size // num_heads, pos_idx_in_fp32=False\n         )\n        self.num_vision_layers = num_vision_layers\n        self.num_layers = num_layers\n        if vision_layer_range is None:\n            vision_layer_range = [i for i in range(min(num_vision_layers, num_layers))]\n        self.vision_layer_range = vision_layer_range\n        self.use_vision_expert = use_vision_expert\n        # Trainable vision expert parameters\n        if self.use_vision_expert:\n            vision_query_key_value_list = []\n            vision_dense_list = []\n            for i in vision_layer_range:\n                vision_query_key_value = ColumnParallelLinear(",
         "type": "code",
         "location": "/utils/models/mixin.py:146-169"
     },
-    "557": {
-        "file_id": 31,
+    "551": {
+        "file_id": 30,
         "content": "Initializing model parameters based on input arguments.\n\nThis code initializes various attributes of the model based on input arguments, such as hidden size, number of attention heads, world size, etc. It also creates a FastRotaryEmbedding object and handles the initialization of vision expert parameters if necessary.",
         "type": "comment"
     },
-    "558": {
-        "file_id": 31,
+    "552": {
+        "file_id": 30,
         "content": "                    hidden_size,\n                    3 * hidden_size,\n                    stride=3,\n                    gather_output=False,\n                    init_method=None,\n                    bias=False,\n                    params_dtype=params_dtype,\n                    module=self,\n                    name=\"vision_query_key_value\",\n                    skip_init=True,\n                    device=device\n                )\n                vision_dense = RowParallelLinear(\n                    self.inner_hidden_size,\n                    hidden_size,\n                    input_is_parallel=True,\n                    init_method=None,\n                    bias=False,\n                    params_dtype=params_dtype,\n                    module=self,\n                    name=\"vision_dense\",\n                    skip_init=True,\n                    device=device,\n                    final_bias=False\n                )\n                vision_query_key_value_list.append(vision_query_key_value)\n                vision_dense_list.append(vision_dense)",
         "type": "code",
         "location": "/utils/models/mixin.py:170-198"
     },
-    "559": {
-        "file_id": 31,
+    "553": {
+        "file_id": 30,
         "content": "Creates two Linear layers for query, key, and value projections, and appends them to lists.",
         "type": "comment"
     },
-    "560": {
-        "file_id": 31,
+    "554": {
+        "file_id": 30,
         "content": "            self.vision_query_key_value_list = nn.ModuleDict([\n                (str(layer_id), vision_query_key_value)\n                for layer_id, vision_query_key_value in zip(vision_layer_range, vision_query_key_value_list)\n            ])\n            self.vision_dense_list = nn.ModuleDict([\n                (str(layer_id), vision_dense)\n                for layer_id, vision_dense in zip(vision_layer_range, vision_dense_list)\n            ])\n    def attention_forward(self, hidden_states, mask, **kw_args):\n        mixin_self = self\n        self = self.transformer.layers[kw_args['layer_id']].attention\n        attention_fn = attention_fn_default\n        if 'attention_fn' in self.hooks:\n            attention_fn = self.hooks['attention_fn']\n        if \"vision_expert_mask\" in kw_args:\n            vision_expert_mask = kw_args['vision_expert_mask']\n        else:\n            vision_expert_mask = None\n        layer_id_key = str(int(kw_args['layer_id']))\n        if mixin_self.use_vision_expert and kw_args['layer_id'] in mixin_self.vision_layer_range and (",
         "type": "code",
         "location": "/utils/models/mixin.py:200-221"
     },
-    "561": {
-        "file_id": 31,
+    "555": {
+        "file_id": 30,
         "content": "Creates a module dictionary for vision query key value and dense layers.\nDefines the attention forward function, allowing for custom attention layers and handling of vision expert masks if provided.",
         "type": "comment"
     },
-    "562": {
-        "file_id": 31,
+    "556": {
+        "file_id": 30,
         "content": "                vision_expert_mask is not None) and vision_expert_mask.any():\n            shape = list(hidden_states.shape)\n            parallel_size = mpu.get_model_parallel_world_size()\n            shape[-1] = shape[-1] * 3 // parallel_size\n            vision_query_key_value = mixin_self.vision_query_key_value_list[layer_id_key]\n            mixed_raw_layer = torch.empty(shape, dtype=hidden_states.dtype, device=hidden_states.device)\n            language_hidden_states = hidden_states[~vision_expert_mask.bool()]\n            vision_hidden_states = hidden_states[vision_expert_mask.bool()]\n            mixed_raw_layer[~vision_expert_mask.bool()] = self.query_key_value(\n                language_hidden_states)  # language_mixed_raw_layer\n            mixed_raw_layer[vision_expert_mask.bool()] = vision_query_key_value(\n                vision_hidden_states)  # vision_mixed_raw_layer\n        else:\n            mixed_raw_layer = self.query_key_value(hidden_states)\n        (mixed_query_layer,\n            mixed_key_layer,",
         "type": "code",
         "location": "/utils/models/mixin.py:222-238"
     },
-    "563": {
-        "file_id": 31,
+    "557": {
+        "file_id": 30,
         "content": "If vision_expert_mask is not None, the code creates a new tensor mixed_raw_layer with the same shape as hidden_states. It separates language and vision hidden_states based on the vision_expert_mask, and assigns each to the corresponding region in mixed_raw_layer using the query_key_value function from the mixin module. If vision_expert_mask is None, it simply calls self.query_key_value with the original hidden_states.",
         "type": "comment"
     },
-    "564": {
-        "file_id": 31,
+    "558": {
+        "file_id": 30,
         "content": "            mixed_value_layer) = split_tensor_along_last_dim(mixed_raw_layer, 3)\n        dropout_fn = self.attention_dropout if self.training else None\n        query_layer = self._transpose_for_scores(mixed_query_layer)\n        key_layer = self._transpose_for_scores(mixed_key_layer)\n        value_layer = self._transpose_for_scores(mixed_value_layer)\n        query_layer, key_layer = mixin_self.rotary_emb(query_layer,key_layer, kw_args['position_ids'], max_seqlen=kw_args['position_ids'].max()+1, layer_id=kw_args['layer_id'])\n        context_layer = attention_fn(query_layer, key_layer, value_layer, mask, dropout_fn, **kw_args)\n        context_layer = context_layer.permute(0, 2, 1, 3).contiguous()\n        new_context_layer_shape = context_layer.size()[:-2] + (self.hidden_size_per_partition,)\n        context_layer = context_layer.view(*new_context_layer_shape)\n        if mixin_self.use_vision_expert and kw_args['layer_id'] in mixin_self.vision_layer_range and (\n                vision_expert_mask is not None) and vision_expert_mask.any():",
         "type": "code",
         "location": "/utils/models/mixin.py:239-256"
     },
-    "565": {
-        "file_id": 31,
+    "559": {
+        "file_id": 30,
         "content": "This code is performing multi-head attention with rotary embeddings and optional visual expert masking. It splits the mixed raw layer, applies dropout if training, transposes query, key, and value layers, applies rotary embedding to query and key layers, performs attention operation, and rearranges the resulting context layer.",
         "type": "comment"
     },
-    "566": {
-        "file_id": 31,
+    "560": {
+        "file_id": 30,
         "content": "            vision_dense = mixin_self.vision_dense_list[layer_id_key]\n            parallel_size = mpu.get_model_parallel_world_size()\n            target_shape = context_layer.shape[:-1] + (context_layer.shape[-1] * parallel_size,)\n            output = torch.empty(target_shape, dtype=hidden_states.dtype, device=hidden_states.device)\n            output[~vision_expert_mask.bool()] = self.dense(context_layer[~vision_expert_mask.bool()])  # language\n            output[vision_expert_mask.bool()] = vision_dense(context_layer[vision_expert_mask.bool()])  # vision\n        else:\n            output = self.dense(context_layer)\n        if self.training:\n            output = self.output_dropout(output)\n        return output.contiguous()\n    def copy_param(self):\n        with torch.no_grad():\n            for i in self.vision_layer_range:\n                self.vision_query_key_value_list[str(i)].weight.data.copy_(self.transformer.layers[i].attention.query_key_value.weight.data)\n                self.vision_dense_list[str(i)].weight.data.copy_(self.transformer.layers[i].attention.dense.weight.data)",
         "type": "code",
         "location": "/utils/models/mixin.py:257-274"
     },
+    "561": {
+        "file_id": 30,
+        "content": "This code applies model parallelism to a transformer model. It splits the layers of the transformer and performs parallel computations on different parts of the input, using a mask to separate the data for different experts (vision and language). The `copy_param` method copies the weights from the original transformer's layers to the split layers.",
+        "type": "comment"
+    },
+    "562": {
+        "file_id": 31,
+        "content": "/utils/split_dataset.py",
+        "type": "filepath"
+    },
+    "563": {
+        "file_id": 31,
+        "content": "The code searches for files with a specific suffix, shuffles and splits them into train, validation, and test sets, ensuring reproducibility, and outputs a \"done\" message upon completion.",
+        "type": "summary"
+    },
+    "564": {
+        "file_id": 31,
+        "content": "import os\nimport shutil\ndef find_all_files(path, suffix=\".jpg\"):\n    target_files = []\n    for cur_dir, _, files in os.walk(path, followlinks=True):\n        for f in files:\n            if f.endswith(suffix):\n                target_files.append(os.path.join(cur_dir, f))\n    print(f'find {len(target_files)} files...')\n    return target_files\nall_files = find_all_files('archive')\nos.makedirs(\"archive_split\", exist_ok=True)\nos.makedirs(\"archive_split/train\", exist_ok=True)\nos.makedirs(\"archive_split/valid\", exist_ok=True)\nos.makedirs(\"archive_split/test\", exist_ok=True)\nimport random\nrandom.seed(2023)\nrandom.shuffle(all_files)\ntrain = all_files[:8000]\nvalid = all_files[8000:8000+500]\ntest = all_files[8000+500:8000+500+1500]\nprint(\"building train\")\nfor file in train:\n    shutil.move(file, os.path.join(\"archive_split/train\", file.split(\"/\")[-1]))\nprint(\"building valid\")\nfor file in valid:\n    shutil.move(file, os.path.join(\"archive_split/valid\", file.split(\"/\")[-1]))\nprint(\"building test\")\nfor file in test:\n    shutil.move(file, os.path.join(\"archive_split/test\", file.split(\"/\")[-1]))",
+        "type": "code",
+        "location": "/utils/split_dataset.py:1-34"
+    },
+    "565": {
+        "file_id": 31,
+        "content": "This code finds all files with a specified suffix (.jpg in this case) in the given directory, shuffles them, and splits them into train, validation, and test sets by moving the files to their respective directories. The random seed is set for reproducibility.",
+        "type": "comment"
+    },
+    "566": {
+        "file_id": 31,
+        "content": "print(\"done\")",
+        "type": "code",
+        "location": "/utils/split_dataset.py:35-35"
+    },
     "567": {
         "file_id": 31,
-        "content": "This code applies model parallelism to a transformer model. It splits the layers of the transformer and performs parallel computations on different parts of the input, using a mask to separate the data for different experts (vision and language). The `copy_param` method copies the weights from the original transformer's layers to the split layers.",
+        "content": "Prints \"done\" message indicating task completion.",
         "type": "comment"
     },
     "568": {
