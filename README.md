@@ -180,7 +180,7 @@ python cli_demo_hf.py --from_pretrained THUDM/cogagent-vqa-hf --bf16
 
 # CogVLM
 python cli_demo_hf.py --from_pretrained THUDM/cogvlm-chat-hf --bf16
-python cli_demo_hf.py --from_pretrained THUDM/cogvlm-grounding-generalist --bf16
+python cli_demo_hf.py --from_pretrained THUDM/cogvlm-grounding-generalist-hf --bf16
 ```
 
 - If you want to manually download the weights, you can replace the path after ``--from_pretrained`` with the model

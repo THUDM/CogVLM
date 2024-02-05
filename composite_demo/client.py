@@ -26,15 +26,15 @@ models_info = {
         'path': os.environ.get('TOKENIZER_PATH', 'lmsys/vicuna-7b-v1.5'),
     },
     'agent_chat': {
-        'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THDUM/cogagent-chat-hf'),
+        'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THUDM/cogagent-chat-hf'),
         'device': ['cuda:0']
     },
     'vlm_chat': {
-        'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THDUM/cogvlm-chat-hf'),
+        'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THUDM/cogvlm-chat-hf'),
         'device': ['cuda:3']
     },
     'vlm_grounding': {
-        'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','THDUM/cogvlm-grounding-generalist-hf'),
+        'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','THUDM/cogvlm-grounding-generalist-hf'),
         'device': ['cuda:6']
     }
 }
