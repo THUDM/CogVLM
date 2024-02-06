@@ -1,9 +1,6 @@
 # CogVLM & CogAgent
 
 📗 [中文版README](./README_zh.md)
-🔥🔥🔥  🆕: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
-which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. 
-Welcome to follow and use.
 
 🌟 **Jump to detailed introduction: [Introduction to CogVLM](#introduction-to-cogvlm)，
 🆕 [Introduction to CogAgent](#introduction-to-cogagent)**
@@ -59,6 +56,7 @@ Welcome to follow and use.
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## Release
+
 - 🔥🔥🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
   which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. Welcome to follow and use.
 - 🔥🔥 **News**: ```2023/12/18```: **New Web UI Launched!** We have launched a new web UI based on Streamlit,
@@ -73,7 +71,6 @@ Welcome to follow and use.
   See [details](#introduction-to-cogvlm).
 
 - **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory!
-  See [details](#CLI).
 
 - **News**: ```2023/11/20``` We have updated the checkpoint of cogvlm-chat to cogvlm-chat-v1.1, unified the versions of
   chat and VQA, and refreshed the SOTA on various datasets. See [details](#introduction-to-cogvlm)

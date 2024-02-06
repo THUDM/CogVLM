@@ -1,8 +1,6 @@
 # CogVLM & CogAgent
 
 📗 [README in English](./README.md)
-- 🔥🔥🔥 🆕: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，
-它包含了超过15万条我们用于训练 **CogVLM v1.0(仅该模型)** 的数据。欢迎关注和使用。
 
 🌟 **跳转到详细介绍: [CogVLM介绍](#introduction-to-cogvlm)，
 🆕 [CogAgent的介绍](#introduction-to-cogagent)**
@@ -35,29 +33,29 @@
 **目录**
 
 - [CogVLM \& CogAgent](#cogvlm--cogagent)
-    - [Release](#release)
+    - [Release](#发布)
     - [开始使用](#开始使用)
-        - [选项1：使用网页演示进行推理](#选项1：使用网页演示进行推理)
-        - [选项2：自行部署CogVLM / CogAgent](#选项2：自行部署CogVLM/CogAgent)
-            - [轩 2.1 CLI (SAT version)](#situation-21-cli-sat-version)
+        - [选项1：使用网页演示进行推理](#选项1使用网页演示进行推理)
+        - [选项2：自行部署CogVLM / CogAgent](#选项2自行部署cogvlm--cogagent)
+            - [Situation 2.1 CLI (SAT version)](#situation-21-cli-sat-version)
             - [Situation 2.2 CLI (Huggingface version)](#situation-22-cli-huggingface-version)
             - [Situation 2.3 Web Demo](#situation-23-web-demo)
-        - [选项3：微调 CogAgent / CogVLM](#选项3：微调 CogAgent/CogVLM)
-        - [选项4：OpenAI格式](#选项4：OpenAI格式)
+        - [选项3：微调 CogAgent / CogVLM](#选项3微调-cogagent--cogvlm)
+        - [选项4：OpenAI格式](#选项4OpenAI格式)
         - [硬件需求](#硬件需求)
         - [Model checkpoints](#model-checkpoints)
     - [Introduction to CogVLM](#introduction-to-cogvlm)
-        - [Examples](#examples)
+        - [示例](#示例)
     - [Introduction to CogAgent](#introduction-to-cogagent)
         - [GUI Agent Examples](#gui-agent-examples)
     - [Cookbook](#cookbook)
         - [Task Prompts](#task-prompts)
         - [选择适合的模型](#选择适合的模型)
-        - [FAQ](#faq)
     - [License](#license)
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## 发布
+
 - 🔥🔥🔥 **News**: ```2023/12/26```:我们公开了 [CogVLM-SFT-311K](dataset_zh.md) 数据集，它包含了超过15万条我们用于训练 **CogVLM v1.0(仅该模型)** 的数据。欢迎关注和使用。
 - 🔥🔥 **News**: ```2023/12/18```: **新的Streamlit用户界面**已经上线！我们已经基于Streamlit推出了新的网页用户界面，用户可以在我们的界面上轻松与CogVLM，CogAgent交谈。带来更好的用户体验。
 - 🔥 **News**: ```2023/12/15```: **CogAgent 正式发布！** CogAgent是基于CogVLM开发的图像理解模型。它具有基于视觉的GUI
@@ -67,7 +65,7 @@
 - **News**: ```2023/12/8```:
   我们已将cogvlm-grounding-generalist的检查点更新为cogvlm-grounding-generalist-v1.1，训练过程中增加了图像增强，因此更加稳健。查看[详情](#introduction-to-cogvlm)。
 
-- **News**: ```2023/12/7``` CogVLM现在支持**4-bit**量化！您只需要11GB的GPU内存就可以进行推理！查看[详情](#CLI)。
+- **News**: ```2023/12/7``` CogVLM现在支持**4-bit**量化！您只需要11GB的GPU内存就可以进行推理！
 
 - **News**: ```2023/11/20```我们已将cogvlm-chat的检查点更新为cogvlm-chat-v1.1，统一了聊天和VQA的版本，并刷新了各种数据集上的SOTA，查看[详情](#introduction-to-cogvlm)。
 
@@ -120,7 +118,7 @@ python cli_demo_sat.py --from_pretrained cogvlm-grounding-generalist --version b
 torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo_sat.py --from_pretrained cogagent-chat --version chat --bf16
 ```
 
-- I如果你想手动下载权重，你可以用模型路径替换 ``--from_pretrained`` 后的路径。
+- 如果你想手动下载权重，你可以用模型路径替换 ``--from_pretrained`` 后的路径。
 
 - 我们的模型支持SAT的4位量化和8位量化。你可以将 ``--bf16`` 更改为 ``--fp16``, 或 ``--fp16 --quant 4``, 或 ``--fp16 --quant 8``.
 
