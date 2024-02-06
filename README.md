@@ -73,7 +73,6 @@ Welcome to follow and use.
   See [details](#introduction-to-cogvlm).
 
 - **News**: ```2023/12/7``` CogVLM supports **4-bit quantization** now! You can inference with just **11GB** GPU memory!
-  See [details](#CLI).
 
 - **News**: ```2023/11/20``` We have updated the checkpoint of cogvlm-chat to cogvlm-chat-v1.1, unified the versions of
   chat and VQA, and refreshed the SOTA on various datasets. See [details](#introduction-to-cogvlm)

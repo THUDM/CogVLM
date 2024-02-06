@@ -53,7 +53,6 @@
     - [Cookbook](#cookbook)
         - [Task Prompts](#task-prompts)
         - [选择适合的模型](#选择适合的模型)
-        - [FAQ](#faq)
     - [License](#license)
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
@@ -67,7 +66,7 @@
 - **News**: ```2023/12/8```:
   我们已将cogvlm-grounding-generalist的检查点更新为cogvlm-grounding-generalist-v1.1，训练过程中增加了图像增强，因此更加稳健。查看[详情](#introduction-to-cogvlm)。
 
-- **News**: ```2023/12/7``` CogVLM现在支持**4-bit**量化！您只需要11GB的GPU内存就可以进行推理！查看[详情](#CLI)。
+- **News**: ```2023/12/7``` CogVLM现在支持**4-bit**量化！您只需要11GB的GPU内存就可以进行推理！
 
 - **News**: ```2023/11/20```我们已将cogvlm-chat的检查点更新为cogvlm-chat-v1.1，统一了聊天和VQA的版本，并刷新了各种数据集上的SOTA，查看[详情](#introduction-to-cogvlm)。
 
