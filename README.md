@@ -1,6 +1,6 @@
 # CogVLM & CogAgent
 
-📗 [中文版README](./README_zh.md
+📗 [中文版README](./README_zh.md)
 
 🔥🔥🔥  🆕: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
 which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. 
