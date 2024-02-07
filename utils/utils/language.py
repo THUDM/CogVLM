@@ -1,8 +1,3 @@
-from sat.model.official.llama_model import LLaMAModel, rotate_half
-from sat.transformer_defaults import attention_fn_default, split_tensor_along_last_dim
-import torch.nn.functional as F
-
-
 def base_history_to_prompt(self, query, history):
     prompt = '<EOI>' + query
     return prompt

@@ -102,12 +102,12 @@ class NewLayerForward(BaseMixin):
         return output
 
 class EVA2CLIPModel(BaseModel):
-    def __init__(self, args, transformer=None, parallel_output=True, **kwargs):
+    def __init__(self, args, transformer=None, **kwargs):
         property = ViTProperty(args.image_size, args.patch_size, args.pre_len, args.post_len)
         args.max_sequence_length = property.pre_len + property.num_patches + property.post_len
         if 'activation_func' not in kwargs:
             kwargs['activation_func'] = gelu
-        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)
+        super().__init__(args, transformer=transformer, **kwargs)
         self.transformer.property = property
         self.add_mixin("patch_embedding", ImagePatchEmbeddingMixin(args.in_channels, args.hidden_size, property))
         self.add_mixin("pos_embedding", InterpolatedPositionEmbeddingMixin())

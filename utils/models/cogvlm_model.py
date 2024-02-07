@@ -98,8 +98,8 @@ class ImageMixin(BaseMixin):
 
 
 class CogVLMModel(LLaMAModel):
-    def __init__(self, args, transformer=None, parallel_output=True, **kwargs):
-        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kwargs)
+    def __init__(self, args, transformer=None, **kwargs):
+        super().__init__(args, transformer=transformer, **kwargs)
         self.image_length = args.image_length
         self.add_mixin("eva", ImageMixin(args))
         self.del_mixin("mlp")
@@ -121,8 +121,8 @@ class CogVLMModel(LLaMAModel):
 
 
 class FineTuneTrainCogVLMModel(CogVLMModel):
-    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):
-        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)
+    def __init__(self, args, transformer=None, **kw_args):
+        super().__init__(args, transformer=transformer, **kw_args)
         self.args = args
         # If you want to use model parallel with a mp_size=1 checkpoint, and meanwhile you also want to use lora,
         # you have to add_mixin after loading model checkpoint.
@@ -142,8 +142,8 @@ class FineTuneTrainCogVLMModel(CogVLMModel):
 from sat.model.finetune import PTuningV2Mixin
 from sat.model.finetune.lora2 import LoraMixin
 class FineTuneTestCogVLMModel(CogVLMModel):
-    def __init__(self, args, transformer=None, parallel_output=True, **kw_args):
-        super().__init__(args, transformer=transformer, parallel_output=parallel_output, **kw_args)
+    def __init__(self, args, transformer=None, **kw_args):
+        super().__init__(args, transformer=transformer, **kw_args)
         if args.use_ptuning:
             self.add_mixin("ptuning", PTuningV2Mixin(args.num_layers, args.hidden_size // args.num_attention_heads, args.num_attention_heads, args.pre_seq_len))
         if args.use_lora:
