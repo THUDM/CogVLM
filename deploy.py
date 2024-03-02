@@ -5,15 +5,17 @@ Usage:
 
     1. Create and populate the .env file:
 
-        echo "AWS_ACCESS_KEY_ID=<your aws access key id>" > .env
-        echo "AWS_SECRET_ACCESS_KEY=<your aws secret access key>" >> .env
-        echo "AWS_REGION=<your aws region>" >> .env
-        echo "GITHUB_OWNER=<your github owner>" >> .env  # e.g. OpenAdaptAI
-        echo "GITHUB_REPO=<your github repo>" >> .env  # e.g. CogVLM
-        echo "GITHUB_TOKEN=<your github token>" >> .env
-        echo "PROJECT_NAME=<your project name>" >> .env  # for tagging AWS resources
-        # optional
-        echo "OPENAI_API_KEY=<your openai api key>" >> .env
+        cat > .env <<EOF
+AWS_ACCESS_KEY_ID=<your aws access key id>
+AWS_SECRET_ACCESS_KEY=<your aws secret access key>
+AWS_REGION=<your aws region>
+GITHUB_OWNER=<your github owner>  # e.g. OpenAdaptAI
+GITHUB_REPO=<your github repo>  # e.g. CogVLM
+GITHUB_TOKEN=<your github token>
+PROJECT_NAME=<your project name>  # for tagging AWS resources
+# optional
+OPENAI_API_KEY=<your openai api key>
+EOF
 
     2. Create a virtual environment for deployment:
 
