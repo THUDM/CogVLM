@@ -1,4 +1,69 @@
 # based on https://github.com/OpenAdaptAI/SoM/blob/main/deploy.py
+"""Deploy CogVLM to AWS EC2 via Github action.
+
+Usage:
+
+    1. Create and populate the .env file:
+
+        echo "AWS_ACCESS_KEY_ID=<your aws access key id>" > .env
+        echo "AWS_SECRET_ACCESS_KEY=<your aws secret access key>" >> .env
+        echo "AWS_REGION=<your aws region>" >> .env
+        echo "GITHUB_OWNER=<your github owner>" >> .env  # e.g. OpenAdaptAI
+        echo "GITHUB_REPO=<your github repo>" >> .env  # e.g. CogVLM
+        echo "GITHUB_TOKEN=<your github token>" >> .env
+        echo "PROJECT_NAME=<your project name>" >> .env  # for tagging AWS resources
+        # optional
+        echo "OPENAI_API_KEY=<your openai api key>" >> .env
+
+    2. Create a virtual environment for deployment:
+
+        python3.10 -m venv venv
+        source venv/bin/activate
+        pip install deploy_requirements.txt
+
+    3. Run the deployment script:
+
+        python deploy.py start
+
+    4. Commit the newly generated github workflow file:
+
+        git add .github/workflows/docker-build-ec2.yml
+        git commit -m "add workflow file"
+        git push
+
+    5. Wait for the build to succeed in Github actions (see console output for URL).
+
+    6. Fine-tune the model on specified data:
+
+        # Ensure your EC2 instance has access to the training and validation data.
+        python deploy.py fine_tune \
+            --train_data="./path/to/train_data" \
+			--valid_data="./path/to/valid_data"
+
+		# Parameters such as --num_gpus_per_worker, --mp_size, --model_type,
+		# --version, --lora_rank, and --max_length can also be specified if different
+		# from defaults.
+
+    7. Terminate the EC2 instance and stop incurring charges:
+
+        python deploy.py stop
+
+       Or, to shut it down without removing it:
+
+        python deploy.py pause
+
+       (This can later be re-started with the `start` command.)
+
+    8. (optional) List all tagged instances with their respective statuses:
+
+        python deploy.py status
+
+This deployment script enables you to deploy CogVLM to an AWS EC2 instance,
+commit necessary configuration files for GitHub Actions, and fine-tune the
+model on specified data. It also provides functionality to manage the lifecycle
+of the EC2 instance used for deployment and fine-tuning.
+"""
+
 
 import base64
 import json
