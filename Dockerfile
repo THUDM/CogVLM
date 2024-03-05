@@ -14,10 +14,10 @@ RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Make port 80 available to the world outside this container
-EXPOSE 80
+EXPOSE 7861
 
 # Define environment variable
 ENV NAME World
 
 # Run composite_demo/main.py when the container launches
-CMD ["python", "composite_demo/main.py"]
+CMD ["streamlit", "run", "composite_demo/main.py", "--server.port", "7861"]

@@ -41,6 +41,6 @@ jobs:
             sudo nvidia-docker build -t cogvlm . || exit 1
 
             # Run the image
-            sudo docker run -d -p 6092:6092 --gpus all --name cogvlm-container \
+            sudo docker run -d -p 7861:7861--gpus all --name cogvlm-container \
               -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
               cogvlm
