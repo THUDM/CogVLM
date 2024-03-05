@@ -1,0 +1,44 @@
+name: Docker Build on EC2 Instance
+
+on:
+  push:
+    branches:
+      - {{ branch_name }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH and Execute Build on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          command_timeout: "60m"
+          host: {{ host }}
+          username: {{ username }}  # Usually 'ubuntu' or 'ec2-user'
+          {% raw %}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          {% endraw %}
+          script: |
+            source activate pytorch
+            nvidia-smi
+
+            rm -rf {{ github_repo }} || true
+            git clone https://github.com/{{ github_path }}
+            cd {{ github_repo }}
+            git checkout {{ branch_name }}
+            git pull
+
+            # Stop and remove existing container if it's running
+            sudo docker stop {{ project_name }}-container || true
+            sudo docker rm {{ project_name }}-container || true
+
+            # Build the image
+            sudo nvidia-docker build -t {{ project_name }} . || exit 1
+
+            # Run the image
+            sudo docker run -d -p 7861:7861 --gpus all --name {{ project_name }}-container \
+              -e OPENAI_API_KEY={% raw %}${{ secrets.OPENAI_API_KEY }}{% endraw %} \
+              {{ project_name }}

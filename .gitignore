@@ -10,3 +10,8 @@ archive*
 hostfile
 runs/
 *.idea/
+
+*.sw[m-p]
+.env
+*.pem
+venv
