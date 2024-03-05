@@ -21,21 +21,15 @@ EOF
 
         python3.10 -m venv venv
         source venv/bin/activate
-        pip install deploy_requirements.txt
+        pip install -r deploy_requirements.txt
 
     3. Run the deployment script:
 
         python deploy.py start
 
-    4. Commit the newly generated github workflow file:
+    4. Wait for the build to succeed in Github actions (see console output for URL).
 
-        git add .github/workflows/docker-build-ec2.yml
-        git commit -m "add workflow file"
-        git push
-
-    5. Wait for the build to succeed in Github actions (see console output for URL).
-
-    6. Fine-tune the model on specified data:
+    5. Fine-tune the model on specified data:
 
         # Ensure your EC2 instance has access to the training and validation data.
         python deploy.py fine_tune \
@@ -46,7 +40,7 @@ EOF
 		# --version, --lora_rank, and --max_length can also be specified if different
 		# from defaults.
 
-    7. Terminate the EC2 instance and stop incurring charges:
+    6. Terminate the EC2 instance and stop incurring charges:
 
         python deploy.py stop
 
@@ -56,20 +50,59 @@ EOF
 
        (This can later be re-started with the `start` command.)
 
-    8. (optional) List all tagged instances with their respective statuses:
+    7. (optional) List all tagged instances with their respective statuses:
 
         python deploy.py status
 
-This deployment script enables you to deploy CogVLM to an AWS EC2 instance,
-commit necessary configuration files for GitHub Actions, and fine-tune the
-model on specified data. It also provides functionality to manage the lifecycle
-of the EC2 instance used for deployment and fine-tuning.
+Troubleshooting Token Scope Error:
+
+    If you encounter an error similar to the following when pushing changes to
+    GitHub Actions workflow files:
+
+        ! [remote rejected] feat/docker -> feat/docker (refusing to allow a
+        Personal Access Token to create or update workflow
+        `.github/workflows/docker-build-ec2.yml` without `workflow` scope)
+
+    This indicates that the Personal Access Token (PAT) being used does not
+    have the necessary permissions ('workflow' scope) to create or update GitHub
+    Actions workflows. To resolve this issue, you will need to create or update
+    your PAT with the appropriate scope.
+
+    Creating or Updating a Classic PAT with 'workflow' Scope:
+
+    1. Go to GitHub and sign in to your account.
+    2. Click on your profile picture in the top right corner, and then click 'Settings'.
+    3. In the sidebar, click 'Developer settings'.
+    4. Click 'Personal access tokens', then 'Classic tokens'.
+    5. To update an existing token:
+       a. Find the token you wish to update in the list and click on it.
+       b. Scroll down to the 'Select scopes' section.
+       c. Make sure the 'workflow' scope is checked. This scope allows for
+          managing GitHub Actions workflows.
+       d. Click 'Update token' at the bottom of the page.
+    6. To create a new token:
+       a. Click 'Generate new token'.
+       b. Give your token a descriptive name under 'Note'.
+       c. Scroll down to the 'Select scopes' section.
+       d. Check the 'workflow' scope to allow managing GitHub Actions workflows.
+       e. Optionally, select any other scopes needed for your project.
+       f. Click 'Generate token' at the bottom of the page.
+    7. Copy the generated token. Make sure to save it securely, as you will not
+       be able to see it again.
+
+    After creating or updating your PAT with the 'workflow' scope, update the
+    Git remote configuration to use the new token, and try pushing your changes
+    again.
+
+    Note: Always keep your tokens secure and never share them publicly.
+
 """
 
 
 import base64
 import json
 import os
+import subprocess
 import time
 
 from botocore.exceptions import ClientError
@@ -124,33 +157,6 @@ class Config(BaseSettings):
     @property
     def GITHUB_PATH(self) -> str:
         return f"{self.GITHUB_OWNER}/{self.GITHUB_REPO}"
-
-# Existing functions remain unchanged as they are generic and can be reused across different projects.
-
-# Main class and methods are adapted to the specific deployment workflow for "CogVLM".
-class Deploy:
-    
-    @staticmethod
-    def start() -> None:
-        """
-        Main method to execute the deployment process for CogVLM.
-        """
-        set_github_secrets()
-        instance_id, instance_ip = configure_ec2_instance()
-        assert instance_ip, f"invalid {instance_ip=}"
-        generate_github_actions_workflow()
-        github_actions_url = get_github_actions_url()
-        gradio_server_url = get_gradio_server_url(instance_ip)
-        logger.info(f"Now run:")
-        logger.info("    git add .github/workflows/docker-build-ec2.yml && git commit -m 'add workflow file' and git push")
-        logger.info(f"Then wait for the action to complete at {github_actions_url}")
-        logger.info(f"Then run:")
-        logger.info(f"    python client.py {gradio_server_url}")
-
-    # The pause, stop, and status methods remain unchanged as their functionality is general and applies to any project.
-
-if __name__ == "__main__":
-    fire.Fire(Deploy)
 
 config = Config()
 
@@ -246,7 +252,7 @@ def create_key_pair(key_name: str = config.AWS_EC2_KEY_NAME, key_path: str = con
         logger.error(f"Error creating key pair: {e}")
         return None
 
-def get_or_create_security_group_id(ports: list[int] = [22, 6092]) -> str | None:
+def get_or_create_security_group_id(ports: list[int] = [22, 80, 7861]) -> str | None:
     """
     Retrieves or creates a security group with the specified ports opened.
 
@@ -559,6 +565,40 @@ def get_gradio_server_url(ip_address: str) -> str:
     url = f"http://{ip_address}:6092"  # TODO: make port configurable
     return url
 
+def git_push_set_upstream(branch_name: str):
+    """
+    Pushes the current branch to the remote 'origin' and sets it to track the upstream branch.
+
+    Args:
+        branch_name (str): The name of the current branch to push.
+    """
+    try:
+        # Push the current branch and set the remote 'origin' as upstream
+        subprocess.run(["git", "push", "--set-upstream", "origin", branch_name], check=True)
+        logger.info(f"Branch '{branch_name}' pushed and set up to track 'origin/{branch_name}'.")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to push branch '{branch_name}' to 'origin': {e}")
+
+def update_git_remote_with_pat(github_owner: str, repo_name: str, pat: str):
+    """
+    Updates the git remote 'origin' to include the Personal Access Token in the URL.
+
+    Args:
+        github_owner (str): GitHub repository owner.
+        repo_name (str): GitHub repository name.
+        pat (str): Personal Access Token with the necessary scopes.
+
+    """
+    new_origin_url = f"https://{github_owner}:{pat}@github.com/{github_owner}/{repo_name}.git"
+    try:
+        # Remove the existing 'origin' remote
+        subprocess.run(["git", "remote", "remove", "origin"], check=True)
+        # Add the new 'origin' with the PAT in the URL
+        subprocess.run(["git", "remote", "add", "origin", new_origin_url], check=True)
+        logger.info("Git remote 'origin' updated successfully.")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to update git remote 'origin': {e}")
+
 class Deploy:
 
     @staticmethod
@@ -570,12 +610,30 @@ class Deploy:
         instance_id, instance_ip = configure_ec2_instance()
         assert instance_ip, f"invalid {instance_ip=}"
         generate_github_actions_workflow()
+
+        # Update the Git remote configuration to include the PAT
+        update_git_remote_with_pat(
+            config.GITHUB_OWNER, config.GITHUB_REPO, config.GITHUB_TOKEN,
+        )
+
+        # Add, commit, and push the workflow file changes, setting the upstream branch
+        try:
+            subprocess.run(
+                ["git", "add", ".github/workflows/docker-build-ec2.yml"], check=True,
+            )
+            subprocess.run(
+                ["git", "commit", "-m", "'add workflow file'"], check=True,
+            )
+            current_branch = get_current_git_branch()
+            git_push_set_upstream(current_branch)
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to commit or push changes: {e}")
+
         github_actions_url = get_github_actions_url()
         gradio_server_url = get_gradio_server_url(instance_ip)
-        logger.info(f"Now run:")
-        logger.info("    git add .github/workflows/docker-build-ec2.yml && git commit -m 'add workflow file' and git push")
-        logger.info(f"Then wait for the action to complete at {github_actions_url}")
-        logger.info(f"Then run:")
+        logger.info("Deployment process completed.")
+        logger.info(f"Check the GitHub Actions at {github_actions_url}.")
+        logger.info("Once the action is complete, run:")
         logger.info(f"    python client.py {gradio_server_url}")
 
 
