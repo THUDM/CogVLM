@@ -125,9 +125,9 @@ class Config(BaseSettings):
     GITHUB_TOKEN: str
     PROJECT_NAME: str = "CogVLM"
     OPENAI_API_KEY: str | None = None
-    AWS_EC2_AMI: str = "ami-0f9c346cdcac09fb5"  # Adjusted for the latest appropriate AMI for the project
-    AWS_EC2_DISK_SIZE: int = 100  # GB
-    AWS_EC2_INSTANCE_TYPE: str = "g4dn.xlarge"  # Adjusted as per project requirements
+    AWS_EC2_AMI: str = "ami-0f9c346cdcac09fb5"  # Deep Learning AMI GPU PyTorch 2.0.1 (Ubuntu 20.04) 20230827
+    AWS_EC2_DISK_SIZE: int = 200  # GB
+    AWS_EC2_INSTANCE_TYPE: str = "g4dn.12xlarge"  # (4x T4 16GB $3.912/hr x86_64)
     AWS_EC2_USER: str = "ubuntu"
 
     class Config:
@@ -252,12 +252,12 @@ def create_key_pair(key_name: str = config.AWS_EC2_KEY_NAME, key_path: str = con
         logger.error(f"Error creating key pair: {e}")
         return None
 
-def get_or_create_security_group_id(ports: list[int] = [22, 80, 7861]) -> str | None:
+def get_or_create_security_group_id(ports: list[int] = [22, 7861]) -> str | None:
     """
     Retrieves or creates a security group with the specified ports opened.
 
     Args:
-        ports (list[int]): A list of ports to open in the security group. Defaults to [22, 6092].
+        ports (list[int]): A list of ports to open in the security group. Defaults to [22, 7861].
 
     Returns:
         str | None: The ID of the security group, or None if an error occurred.
@@ -552,7 +552,7 @@ def get_github_actions_url() -> str:
     url = f"https://github.com/{config.GITHUB_OWNER}/{config.GITHUB_REPO}/actions"
     return url
 
-def get_gradio_server_url(ip_address: str) -> str:
+def get_streamlit_server_url(ip_address: str) -> str:
     """
     Get the Gradio server URL using the provided IP address.
 
@@ -562,7 +562,7 @@ def get_gradio_server_url(ip_address: str) -> str:
     Returns:
         str: The Gradio server URL
     """
-    url = f"http://{ip_address}:6092"  # TODO: make port configurable
+    url = f"http://{ip_address}:7861"  # TODO: make port configurable
     return url
 
 def git_push_set_upstream(branch_name: str):
@@ -630,11 +630,12 @@ class Deploy:
             logger.error(f"Failed to commit or push changes: {e}")
 
         github_actions_url = get_github_actions_url()
-        gradio_server_url = get_gradio_server_url(instance_ip)
+        streamlit_server_url = get_streamlit_server_url(instance_ip)
         logger.info("Deployment process completed.")
         logger.info(f"Check the GitHub Actions at {github_actions_url}.")
-        logger.info("Once the action is complete, run:")
-        logger.info(f"    python client.py {gradio_server_url}")
+        logger.info("Once the action is complete, open {streamlist_server_url} in a browser.")
+        logger.info("Once 'Running `get_client()`' is complete, run:")
+        logger.info(f"    python composite_demo/client.py")
 
 
     @staticmethod
