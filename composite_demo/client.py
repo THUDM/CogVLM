@@ -27,15 +27,15 @@ models_info = {
     },
     'agent_chat': {
         'path': os.environ.get('MODEL_PATH_AGENT_CHAT', 'THUDM/cogagent-chat-hf'),
-        'device': ['cuda:0']
+        #'device': ['cuda:0']
     },
     'vlm_chat': {
         'path': os.environ.get('MODEL_PATH_VLM_CHAT', 'THUDM/cogvlm-chat-hf'),
-        'device': ['cuda:3']
+        #'device': ['cuda:3']
     },
     'vlm_grounding': {
         'path': os.environ.get('MODEL_PATH_VLM_GROUNDING','THUDM/cogvlm-grounding-generalist-hf'),
-        'device': ['cuda:6']
+        #'device': ['cuda:6']
     }
 }
 
@@ -50,6 +50,10 @@ models_info = {
 #         'device': ['cuda:0']
 #     },
 
+def get_available_devices() -> list[str]:
+    """Returns a list of available GPU devices in the format 'cuda:X' or an empty list if no GPU is available."""
+    n_gpus = torch.cuda.device_count()
+    return [f'cuda:{i}' for i in range(n_gpus)]
 
 
 @st.cache_resource
@@ -119,18 +123,36 @@ class HFClient(Client):
         """
     def __init__(self, models_info):
         self.models = {}
-        self.tokenizer = AutoTokenizer.from_pretrained(models_info['tokenizer']['path'], trust_remote_code=True)
+        self.init_models(models_info)
+
+    def init_models(self, models_info):
+        """
+        Initializes models on dynamically selected devices based on availability.
+        """
+        available_devices = get_available_devices()
+        device_iterator = iter(available_devices)
+
         for model_name, model_info in models_info.items():
-            if model_name != 'tokenizer':
-                self.models[model_name] = []
-                for device in model_info['device']:
-                    model = AutoModelForCausalLM.from_pretrained(
-                        model_info['path'],
-                        torch_dtype=torch_type,
-                        low_cpu_mem_usage=True,
-                        trust_remote_code=True,
-                    ).to(device).eval()
-                    self.models[model_name].append(model)
+            if model_name == 'tokenizer':  # Skip tokenizer for device allocation
+                continue
+
+            try:
+                device = next(device_iterator)  # Assign next available device
+            except StopIteration:
+                warnings.warn("Not enough GPUs for all models, some models may share devices")
+                device_iterator = iter(available_devices)  # Reset iterator to reuse devices
+                device = next(device_iterator)
+
+            print(f"loading {model_name=} into {device=}")
+            model = AutoModelForCausalLM.from_pretrained(
+                model_info['path'],
+                torch_dtype=torch_type,
+                low_cpu_mem_usage=True,
+                trust_remote_code=True,
+            ).to(device).eval()
+
+            # Assign model and device to the models_info dict for later reference
+            self.models[model_name] = {'model': model, 'device': device}
 
     def select_best_gpu(self, model_name):
         min_memory_used = None
@@ -144,6 +166,7 @@ class HFClient(Client):
                 min_memory_used = mem_used
                 selected_model = model
 
+        print(f"{model_name=} {selected_model=}")
         return selected_model
 
     def generate_stream(self,
