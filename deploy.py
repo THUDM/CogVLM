@@ -127,7 +127,9 @@ class Config(BaseSettings):
     OPENAI_API_KEY: str | None = None
     AWS_EC2_AMI: str = "ami-0f9c346cdcac09fb5"  # Deep Learning AMI GPU PyTorch 2.0.1 (Ubuntu 20.04) 20230827
     AWS_EC2_DISK_SIZE: int = 200  # GB
-    AWS_EC2_INSTANCE_TYPE: str = "g4dn.12xlarge"  # (4x T4 16GB $3.912/hr x86_64)
+    #AWS_EC2_INSTANCE_TYPE: str = "g4dn.12xlarge"  # (4x T4 16GB $3.912/hr x86_64)
+    #AWS_EC2_INSTANCE_TYPE: str = "g5.12xlarge"  # (4x A10G 24GB $5.672/hr x86_64)
+    AWS_EC2_INSTANCE_TYPE: str = "p3.8xlarge"  # (4x V100 16GB $12.24/hr x86_64)
     AWS_EC2_USER: str = "ubuntu"
 
     class Config:
@@ -565,19 +567,30 @@ def get_streamlit_server_url(ip_address: str) -> str:
     url = f"http://{ip_address}:7861"  # TODO: make port configurable
     return url
 
-def git_push_set_upstream(branch_name: str):
+def git_push_set_upstream(branch_name: str, max_retries: int = 3, retry_delay: int = 5):
     """
-    Pushes the current branch to the remote 'origin' and sets it to track the upstream branch.
+    Pushes the current branch to the remote 'origin' and sets it to track the upstream branch, with retry logic.
 
     Args:
         branch_name (str): The name of the current branch to push.
+        max_retries (int): Maximum number of retries if the push fails. Defaults to 3.
+        retry_delay (int): Delay (in seconds) between retries. Defaults to 5 seconds.
     """
-    try:
-        # Push the current branch and set the remote 'origin' as upstream
-        subprocess.run(["git", "push", "--set-upstream", "origin", branch_name], check=True)
-        logger.info(f"Branch '{branch_name}' pushed and set up to track 'origin/{branch_name}'.")
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Failed to push branch '{branch_name}' to 'origin': {e}")
+    attempt = 0
+    while attempt < max_retries:
+        try:
+            # Push the current branch and set the remote 'origin' as upstream
+            subprocess.run(["git", "push", "--set-upstream", "origin", branch_name], check=True)
+            logger.info(f"Branch '{branch_name}' pushed and set up to track 'origin/{branch_name}'.")
+            break  # Success, exit the loop
+        except subprocess.CalledProcessError as e:
+            attempt += 1
+            logger.error(f"Attempt {attempt} failed to push branch '{branch_name}' to 'origin': {e}")
+            if attempt < max_retries:
+                logger.info(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                logger.error(f"Failed to push branch '{branch_name}' to 'origin' after {max_retries} attempts.")
 
 def update_git_remote_with_pat(github_owner: str, repo_name: str, pat: str):
     """
@@ -632,10 +645,8 @@ class Deploy:
         github_actions_url = get_github_actions_url()
         streamlit_server_url = get_streamlit_server_url(instance_ip)
         logger.info("Deployment process completed.")
-        logger.info(f"Check the GitHub Actions at {github_actions_url}.")
-        logger.info("Once the action is complete, open {streamlist_server_url} in a browser.")
-        logger.info("Once 'Running `get_client()`' is complete, run:")
-        logger.info(f"    python composite_demo/client.py")
+        logger.info(f"Check the GitHub Actions at: {github_actions_url}")
+        logger.info(f"Once the action is complete, open: {streamlit_server_url}")
 
 
     @staticmethod

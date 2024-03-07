@@ -143,7 +143,7 @@ class HFClient(Client):
                 device_iterator = iter(available_devices)  # Reset iterator to reuse devices
                 device = next(device_iterator)
 
-            print(f"loading {model_name=} into {device=}")
+            print(f"loading {model_name=} into {device=}", flush=True)
             model = AutoModelForCausalLM.from_pretrained(
                 model_info['path'],
                 torch_dtype=torch_type,
@@ -166,7 +166,7 @@ class HFClient(Client):
                 min_memory_used = mem_used
                 selected_model = model
 
-        print(f"{model_name=} {selected_model=}")
+        print(f"{model_name=} {selected_model=}", flush=True)
         return selected_model
 
     def generate_stream(self,
