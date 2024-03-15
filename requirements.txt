@@ -19,3 +19,4 @@ sse-starlette>=1.8.2
 fastapi>=0.109.0
 httpx>=0.26.0
 uvicorn>=0.27.0
+jsonlines>=4.0.0
