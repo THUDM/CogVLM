@@ -56,7 +56,7 @@
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## Release
-
+- 🔥🔥🔥  **News**: ```2024/02/27```: **CogAgent** is accepted by CVPR 2024.
 - 🔥🔥🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
   which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. Welcome to follow and use.
 - 🔥🔥 **News**: ```2023/12/18```: **New Web UI Launched!** We have launched a new web UI based on Streamlit,
