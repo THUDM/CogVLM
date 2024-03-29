@@ -4,6 +4,8 @@ import argparse
 from functools import partial
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import wandb
+wandb.init(mode=os.environ.get('WANDB_MODE', 'offline'))
 
 from sat import mpu, get_args, get_tokenizer
 from sat.training.deepspeed_training import training_main
@@ -49,7 +51,7 @@ def data_collator(examples, cross_image_processor=None):
         elif isinstance(value, np.ndarray):
             return torch.from_numpy(value)
         return value
-    
+
     def concatenate_tensors(attribute, key):
         """Concatenates tensors for a specific attribute and key."""
         if attribute is None:
@@ -83,11 +85,11 @@ def data_collator(examples, cross_image_processor=None):
         example.pop('cross', None)
 
     # Create model_args by concatenating tensors and copying other attributes
-    model_args = {key: concatenate_tensors(None, key) 
-                  if isinstance(examples[-1][key], torch.Tensor) else examples[-1][key] 
+    model_args = {key: concatenate_tensors(None, key)
+                  if isinstance(examples[-1][key], torch.Tensor) else examples[-1][key]
                   for key in examples[-1]
                   }
-    
+
     # Merge img_args into model_args
     model_args.update(img_args)
     return model_args
@@ -183,7 +185,7 @@ def forward_step_eval(data_iterator, model, args, timers):
                 score_dict['acc_w/o_case'].append(1.)
             else:
                 score_dict['acc_w/o_case'].append(0.)
-            
+
 
         for k, v in score_dict.items():
             score_dict[k] = float(np.mean(v))
@@ -271,7 +273,7 @@ if __name__ == '__main__':
         model.get_mixin("eva").vit_model.add_mixin("lora", LoraMixin(args.eva_args['num_layers'], args.lora_rank, layer_range=args.layer_range), reinit=True)
     elif args.use_qlora:
         model.add_mixin("lora", LoraMixin(args.num_layers, args.lora_rank, layer_range=args.layer_range, qlora=True), reinit=True)
-        
+
     if args.use_qlora and torch.cuda.is_available():
         model = model.to('cuda')
     from utils.utils import llama2_tokenizer
