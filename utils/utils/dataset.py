@@ -47,15 +47,19 @@ class ItemDataset(Dataset):
     def load_data(self, data_dirs):
         image_dir = os.path.join(self.data_dirs, 'images')
         label_dir = os.path.join(self.data_dirs, 'labels')
-        image_files = self.find_all_files(image_dir, suffixes=(".jpg", ".png"))
-        
+        image_files = sorted(self.find_all_files(image_dir, suffixes=(".jpg", ".png")))
+
         # Check if label directory exists
         if os.path.exists(label_dir):
-            label_files = self.find_all_files(label_dir, suffixes=(".json"))
+            # Construct label file paths based on image file names
+            label_files = [os.path.join(label_dir, os.path.splitext(os.path.basename(image_file))[0] + '.json') for image_file in image_files]
+            # Check if all label files exist
+            for label_file in label_files:
+                if not os.path.exists(label_file):
+                    raise FileNotFoundError(f"Label file {label_file} does not exist.")
         else:
             # If label directory does not exist, use image file names as labels
-            label_files = [os.path.splitext(os.path.basename(f))[0] for f in image_files]
-        
+            label_files = image_files
         print_rank0(f"Found {len(image_files)} images and {len(label_files)} labels in total...")
         return list(zip(image_files, label_files))
     
