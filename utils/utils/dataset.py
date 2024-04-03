@@ -8,19 +8,17 @@ from PIL import Image
 from torch.utils.data import Dataset
 from sat.helpers import print_rank0
 
-
-
 class ItemDataset(Dataset):
     # Initialization function, set image processor, text processor, data directories, etc.
     def __init__(self, image_processor, text_processor, args, data_dirs, cross_image_processor=None, **kwargs):
         super().__init__()
         self.image_processor, self.text_processor, self.cross_image_processor = image_processor, text_processor, cross_image_processor
         self.data_dirs = data_dirs
-        self.data = self.load_data()
+        self.data = self.load_data(data_dirs)
         print_rank0(f"Dataset initialized with {len(self.data)} samples.")
 
     # Define a function to find all target files
-    def find_all_files(path, suffixes=(".jpg", ".png")):
+    def find_all_files(self, path, suffixes=(".jpg", ".png")):
         target_files = []
         for cur_dir, _, files in os.walk(path, followlinks=True):
             for f in files:
