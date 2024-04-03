@@ -13,8 +13,8 @@ class ItemDataset(Dataset):
         super().__init__()
         self.image_processor, self.text_processor, self.cross_image_processor = image_processor, text_processor, cross_image_processor
         self.data_dirs = data_dirs
-        self.data = self.load_data(data_dirs)
-        print_rank0(f"Dataset initialized with {len(self.data)} samples.")
+        self.image_files, self.label_files = self.load_data(data_dirs)
+        print_rank0(f"Dataset initialized with {len(self.image_files)} samples.")
 
     # Define a function to find all target files
     def find_all_files(self, path, suffixes=(".jpg", ".png")):
@@ -62,11 +62,16 @@ class ItemDataset(Dataset):
 
     # Function to get the length of the dataset
     def __len__(self):
-        return len(self.data)
+        return len(self.image_files)
     # Function to get an item from the dataset
+    def get_label(self, image_file):
+        label_dir = os.path.join(self.data_dirs, 'labels')
+        label_file = os.path.join(label_dir, os.path.splitext(os.path.basename(image_file))[0] + '.json')
+        return label_file
+
     def __getitem__(self, index):
         image_file = self.image_files[index]
-        label_file = os.path.join(self.label_dir, os.path.splitext(os.path.basename(image_file))[0] + '.json')
+        label_file = self.get_label(image_file)
         # img
         try:
             img = Image.open(image_file).convert('RGB')
