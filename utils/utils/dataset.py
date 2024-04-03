@@ -8,25 +8,26 @@ from PIL import Image
 from torch.utils.data import Dataset
 from sat.helpers import print_rank0
 
-# Define a function to find all target files
-def find_all_files(path, suffixes=(".jpg", ".png")):
-    target_files = []
-    for cur_dir, _, files in os.walk(path, followlinks=True):
-        for f in files:
-            if f.endswith(suffixes):
-                target_files.append(os.path.join(cur_dir, f))
-    print_rank0(f'Found {len(target_files)} files...')
-    return target_files
+
 
 class ItemDataset(Dataset):
     # Initialization function, set image processor, text processor, data directories, etc.
     def __init__(self, image_processor, text_processor, args, data_dirs, cross_image_processor=None, **kwargs):
         super().__init__()
-        self.data = self.load_data(data_dirs)
         self.image_processor, self.text_processor, self.cross_image_processor = image_processor, text_processor, cross_image_processor
         self.data_dirs = data_dirs
         self.data = self.load_data()
         print_rank0(f"Dataset initialized with {len(self.data)} samples.")
+
+    # Define a function to find all target files
+    def find_all_files(path, suffixes=(".jpg", ".png")):
+        target_files = []
+        for cur_dir, _, files in os.walk(path, followlinks=True):
+            for f in files:
+                if f.endswith(suffixes):
+                    target_files.append(os.path.join(cur_dir, f))
+        print_rank0(f'Found {len(target_files)} files...')
+        return target_files
     
     # Function to process images
     def process_img(self, img):
@@ -50,7 +51,7 @@ class ItemDataset(Dataset):
         
         # Check if label directory exists
         if os.path.exists(label_dir):
-            label_files = self.find_all_files(label_dir, suffix=".json")
+            label_files = self.find_all_files(label_dir, suffixes=(".json"))
         else:
             # If label directory does not exist, use image file names as labels
             label_files = [os.path.splitext(os.path.basename(f))[0] for f in image_files]
