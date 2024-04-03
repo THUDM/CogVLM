@@ -58,15 +58,15 @@ class ItemDataset(Dataset):
             # If label directory does not exist, use image file names as labels
             label_files = image_files
         print_rank0(f"Found {len(image_files)} images and {len(label_files)} labels in total...")
-        return list(zip(image_files, label_files))
-    
+        return image_files, label_files
+
     # Function to get the length of the dataset
     def __len__(self):
         return len(self.data)
-
     # Function to get an item from the dataset
     def __getitem__(self, index):
-        image_file, label_file = self.data[index]
+        image_file = self.image_files[index]
+        label_file = os.path.join(self.label_dir, os.path.splitext(os.path.basename(image_file))[0] + '.json')
         # img
         try:
             img = Image.open(image_file).convert('RGB')
