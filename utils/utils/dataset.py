@@ -47,7 +47,14 @@ class ItemDataset(Dataset):
         image_dir = os.path.join(self.data_dirs, 'images')
         label_dir = os.path.join(self.data_dirs, 'labels')
         image_files = self.find_all_files(image_dir, suffixes=(".jpg", ".png"))
-        label_files = self.find_all_files(label_dir, suffix=".json")
+        
+        # Check if label directory exists
+        if os.path.exists(label_dir):
+            label_files = self.find_all_files(label_dir, suffix=".json")
+        else:
+            # If label directory does not exist, use image file names as labels
+            label_files = [os.path.splitext(os.path.basename(f))[0] for f in image_files]
+        
         print_rank0(f"Found {len(image_files)} images and {len(label_files)} labels in total...")
         return list(zip(image_files, label_files))
     
@@ -67,14 +74,18 @@ class ItemDataset(Dataset):
         img_dict = self.process_img(img)
         # text
         try:
-            with open(label_file, 'r') as f:
-                label_data = json.load(f)
-                label = label_data['captions'][0]['content']
+            if os.path.exists(label_file):
+                with open(label_file, 'r') as f:
+                    label_data = json.load(f)
+                    label = label_data['captions'][0]['content']
+            else:
+                label = os.path.splitext(os.path.basename(image_file))[0]
         except Exception as e:
             print_rank0(e, level=logging.WARNING)
             return {}
         uni_key = label
-        text_dict = self.process_text(label, "This image can be best described as:")
+        prompt = "CAPTCHA:" if not os.path.exists(label_file) else "This image can be best described as:"
+        text_dict = self.process_text(label, prompt)
         if text_dict is None:
             print_rank0(f"Process text failed. Please check the max_target_length & max_source_length.\n The data is {label_file}", level=logging.WARNING)
             return {}
