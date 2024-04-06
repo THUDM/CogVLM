@@ -93,7 +93,8 @@ def simple_image_chat(use_stream=True, img_path=None):
             "role": "user",
             "content": [
                 {
-                    "type": "text", "text": "What’s in this image?",
+                    "type": "text",
+                    "text": "What’s in this image?",
                 },
                 {
                     "type": "image_url",
