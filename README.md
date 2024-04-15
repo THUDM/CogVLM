@@ -56,12 +56,12 @@
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## Release
-
-- 🔥🔥🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
+- 🔥🔥🔥  **News**: ```2024/4/5```: [CogAgent](https://arxiv.org/abs/2312.08914) was selected as a CVPR 2024 Highlights!
+- 🔥🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
   which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. Welcome to follow and use.
-- 🔥🔥 **News**: ```2023/12/18```: **New Web UI Launched!** We have launched a new web UI based on Streamlit,
+- 🔥 **News**: ```2023/12/18```: **New Web UI Launched!** We have launched a new web UI based on Streamlit,
   users can painlessly talk to CogVLM, CogAgent in our UI. Have a better user experience.
-- 🔥 **News**: ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed
+- **News**: ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed
   based on CogVLM. It features **visual-based GUI Agent capabilities** and has further enhancements in image
   understanding. It supports image input with a resolution of 1120*1120, and possesses multiple abilities including
   multi-turn dialogue with images, GUI Agent, Grounding, and more.

@@ -14,8 +14,9 @@ accelerate>=0.26.1
 pydantic>=2.6.0
 
 # for openai demo
-openai>=1.11.1
+openai>=1.16.0
 sse-starlette>=1.8.2
-fastapi>=0.109.0
-httpx>=0.26.0
-uvicorn>=0.27.0
+fastapi>=0.110.1
+httpx>=0.27.0
+uvicorn>=0.29.0
+jsonlines>=4.0.0
