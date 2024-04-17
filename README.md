@@ -283,17 +283,17 @@ weights. Alternatively, you can choose to manually download the necessary weight
 
   |   Model name    | Input resolution |                             Introduction                             | Huggingface model | SAT model |
   | :-----------: | :----: | :----------------------------------------------------------: | :------: | :-------: |
-  | cogagent-chat |  1120  | Chat version of CogAgent. Supports GUI Agent, multiple-round  chat and visual grounding. |  [link](https://huggingface.co/THUDM/cogagent-chat-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
-  | cogagent-vqa |  1120  | VQA version of CogAgent. Has stronger capabilities in single-turn visual dialogue. Recommended for VQA benchmarks. |  [link](https://huggingface.co/THUDM/cogagent-vqa-hf)       |    [link](https://huggingface.co/THUDM/CogAgent/tree/main)       |
-
+  | cogagent-chat |  1120  | Chat version of CogAgent. Supports GUI Agent, multiple-round  chat and visual grounding. |  [HF link](https://huggingface.co/THUDM/cogagent-chat-hf) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/cogagent-chat-hf)    |   [HF link](https://huggingface.co/THUDM/CogAgent/tree/main)<br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/CogAgent)           |
+  | cogagent-vqa |  1120  | VQA version of CogAgent. Has stronger capabilities in single-turn visual dialogue. Recommended for VQA benchmarks. |  [HF link](https://huggingface.co/THUDM/cogagent-vqa-hf)<br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/cogagent-vqa-hf)        |    [HF link](https://huggingface.co/THUDM/CogAgent/tree/main) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/CogAgent)      |
+c
 - CogVLM
 
   |          Model name           | Input resolution |                           Introduction                            | Huggingface model | SAT model |
   | :-------------------------: | :----: | :-------------------------------------------------------: | :------: | :-------: |
-  |         cogvlm-chat-v1.1         |  490   |  Supports multiple rounds of chat and vqa simultaneously, with different prompts.   |  [link](https://huggingface.co/THUDM/cogvlm-chat-hf)        |    [link](https://huggingface.co/THUDM/CogVLM/tree/main)        |
-  |       cogvlm-base-224       |  224   |               The original checkpoint after text-image pretraining.               |   [link](https://huggingface.co/THUDM/cogvlm-base-224-hf)       |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
-  |       cogvlm-base-490       |  490   |      Amplify the resolution to 490 through position encoding interpolation from `cogvlm-base-224`.      |   [link](https://huggingface.co/THUDM/cogvlm-base-490-hf)       |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
-  | cogvlm-grounding-generalist |  490   | This checkpoint supports different visual grounding tasks, e.g. REC, Grounding Captioning, etc.  |    [link](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)      |     [link](https://huggingface.co/THUDM/CogVLM/tree/main)       |
+  |         cogvlm-chat-v1.1         |  490   |  Supports multiple rounds of chat and vqa simultaneously, with different prompts.   |  [HF link](https://huggingface.co/THUDM/cogvlm-chat-hf) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/cogvlm-chat-hf)        |    [HF link](https://huggingface.co/THUDM/CogVLM/tree/main)  <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/CogVLM)       |
+  |       cogvlm-base-224       |  224   |               The original checkpoint after text-image pretraining.               |   [HF link](https://huggingface.co/THUDM/cogvlm-base-224-hf) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/cogvlm-base-224-hf)       |     [HF link](https://huggingface.co/THUDM/CogVLM/tree/main) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/CogVLM)       |
+  |       cogvlm-base-490       |  490   |      Amplify the resolution to 490 through position encoding interpolation from `cogvlm-base-224`.      |   [HF link](https://huggingface.co/THUDM/cogvlm-base-490-hf) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/cogvlm-base-490-hf)       |     [HF link](https://huggingface.co/THUDM/CogVLM/tree/main) <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/CogVLM)       |
+  | cogvlm-grounding-generalist |  490   | This checkpoint supports different visual grounding tasks, e.g. REC, Grounding Captioning, etc.  |    [HF link](https://huggingface.co/THUDM/cogvlm-grounding-generalist-hf)  <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/cogvlm-grounding-generalist-hf)       |     [HF link](https://huggingface.co/THUDM/CogVLM/tree/main)   <br> [OpenXLab link](https://openxlab.org.cn/models/detail/THUDM/CogVLM)     |
 
 ## Introduction to CogVLM
 
