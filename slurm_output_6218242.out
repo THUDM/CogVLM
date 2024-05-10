@@ -1,0 +1,79 @@
+============================================================================================== 
+Warning! Mixing Conda and module environments may lead to corruption of the
+user environment. 
+We do not recommend users mixing those two environments unless absolutely
+necessary. Note that 
+SURF does not provide any support for Conda environment.
+For more information, please refer to our software policy page:
+https://servicedesk.surf.nl/wiki/display/WIKI/Software+policy+Snellius#SoftwarepolicySnellius-UseofAnacondaandMinicondaenvironmentsonSnellius 
+
+Remember that many packages have already been installed on the system and can
+be loaded using 
+the 'module load <package__name>' command. If you are uncertain if a package is
+already available 
+on the system, please use 'module avail' or 'module spider' to search for it.
+============================================================================================== 
+Lmod has detected the following error: The following module(s) are unknown:
+"llava"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "llava"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Traceback (most recent call last):
+  File "/sw/arch/RHEL8/EB_production/2022/software/Anaconda3/2022.05/lib/python3.9/runpy.py", line 188, in _run_module_as_main
+    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)
+  File "/sw/arch/RHEL8/EB_production/2022/software/Anaconda3/2022.05/lib/python3.9/runpy.py", line 111, in _get_module_details
+    __import__(pkg_name)
+  File "/gpfs/home3/adurenajaf/VLM_Hallucinations/llava/__init__.py", line 1, in <module>
+    from .model import LlavaLlamaForCausalLM
+ImportError: cannot import name 'LlavaLlamaForCausalLM' from 'llava.model' (/gpfs/home3/adurenajaf/VLM_Hallucinations/llava/model/__init__.py)
+Category: popular, # samples: 3000
+TP	FP	TN	FN	
+1182	59	1441	318
+Accuracy: 0.8743333333333333
+Precision: 0.9524576954069299
+Recall: 0.788
+F1 score: 0.8624589565851879
+Yes ratio: 0.4136666666666667
+0.862, 0.874, 0.952, 0.788, 0.414
+====================================
+Category: random, # samples: 2910
+TP	FP	TN	FN	
+1182	31	1379	318
+Accuracy: 0.8800687285223368
+Precision: 0.9744435284418796
+Recall: 0.788
+F1 score: 0.8713601179506082
+Yes ratio: 0.4168384879725086
+0.871, 0.880, 0.974, 0.788, 0.417
+====================================
+Category: adversarial, # samples: 3000
+TP	FP	TN	FN	
+1182	117	1383	318
+Accuracy: 0.855
+Precision: 0.9099307159353349
+Recall: 0.788
+F1 score: 0.8445873526259379
+Yes ratio: 0.433
+0.845, 0.855, 0.910, 0.788, 0.433
+====================================
+
+JOB STATISTICS
+==============
+Job ID: 6218242
+Cluster: snellius
+User/Group: adurenajaf/adurenajaf
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 18
+CPU Utilized: 00:00:03
+CPU Efficiency: 1.39% of 00:03:36 core-walltime
+Job Wall-clock time: 00:00:12
+Memory Utilized: 1.18 MB
+Memory Efficiency: 0.00% of 120.00 GB
