@@ -13,5 +13,6 @@ module load 2022
 module load Anaconda3/2022.05
 
 module load llava
-
-srun /home/adurenajaf/VLM_Hallucinations/scripts/v1_5/eval/pope.sh
+cd $HOME/VLM_Hallucinations/
+conda activate fomo
+srun scripts/v1_5/eval/pope.sh

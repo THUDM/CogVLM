@@ -1,0 +1,1 @@
+Two beds [[000,444,703,989]] with white linens [[000,600,703,997]] and black decorative pillows [[000,444,703,989]] are in a room with a wooden floor [[668,660,998,997]].
