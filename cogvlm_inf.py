@@ -5,6 +5,8 @@ import torch
 from PIL import Image
 from transformers import AutoModelForCausalLM, LlamaTokenizer
 import os
+import json
+import shortuuid
 
 # Create an argument parser to handle command line arguments
 parser = argparse.ArgumentParser()
@@ -128,56 +130,63 @@ image_files = [
     for filename in os.listdir(args.folder_path)
     if filename.endswith((".jpg", ".png"))
 ]
+with open(os.path.join(args.folder_path, "outputs.json"), "w") as ans_file:
+    results = []
+    # Iterate over the image files
+    for filename in image_files:
+        # Open the image
+        image = Image.open(os.path.join(args.folder_path, filename)).convert("RGB")
 
-# Iterate over the image files
-for filename in image_files:
-    # Open the image
-    image = Image.open(os.path.join(args.folder_path, filename)).convert("RGB")
+        # Clear the history
+        history.clear()
 
-    # Clear the history
-    history.clear()
+        query = args.query
 
-    query = args.query
+        input_by_model = model.build_conversation_input_ids(
+            tokenizer, query=query, history=history, images=[image]
+        )
+        inputs = {
+            "input_ids": input_by_model["input_ids"].unsqueeze(0).to(DEVICE),
+            "token_type_ids": input_by_model["token_type_ids"].unsqueeze(0).to(DEVICE),
+            "attention_mask": input_by_model["attention_mask"].unsqueeze(0).to(DEVICE),
+            "images": [[input_by_model["images"][0].to(DEVICE).to(torch_type)]]
+            if image is not None
+            else None,
+        }
+        if "cross_images" in input_by_model and input_by_model["cross_images"]:
+            inputs["cross_images"] = [
+                [input_by_model["cross_images"][0].to(DEVICE).to(torch_type)]
+            ]
 
-    input_by_model = model.build_conversation_input_ids(
-        tokenizer, query=query, history=history, images=[image]
-    )
-    inputs = {
-        "input_ids": input_by_model["input_ids"].unsqueeze(0).to(DEVICE),
-        "token_type_ids": input_by_model["token_type_ids"].unsqueeze(0).to(DEVICE),
-        "attention_mask": input_by_model["attention_mask"].unsqueeze(0).to(DEVICE),
-        "images": [[input_by_model["images"][0].to(DEVICE).to(torch_type)]]
-        if image is not None
-        else None,
-    }
-    if "cross_images" in input_by_model and input_by_model["cross_images"]:
-        inputs["cross_images"] = [
-            [input_by_model["cross_images"][0].to(DEVICE).to(torch_type)]
-        ]
+        gen_kwargs = {
+            "max_new_tokens": args.max_new_tokens,
+            "do_sample": args.do_sample,
+        }
 
-    gen_kwargs = {
-        "max_new_tokens": args.max_new_tokens,
-        "do_sample": args.do_sample,
-    }
+        if args.do_sample:
+            gen_kwargs["temperature"] = args.temperature
+            gen_kwargs["top_p"] = args.top_p
+            gen_kwargs["top_k"] = args.top_k
 
-    if args.do_sample:
-        gen_kwargs["temperature"] = args.temperature
-        gen_kwargs["top_p"] = args.top_p
-        gen_kwargs["top_k"] = args.top_k
+        with torch.no_grad():
+            outputs = model.generate(**inputs, **gen_kwargs)
+            outputs = outputs[:, inputs["input_ids"].shape[1] :]
+            response = tokenizer.decode(outputs[0])
+            response = response.split("</s>")[0]
+            print("\nCog:", response)
+        history.append((query, response))
 
-    with torch.no_grad():
-        outputs = model.generate(**inputs, **gen_kwargs)
-        outputs = outputs[:, inputs["input_ids"].shape[1] :]
-        response = tokenizer.decode(outputs[0])
-        response = response.split("</s>")[0]
-        print("\nCog:", response)
-    history.append((query, response))
+        ans_id = shortuuid.uuid()
+        result = {
+            "question_id": filename,
+            "prompt": args.system,
+            "text": response,
+            "answer_id": ans_id,
+            "metadata": {}
+        }
+        results.append(result)
 
-    # Write the response to a text file
-    with open(
-        os.path.join(args.folder_path, filename.rsplit(".", 1)[0] + ".txt"), "w"
-    ) as f:
-        f.write(response)
-
-    # Clear the history for next image
-    history.clear()
+            # Write all results to the JSON file at once
+            
+        history.clear()
+json.dump(results, ans_file)
