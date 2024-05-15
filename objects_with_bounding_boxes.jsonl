@@ -1,0 +1,17 @@
+{"question_id": "COCO_val2014_000000006033.jpg", "object_name": "Man", "bounding_box": "392,130,765,834"}
+{"question_id": "COCO_val2014_000000006033.jpg", "object_name": "Goat", "bounding_box": "262,458,605,858"}
+{"question_id": "COCO_val2014_000000006033.jpg", "object_name": "Van", "bounding_box": "000,000,939,568"}
+{"question_id": "COCO_val2014_000000012333.jpg", "object_name": "Woman", "bounding_box": "628,192,773,631"}
+{"question_id": "COCO_val2014_000000012333.jpg", "object_name": "Horse", "bounding_box": "492,154,994,984"}
+{"question_id": "COCO_val2014_000000012333.jpg", "object_name": "Crowd", "bounding_box": "000,145,998,694"}
+{"question_id": "COCO_val2014_000000007320.jpg", "object_name": "Person", "bounding_box": "240,844,616,998"}
+{"question_id": "COCO_val2014_000000007320.jpg", "object_name": "Remote", "bounding_box": "370,574,597,998"}
+{"question_id": "COCO_val2014_000000007320.jpg", "object_name": "Game", "bounding_box": "138,048,797,366"}
+{"question_id": "COCO_val2014_000000001171.jpg", "object_name": "Engine", "bounding_box": "116,082,768,891"}
+{"question_id": "COCO_val2014_000000001171.jpg", "object_name": "Lights", "bounding_box": "322,621,766,768"}
+{"question_id": "COCO_val2014_000000003845.jpg", "object_name": "Food", "bounding_box": "012,109,986,954"}
+{"question_id": "COCO_val2014_000000003845.jpg", "object_name": "Table", "bounding_box": "000,000,998,997"}
+{"question_id": "COCO_val2014_000000007795.jpg", "object_name": "Beds", "bounding_box": "000,444,703,989"}
+{"question_id": "COCO_val2014_000000007795.jpg", "object_name": "Linens", "bounding_box": "000,600,703,997"}
+{"question_id": "COCO_val2014_000000007795.jpg", "object_name": "Pillows", "bounding_box": "000,444,703,989"}
+{"question_id": "COCO_val2014_000000007795.jpg", "object_name": "Floor", "bounding_box": "668,660,998,997"}
