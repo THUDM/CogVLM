@@ -184,9 +184,10 @@ with open(os.path.join(args.folder_path, "outputs.json"), "w") as ans_file:
             "answer_id": ans_id,
             "metadata": {}
         }
+        print(response)
         results.append(result)
 
             # Write all results to the JSON file at once
             
         history.clear()
-json.dump(results, ans_file)
+    json.dump(results, ans_file)
