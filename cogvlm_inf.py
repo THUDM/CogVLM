@@ -146,7 +146,7 @@ image_files = [
     if filename.endswith((".jpg", ".png"))
 ]
 # Process each image file
-with open(os.path.join(args.folder_path, args.from_pretrained + "_outputs.jsonl"), "w") as ans_file:
+with open(os.path.join(args.folder_path,  "inference_outputs.jsonl"), "w") as ans_file:
     for filename in image_files:
         image = Image.open(os.path.join(args.folder_path, filename)).convert("RGB")
         
