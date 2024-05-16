@@ -84,19 +84,25 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-# Function to load prompts from a JSONL file
 def load_prompts(prompts_file):
     prompt_dict = {}
     with open(prompts_file, 'r') as file:
         for line in file:
             data = json.loads(line)
             image_name = data['image']
-            prompt_dict.setdefault(image_name, []).append(data['text'])
+            prompt_text = data['text']
+
+            if image_name not in prompt_dict:
+                prompt_dict[image_name] = []
+
+            if prompt_text not in prompt_dict[image_name]:
+                prompt_dict[image_name].append(prompt_text)
+
     return prompt_dict
 
-# Check if prompts file is provided and load prompts
 if args.prompts_file:
     prompts_dict = load_prompts(args.prompts_file)
+    
 MODEL_PATH = args.from_pretrained
 TOKENIZER_PATH = args.local_tokenizer
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -146,7 +152,7 @@ image_files = [
     if filename.endswith((".jpg", ".png"))
 ]
 # Process each image file
-with open(os.path.join(args.folder_path,  "inference_outputs.jsonl"), "w") as ans_file:
+with open(os.path.join(args.folder_path,"pope_outputs.jsonl"), "w") as ans_file:
     for filename in image_files:
         image = Image.open(os.path.join(args.folder_path, filename)).convert("RGB")
         
