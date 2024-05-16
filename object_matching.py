@@ -6,7 +6,7 @@ import jsonlines
 # Set up command line argument parsing
 parser = argparse.ArgumentParser(description="Match objects in images to COCO classes using semantic similarity and output results.")
 parser.add_argument("--jsonl_file", type=str, required=True, help="Path to the JSONL file containing image object data.")
-parser.add_argument("--output_file", type=str, required=True, help="Path to output the modified JSONL data.")
+parser.add_argument("--output_file", type=str, default="matched.jsonl",help="Path to output the modified JSONL data.")
 args = parser.parse_args()
 
 # COCO classes (simplified example, replace with full list as needed)

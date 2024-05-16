@@ -193,11 +193,10 @@ with open(os.path.join(args.folder_path,  "inference_outputs.jsonl"), "w") as an
 
             ans_id = shortuuid.uuid()
             result = {
-                "question_id": filename,
-                "prompt": args.system,
+                "file": filename,
+                "prompt": query,
                 "text": response,
-                "answer_id": ans_id,
-                "metadata": {}
+                "answer_id": ans_id
             }
 
             ans_file.write(json.dumps(result) + '\n')    
