@@ -82,8 +82,6 @@ parser.add_argument(
 parser.add_argument(
     "--prompts_file", type=str, default=None, help="Optional path to a JSONL file containing prompts for each image.")
 
-
-parser = argparse.ArgumentParser(description="Image captioning with optional prompts file.")
 args = parser.parse_args()
 
 # Function to load prompts from a JSONL file
