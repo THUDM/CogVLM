@@ -9,11 +9,23 @@ parser.add_argument("--jsonl_file", type=str, required=True, help="Path to the J
 parser.add_argument("--output_file", type=str, default="matched.jsonl",help="Path to output the modified JSONL data.")
 args = parser.parse_args()
 
-# COCO classes (simplified example, replace with full list as needed)
 coco_classes = [
-    "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", 
-    "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", 
-    "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe"
+    "person", "bicycle", "car", "motorcycle", "airplane",
+    "bus", "train", "truck", "boat", "traffic light",
+    "fire hydrant", "stop sign", "parking meter", "bench", "bird",
+    "cat", "dog", "horse", "sheep", "cow", "elephant",
+    "bear", "zebra", "giraffe", "backpack", "umbrella",
+    "handbag", "tie", "suitcase", "frisbee", "skis",
+    "snowboard", "sports ball", "kite", "baseball bat", "baseball glove",
+    "skateboard", "surfboard", "tennis racket", "bottle", "wine glass",
+    "cup", "fork", "knife", "spoon", "bowl",
+    "banana", "apple", "sandwich", "orange", "broccoli",
+    "carrot", "hot dog", "pizza", "donut", "cake",
+    "chair", "couch", "potted plant", "bed", "dining table",
+    "toilet", "TV", "laptop", "mouse", "remote",
+    "keyboard", "cell phone", "microwave", "oven", "toaster",
+    "sink", "refrigerator", "book", "clock", "vase",
+    "scissors", "teddy bear", "hair drier", "toothbrush"
 ]
 
 # Initialize the sentence transformer model
