@@ -112,9 +112,9 @@ class CogVLM2Model(LLaMAModel):
         self.image_length = args.image_length
         self.add_mixin("eva", ImageMixin(args))
         self.del_mixin("mlp")
-        self.add_mixin("mlp", LlamaVisionExpertFCMixin(args.hidden_size, args.inner_hidden_size, args.num_layers, args.num_layers))
+        self.add_mixin("mlp", LlamaVisionExpertFCMixin(args.hidden_size, args.inner_hidden_size, args.num_layers, args.num_layers, frequency=1))
         self.del_mixin("rotary")
-        self.add_mixin("rotary", LlamaVisionExpertAttnMixin(args.hidden_size, args.num_attention_heads, args.num_layers, args.num_layers))
+        self.add_mixin("rotary", LlamaVisionExpertAttnMixin(args.hidden_size, args.num_attention_heads, args.num_layers, args.num_layers, num_multi_query_heads=args.num_multi_query_heads, frequency=1))
 
     @classmethod
     def add_model_specific_args(cls, parser):
