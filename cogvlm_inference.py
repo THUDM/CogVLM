@@ -30,7 +30,7 @@ def load_model(from_pretrained, use_bfloat16, quantization=None):
         low_cpu_mem_usage=True,
         load_in_4bit=quantization is not None,
         trust_remote_code=True,
-    ).to(device).eval()
+    ).eval()
     return model, device
 
 def load_prompts(prompts_file):
