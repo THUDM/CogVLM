@@ -1,6 +1,6 @@
 torch>=2.1.0
 torchvision>=0.16.2
-transformers>=4.36.2
+transformers==4.36.2
 Pillow>=10.2.0
 requests>=2.26.0
 shortuuid>=1.0.1
@@ -14,3 +14,5 @@ timm>=0.9.12
 accelerate>=0.26.1
 pydantic>=2.6.0
 bitsandbytes>=0.31.0
+xformers>=0.0.22
+jsonlines>=2.0.0
