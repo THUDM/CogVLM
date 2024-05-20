@@ -56,10 +56,11 @@
     - [Citation \& Acknowledgements](#citation--acknowledgements)
 
 ## Release
-- 🔥🔥🔥  **News**: ```2024/4/5```: [CogAgent](https://arxiv.org/abs/2312.08914) was selected as a CVPR 2024 Highlights!
-- 🔥🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
+- 🔥🔥🔥  **News**: ```2024/5/20```: We released the **next generation of model, [CogVLM2](https://github.com/THUDM/CogVLM2)**, which is based on llama3-8b and on the par of (or better than) GPT-4V in most cases! DOWNLOAD and TRY!
+- 🔥🔥  **News**: ```2024/4/5```: [CogAgent](https://arxiv.org/abs/2312.08914) was selected as a CVPR 2024 Highlights!
+- 🔥  **News**: ```2023/12/26```: We have released the [CogVLM-SFT-311K](dataset.md) dataset, 
   which contains over 150,000 pieces of data that we used for **CogVLM v1.0 only** training. Welcome to follow and use.
-- 🔥 **News**: ```2023/12/18```: **New Web UI Launched!** We have launched a new web UI based on Streamlit,
+- **News**: ```2023/12/18```: **New Web UI Launched!** We have launched a new web UI based on Streamlit,
   users can painlessly talk to CogVLM, CogAgent in our UI. Have a better user experience.
 - **News**: ```2023/12/15```: **CogAgent Officially Launched!** CogAgent is an image understanding model developed
   based on CogVLM. It features **visual-based GUI Agent capabilities** and has further enhancements in image
