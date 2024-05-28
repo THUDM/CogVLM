@@ -10,3 +10,4 @@ archive*
 hostfile
 runs/
 *.idea/
+.DS_Store
