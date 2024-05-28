@@ -31,10 +31,10 @@ _history_to_prompt = {
     "chat_old": chat_old_history_to_prompt, # for cogvlm-v1.1
 }
 
-from transformers import LlamaTokenizer
+from transformers import AutoTokenizer
 
 def llama2_tokenizer(tokenizer_path, signal_type="base"):
-    tokenizer = LlamaTokenizer.from_pretrained(tokenizer_path)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = 32000
     tokenizer.boi = "[IMG]"
