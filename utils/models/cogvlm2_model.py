@@ -7,12 +7,8 @@ from .mixin_llama3 import LlamaVisionExpertFCMixin, LlamaVisionExpertAttnMixin
 
 from sat.resources.urls import MODEL_URLS
 
-# MODEL_URLS["cogvlm-base-224"] = "r2://cogvlm-base-224.zip"
-# MODEL_URLS["cogvlm-base-490"] = "r2://cogvlm-base-490.zip"
-# MODEL_URLS["cogvlm-chat-v1.1"] = "r2://cogvlm-chat-v1.1.zip"
-# MODEL_URLS["cogvlm-grounding-base"] = "r2://cogvlm-grounding-base.zip"
-# MODEL_URLS["cogvlm-grounding-generalist-v1.1"] = "r2://cogvlm-grounding-generalist-v1.1.zip"
-
+MODEL_URLS["cogvlm2-llama3-chat-19B"] = "r2://cogvlm2-llama3-chat-19B.zip"
+MODEL_URLS["cogvlm2-llama3-chinese-chat-19B"] = "r2://cogvlm2-llama3-chinese-chat-19B.zip"
 
 class GLU(nn.Module):
     def __init__(self, args, in_features):
@@ -129,7 +125,7 @@ class CogVLM2Model(LLaMAModel):
         return super().forward(input_ids=input_ids, **kwargs)
 
 
-class FineTuneTrainCogVLMModel(CogVLMModel):
+class FineTuneTrainCogVLM2Model(CogVLM2Model):
     def __init__(self, args, transformer=None, **kw_args):
         super().__init__(args, transformer=transformer, **kw_args)
         self.args = args
