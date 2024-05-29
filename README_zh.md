@@ -24,7 +24,7 @@
   </tr>
   <tr>
     <td colspan="2" align="center">
-      <p>🌐 CogVLM 和 CogAgent 的网络演示: <a href="http://36.103.203.44:7861">this link</a></p>
+      <p>🌐 CogVLM2 在线体验: <a href="http://36.103.203.44:7861">this link</a></p>
     </td>
   </tr>
 </table>
@@ -79,7 +79,7 @@
 
 ### 选项1：使用网页演示进行推理
 
-* 点击此处进入 [CogVLM & CogAgent Web Demo](http://36.103.203.44:7861/)。
+* 点击此处进入 [CogVLM2 Web Demo](http://36.103.203.44:7861/)。
 
 如果您需要使用代理和接地功能，请参考[Cookbook - Task Prompts](#task-prompts)。
 

@@ -24,7 +24,7 @@
   </tr>
   <tr>
     <td colspan="2" align="center">
-      <p>🌐 Web Demo for both CogVLM and CogAgent: <a href="http://36.103.203.44:7861">this link</a></p>
+      <p>🌐 Web Demo for both CogVLM2: <a href="http://36.103.203.44:7861">this link</a></p>
     </td>
   </tr>
 </table>
@@ -86,7 +86,7 @@
 
 ### Option 1: Inference Using Web Demo.
 
-* Click here to enter [CogVLM & CogAgent Web Demo](http://36.103.203.44:7861/)。
+* Click here to enter [CogVLM2 Demo](http://36.103.203.44:7861/)。
 
 If you need to use Agent and Grounding functions, please refer to [Cookbook - Task Prompts](#task-prompts)
 
@@ -94,11 +94,6 @@ If you need to use Agent and Grounding functions, please refer to [Cookbook - Ta
 
 We support two GUIs for model inference, **CLI** and **web demo** . If you want to use it in your python code, it is
 easy to modify the CLI scripts for your case.
-
-
-<!-- ### Online Web Demo
-We provide a [web demo](http://36.103.203.44:7861/) based on [Gradio](https://gradio.app). -->
-
 
 First, we need to install the dependencies.
 
